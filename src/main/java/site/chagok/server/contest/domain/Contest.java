@@ -1,5 +1,7 @@
 package site.chagok.server.contest.domain;
 
+import lombok.Getter;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -9,7 +11,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+
 //commnet,scrap은 글이 삭제된다면 남아있을 필요가 ㅇ벗음
+@Getter
 @Entity
 public class Contest {
     @Id

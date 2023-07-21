@@ -1,9 +1,10 @@
 package site.chagok.server.contest.domain;
 
+import lombok.Getter;
 import site.chagok.server.member.domain.Member;
 
 import javax.persistence.*;
-
+@Getter
 @Entity
 public class ContestScrap {
     @Id
