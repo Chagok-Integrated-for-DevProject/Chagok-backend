@@ -1,16 +1,21 @@
 package site.chagok.server.study.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import lombok.Getter;
+
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-
+@Getter
 @Entity
 public class Study {
     @Id
     private Long id;
-
     @OneToMany(mappedBy = "study")
-    List<StudyScrap> studyScraps = new ArrayList<>();
+    private List<StudyScrap> studyScraps = new ArrayList<>();
+
+
+    @ElementCollection
+    @Enumerated(EnumType.STRING)
+    private List<TechStack> techStacks = new ArrayList<>();
+
 }

@@ -1,9 +1,10 @@
 package site.chagok.server.study.domain;
 
+import lombok.Getter;
 import site.chagok.server.member.domain.Member;
 
 import javax.persistence.*;
-
+@Getter
 @Entity
 public class StudyScrap {
 
@@ -16,4 +17,5 @@ public class StudyScrap {
     @ManyToOne(fetch= FetchType.LAZY)
     @JoinColumn(name="study_id")
     private Study study;
+
 }
