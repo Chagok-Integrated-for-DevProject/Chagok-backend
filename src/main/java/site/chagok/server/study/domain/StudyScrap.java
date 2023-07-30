@@ -17,4 +17,5 @@ public class StudyScrap {
     @ManyToOne(fetch= FetchType.LAZY)
     @JoinColumn(name="study_id")
     private Study study;
+
 }
