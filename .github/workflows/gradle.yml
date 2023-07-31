@@ -23,7 +23,6 @@ jobs:
       with:
         java-version: '11'
 
-        
     - name: 💾 Cache Gradle & Spring
       uses: actions/cache@v3
       with:
@@ -38,39 +37,33 @@ jobs:
       run: |
           chmod +x ./gradlew
           ./gradlew clean build -x test
-          # /build/libs에 jar 파일 생성
-          
-          # jar 파일 복사
+     
   deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: scp jar File 
-        uses: appleboy/scp-action@master 
-        with:
-          host: ${{}}
-          key: ${{}}
-          passphrase: ${{}}
+     runs-on: ubuntu-latest
+     needs: build
+     # build가 끝나야 실행
+     steps:
+     - name: scp jarFile
+       uses: appleboy/scp-action@master
+       with:
+          username: root
+          host: ${{secrets.SSH_HOST }}
+          key: ${{ secrets.SSH_PEM_KEY }}
           source: "./build/libs/*.jar"
           target: "/home/root/deploy/chagok"
           strip_components: 1
-      
-         # jar 파일 실행
-      - name: execute jar
-        uses: appleboy/ssh-action@masetr
-        with: 
-           host: ${{}}
-           key: ${{}}
-           username: ${{}}
-           port: 22
-           script: |
+     - name: execute jar
+       uses: appleboy/ssh-action@master
+       with:
+          username: root
+          host: ${{secrets.SSH_HOST }}
+          key: ${{ secrets.SSH_PEM_KEY }}
+          port: 22
+          script: |
              cd deploy/chagok
-             sudo fuser -k 8080/tcp 
-             # 진행중인 Jar 파일 실행 중지     
-             sudo nohup java -jar *.jar &
-          
-          
-    
+             sudo fuser -k 8080/tcp
+             #8080 실행 중지
+             nohup java -jar *.jar &
+             
+        
      
-      
-  
-      
