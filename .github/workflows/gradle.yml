@@ -68,12 +68,12 @@ jobs:
 
   #          checkout을 해주면 build git Ignore 됨
 
-  deploy:
-
-     # build가 끝나야 실행
-     steps:
-
-         #checkout을 해줘야 다시 찾음
+#  deploy:
+#
+#     # build가 끝나야 실행
+#     steps:
+#
+#         #checkout을 해줘야 다시 찾음
 
           
           
