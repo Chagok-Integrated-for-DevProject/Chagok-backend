@@ -50,8 +50,10 @@ jobs:
      steps:
        - name: Docker build
          run: |
+          cd /home/runner/work/Chagok-backend/Chagok-backend
+          ls -al
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build  -t app .
+          docker build  -t app -f Dockerfile.
           # 이름은 app으로 f는 현재 경로 -f /home/runner/work/Chagok-backend/Dockerfile 
           docker tag app ${{ secrets.DOCKER_USERNAME }}/chagok:latest
           # 이름 변경
