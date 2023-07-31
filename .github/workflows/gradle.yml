@@ -51,7 +51,7 @@ jobs:
        - name: Docker build
          run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build  -t app -f ./ .
+          docker build  -t app -f /home/runner/work/Chagok-backend/Chagok-backend/Dockerfile .
           # 이름은 app으로 경로는 현재 경로
           docker tag app ${{ secrets.DOCKER_USERNAME }}/chagok:latest
           # 이름 변경
