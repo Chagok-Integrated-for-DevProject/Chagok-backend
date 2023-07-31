@@ -1,9 +1,4 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-# This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
+
 
 name: Java CI with Gradle
 
@@ -27,11 +22,22 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: '11'
-    - name: 🔧 Build Spring server
+
+    - name: 💾 Cache Gradle & Spring
+      uses: actions/cache@v3
+      with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+            
+    - name: 🔧 Build Spring server 
       run: |
           chmod +x ./gradlew
           ./gradlew clean build -x test
-          
+     
   deploy:
      runs-on: ubuntu-latest
      needs: build
@@ -60,7 +66,4 @@ jobs:
              nohup java -jar *.jar &
              
         
-      
-
-
-      
+     
