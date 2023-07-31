@@ -4,9 +4,9 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ "deploy" ]
+    branches: [ "deploy-test" ]
   pull_request:
-    branches: [ "deploy" ]
+    branches: [ "deploy-test" ]
 
 permissions:
   contents: read
