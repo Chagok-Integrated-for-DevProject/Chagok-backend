@@ -11,6 +11,17 @@ java {
 	sourceCompatibility = '11'
 }
 
+jar {
+	enabled =false
+	manifest { // 빌드시 Main-Class 설정
+		attributes 'Main-Class': 'site.chagok.server.ChagokApplication'
+	}
+}
+bootJar{
+	mainClass = 'site.chagok.server.ChagokApplication'
+}
+
+
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
@@ -19,6 +30,9 @@ configurations {
 
 repositories {
 	mavenCentral()
+	maven{
+		url 'https://jitpack.io'
+	}
 }
 
 dependencies {
@@ -32,6 +46,7 @@ dependencies {
 
 	implementation group: 'io.springfox', name: 'springfox-boot-starter', version: '3.0.0'
 	implementation "io.springfox:springfox-swagger-ui:3.0.0"
+	implementation 'mysql:mysql-connector-java'
 }
 
 tasks.named('test') {
