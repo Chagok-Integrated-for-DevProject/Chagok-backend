@@ -37,6 +37,8 @@ jobs:
       run: |
           chmod +x ./gradlew
           ./gradlew clean build -x test
+          cp ./build/libs/*.jar .
+#          checkout을 해주면 build git Ignore 됨
 
   deploy:
      runs-on: ubuntu-latest
@@ -44,6 +46,7 @@ jobs:
      # build가 끝나야 실행
      steps:
        - uses: actions/checkout@v2
+         #checkout을 해줘야 다시 찾음
        - name: Docker build
          run: |
           cd /home/runner/work/Chagok-backend/Chagok-backend
