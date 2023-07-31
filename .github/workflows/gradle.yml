@@ -42,6 +42,8 @@ jobs:
       run: |
         cd /home/runner/work/Chagok-backend/Chagok-backend
         ls -al
+        cd build/libs
+        ls -al
         docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
         docker build  -t app .
         # 이름은 app으로 f는 현재 경로 -f /home/runner/work/Chagok-backend/Dockerfile 
