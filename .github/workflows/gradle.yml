@@ -51,7 +51,7 @@ jobs:
        - name: Docker build
          run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -t app .
+          docker build ./ --file Dockerfile -t app .
           docker tag app ${{ secrets.DOCKER_USERNAME }}/chagok:latest
           # 이름 변경
           docker push ${{ secrets.DOCKER_USERNAME }}/chagok:latest
