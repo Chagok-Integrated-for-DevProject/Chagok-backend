@@ -12,7 +12,7 @@ java {
 }
 
 jar {
-	enabled =false
+	enabled =true
 	manifest { // 빌드시 Main-Class 설정
 		attributes 'Main-Class': 'site.chagok.server.ChagokApplication'
 	}
