@@ -1,6 +1,7 @@
 package site.chagok.server.member.domain;
 
 
+import lombok.Generated;
 import lombok.Getter;
 import site.chagok.server.contest.domain.Comment;
 import site.chagok.server.contest.domain.ContestScrap;
@@ -18,7 +19,7 @@ import java.util.Set;
 @Getter
 @Entity
 public class Member {
-    @Id
+    @Id @GeneratedValue
     private Long id;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL,orphanRemoval = true)
@@ -33,4 +34,6 @@ public class Member {
     @ElementCollection
     @Enumerated(EnumType.STRING)
     private List<TechStack> techStacks = new ArrayList<>();
+
+    private String nickName;
 }

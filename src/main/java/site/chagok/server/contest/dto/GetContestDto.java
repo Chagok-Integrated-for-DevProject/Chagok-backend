@@ -18,8 +18,8 @@ public class GetContestDto  {
     private String imageUrl;
     private String originalUrl;
     private String host;
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private String startDate;
+    private String endDate;
     private int viewCount;
     private int scrapCount;
 }
