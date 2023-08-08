@@ -4,10 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import site.chagok.server.contest.domain.Contest;
 
 import java.time.LocalDate;
-import java.util.function.Function;
 
 @Builder
 @Getter

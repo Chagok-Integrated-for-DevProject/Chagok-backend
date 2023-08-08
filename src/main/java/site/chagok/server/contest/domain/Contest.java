@@ -3,21 +3,22 @@ package site.chagok.server.contest.domain;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 
 
-//commnet,scrap은 글이 삭제된다면 남아있을 필요가 ㅇ벗음
+//commnet,scrap은 글이 삭제된다면 남아있을 필요가 없음
 @Getter
 @Entity
 @Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class Contest {
     @Id
     private Long id;
