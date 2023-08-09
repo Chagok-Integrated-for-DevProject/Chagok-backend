@@ -66,6 +66,7 @@ jobs:
           docker tag ${{ secrets.DOCKER_USERNAME }}/chagok:latest chagok:latest
           docker stop chagok:latest
           docker run -d --rm -p 8080:8080 chagok:latest --name chagok:latest
+          
           docker rm $(docker ps --filter 'status=exited' -a -q)
           # 실행 중이지 않으 모든 컨테인 삭제
           docker image prune -a -f
