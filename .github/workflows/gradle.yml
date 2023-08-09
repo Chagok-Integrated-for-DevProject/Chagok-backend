@@ -64,6 +64,7 @@ jobs:
         script: |
           docker pull ${{ secrets.DOCKER_USERNAME }}/chagok:latest
           docker tag ${{ secrets.DOCKER_USERNAME }}/chagok:latest chagok:latest
+          docker stop chagok:latest
           docker run -d --rm -p 8080:8080 chagok:latest
          
 
