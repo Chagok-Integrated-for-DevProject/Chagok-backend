@@ -51,6 +51,4 @@ public class CommentSorter {
                 .parentId(comment.getParentId())
                 .build());
     }
-
-
 }
