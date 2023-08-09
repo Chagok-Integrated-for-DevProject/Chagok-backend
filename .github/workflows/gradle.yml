@@ -33,12 +33,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-    - name: make application-db.properties
-      run: |
-          cd ./src/main/resources
-          touch ./application-db.properties
-          echo "${{ secrets.PROPERTIES_DB }}" > ./application-db.properties
-      shell: bash
+    # - name: make application-db.properties
+    #   run: |
+    #       cd ./src/main/resources
+    #       touch ./application-db.properties
+    #       echo "${{ secrets.PROPERTIES_DB }}" > ./application-db.properties
+    #   shell: bash
             
     - name: 🔧 Build Spring server
       run: |
@@ -54,6 +54,7 @@ jobs:
         docker tag app ${{ secrets.DOCKER_USERNAME }}/chagok:latest
         # 이름 변경
         docker push ${{ secrets.DOCKER_USERNAME }}/chagok:latest
+        
     - name: Deploy
       uses: appleboy/ssh-action@master
       with:
