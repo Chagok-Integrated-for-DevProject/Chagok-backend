@@ -1,17 +1,19 @@
 package site.chagok.server.contest.domain;
 
+
 import lombok.*;
+
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 
 
-//commnet,scrap은 글이 삭제된다면 남아있을 필요가 ㅇ벗음
+//commnet,scrap은 글이 삭제된다면 남아있을 필요가 없음
 @Getter
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 public class Contest {
     @Id @GeneratedValue
     private Long id;

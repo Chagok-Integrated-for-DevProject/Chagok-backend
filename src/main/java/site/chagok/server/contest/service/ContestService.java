@@ -27,9 +27,7 @@ public class ContestService {
     private final MemberRepository memberRepository;
     @Transactional
     public GetContestDto getContest(Long contestId){
-        Optional<Contest> contest = contestRepository.findById(contestId);
-        if(!contest.isPresent()) throw new EntityNotFoundException();
-        Contest foundContest = contest.get();
+        Contest foundContest = contestRepository.findById(contestId).orElseThrow(EntityNotFoundException::new);
         foundContest.addViewCount(1);
         return GetContestDto.builder()
                 .title(foundContest.getTitle())

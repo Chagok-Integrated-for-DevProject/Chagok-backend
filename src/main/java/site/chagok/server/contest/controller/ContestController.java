@@ -22,7 +22,7 @@ public class ContestController {
     private final ContestService contestService;
 
     @GetMapping(value ="/contests/{id}")
-    @ApiOperation(value="콘테스트 상세 조회")
+    @ApiOperation(value="공모전 글 상세 조회")
     public GetContestDto getContest(@PathVariable("id") Long id){
         return contestService.getContest(id);
     }
@@ -43,8 +43,6 @@ public class ContestController {
     public void addContest(){
         contestService.makeContest();
     }
-
-
 
 
 }
