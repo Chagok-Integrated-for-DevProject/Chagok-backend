@@ -77,6 +77,8 @@ public class ContestService {
                 .title(c.getTitle())
                 .imageUrl(c.getImageUrl())
                 .host(c.getHost())
+                .startDate(c.getStartDate().toString())
+                .endDate(c.getEndDate().toString())
                 .scrapCount(c.getScrapCount())
                 .commentCount(c.getCommentCount())
                 .build());

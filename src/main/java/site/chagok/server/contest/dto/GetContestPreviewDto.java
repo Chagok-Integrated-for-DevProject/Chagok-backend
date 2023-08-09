@@ -15,6 +15,8 @@ public class GetContestPreviewDto {
     private String title;
     private String imageUrl;
     private String host;
+    private String startDate;
+    private String endDate;
     private int scrapCount;
     private int commentCount;
 }
