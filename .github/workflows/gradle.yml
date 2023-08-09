@@ -52,7 +52,7 @@ jobs:
       with:
         host: ${{ secrets.SSH_HOST}}
         username: root
-        key: ${{ secrets.SSH_PEM_KEY }}
+        password: ${{ secrets.SSH_PASSWORD }}
         script: |
           docker pull ${{ secrets.DOCKER_USERNAME }}/chagok:latest
           docker tag app ${{ secrets.DOCKER_USERNAME }}/chagok:latest chagok:latest
