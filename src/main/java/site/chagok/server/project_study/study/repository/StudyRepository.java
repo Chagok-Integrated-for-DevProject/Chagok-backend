@@ -1,7 +1,7 @@
-package site.chagok.server.study.repository;
+package site.chagok.server.project_study.study.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import site.chagok.server.study.domain.Study;
+import site.chagok.server.project_study.study.domain.Study;
 
 import java.util.Optional;
 

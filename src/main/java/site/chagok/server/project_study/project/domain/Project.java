@@ -1,8 +1,8 @@
-package site.chagok.server.project.domain;
+package site.chagok.server.project_study.project.domain;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+import site.chagok.server.project_study.constants.SiteType;
+import site.chagok.server.project_study.constants.TechStack;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -16,7 +16,10 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-@Table(name = "study")
+@Table(name = "project")
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Project {
 
     @Id
@@ -37,10 +40,10 @@ public class Project {
 
     private int scrapCount;
 
-    private String siteType;
+    @Enumerated(EnumType.STRING)
+    private SiteType siteType;
 
-    @ElementCollection(targetClass = String.class, fetch = FetchType.LAZY)
-    @CollectionTable(name = "project_tech_stacks", joinColumns = @JoinColumn(name = "project_id"))
-    @Column(name = "tech", nullable = false)
-    private List<String> techStacks = new ArrayList<>();
+    @ElementCollection
+    @Enumerated(EnumType.STRING)
+    private List<TechStack> techStacks = new ArrayList<>();
 }
