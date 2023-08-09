@@ -1,6 +1,8 @@
-package site.chagok.server.study.domain;
+package site.chagok.server.project.domain;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -8,18 +10,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-// Study 게시글 및 Study 게시글 기술 스택 엔티티
+// Project 게시글 및 Project 게시글 기술 스택 엔티티
+
 @Entity
 @Getter
 @Setter
 @ToString
 @Table(name = "study")
-public class Study {
+public class Project {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToMany(mappedBy = "study")
-    private List<StudyScrap> studyScraps = new ArrayList<>();
 
     private String title;
 
@@ -38,8 +40,7 @@ public class Study {
     private String siteType;
 
     @ElementCollection(targetClass = String.class, fetch = FetchType.LAZY)
-    @CollectionTable(name = "study_tech_stacks", joinColumns = @JoinColumn(name = "study_id"))
+    @CollectionTable(name = "project_tech_stacks", joinColumns = @JoinColumn(name = "project_id"))
     @Column(name = "tech", nullable = false)
     private List<String> techStacks = new ArrayList<>();
-
 }
