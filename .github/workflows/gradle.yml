@@ -62,7 +62,7 @@ jobs:
         password: ${{ secrets.SSH_PASSWORD }}
         script: |
           docker pull ${{ secrets.DOCKER_USERNAME }}/chagok:latest
-          docker tag app ${{ secrets.DOCKER_USERNAME }}/chagok:latest chagok:latest
+          docker tag ${{ secrets.DOCKER_USERNAME }}/chagok:latest chagok:latest
           docker stop $(docker ps -a -q)
           #모든 컨테이너 종료
           docker log run -d --log-driver=syslog -p 8080:8080 chagok:latest
