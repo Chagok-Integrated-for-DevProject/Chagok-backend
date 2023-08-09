@@ -67,9 +67,9 @@ jobs:
           #모든 컨테이너 종료
           docker log run -d --log-driver=syslog -p 8080:8080 chagok:latest
           #-d(백그라운드) ,--log-driver(로그 출력을 시스템 로그로) 
-          #docker rm $(docker ps --filter 'status=exited' -a -q)
+          # docker rm $(docker ps --filter 'status=exited' -a -q)
           # 실행 중이지 않으 모든 컨테인 삭제
-          #docker image prune -a -f
+          # docker image prune -a -f
           # 사용하지않은 모든 이미지 삭제
 
   #          checkout을 해주면 build git Ignore 됨
