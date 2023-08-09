@@ -4,9 +4,9 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ "deploy-test" ]
+    branches: [ "feature/contest-service" ]
   pull_request:
-    branches: [ "deploy-test" ]
+    branches: [ "deploy" ]
 
 permissions:
   contents: read
@@ -32,6 +32,13 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+
+    - name: make application-db.properties
+      run: |
+          cd ./src/main/resources
+          touch ./application-db.properties
+          echo "${{ secrets.PROPERTIES_DB }}" > ./application-db.properties
+      shell: bash
             
     - name: 🔧 Build Spring server
       run: |
@@ -47,6 +54,7 @@ jobs:
         docker tag app ${{ secrets.DOCKER_USERNAME }}/chagok:latest
         # 이름 변경
         docker push ${{ secrets.DOCKER_USERNAME }}/chagok:latest
+        
     - name: Deploy
       uses: appleboy/ssh-action@master
       with:
@@ -55,15 +63,15 @@ jobs:
         password: ${{ secrets.SSH_PASSWORD }}
         script: |
           docker pull ${{ secrets.DOCKER_USERNAME }}/chagok:latest
-          docker tag app ${{ secrets.DOCKER_USERNAME }}/chagok:latest chagok:latest
-          docker stop $(docker ps -a -q)
-          #모든 컨테이너 종료
-          docker log run -d --log-driver=syslog -p 8080:8080 chagok:latest
-          #-d(백그라운드) ,--log-driver(로그 출력을 시스템 로그로) 
+          docker tag ${{ secrets.DOCKER_USERNAME }}/chagok:latest chagok:latest
+          docker stop chagok:latest
+          docker run -d --rm -p 8080:8080 chagok:latest --name chagok:latest
+          
           docker rm $(docker ps --filter 'status=exited' -a -q)
           # 실행 중이지 않으 모든 컨테인 삭제
           docker image prune -a -f
           # 사용하지않은 모든 이미지 삭제
+         
 
   #          checkout을 해주면 build git Ignore 됨
 

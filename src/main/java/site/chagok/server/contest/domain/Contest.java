@@ -1,14 +1,10 @@
 package site.chagok.server.contest.domain;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import lombok.*;
+
+
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -16,11 +12,10 @@ import java.util.*;
 //commnet,scrap은 글이 삭제된다면 남아있을 필요가 없음
 @Getter
 @Entity
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Contest {
-    @Id
+    @Id @GeneratedValue
     private Long id;
     @OneToMany(mappedBy = "contest",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ContestScrap> contestScraps = new ArrayList<>();
@@ -31,10 +26,14 @@ public class Contest {
     private LocalDate startDate;
     private LocalDate endDate;
     private String host;
-    private String contents;
+    private String content;
     private String imageUrl;
     private String originalUrl;
     private int hotCount;
     private int scrapCount;
     private int viewCount;
+
+    public void addViewCount(int viewCount){
+        this.viewCount += viewCount;
+    }
 }
