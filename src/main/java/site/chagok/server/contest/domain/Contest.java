@@ -28,12 +28,16 @@ public class Contest {
     private String host;
     private String content;
     private String imageUrl;
-    private String originalUrl;
+    private String sourceUrl;
     private int hotCount;
     private int scrapCount;
     private int viewCount;
+    private int commentCount;
 
     public void addViewCount(int viewCount){
         this.viewCount += viewCount;
+    }
+    public void addCommentCount(){
+        this.commentCount++;
     }
 }

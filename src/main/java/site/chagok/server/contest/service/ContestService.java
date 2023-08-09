@@ -1,6 +1,8 @@
 package site.chagok.server.contest.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.chagok.server.contest.CommentSorter;
@@ -9,6 +11,7 @@ import site.chagok.server.contest.domain.Contest;
 import site.chagok.server.contest.dto.CommentDto;
 import site.chagok.server.contest.dto.GetContestCommentDto;
 import site.chagok.server.contest.dto.GetContestDto;
+import site.chagok.server.contest.dto.GetContestPreviewDto;
 import site.chagok.server.contest.repository.ContestRepository;
 import site.chagok.server.member.domain.Member;
 import site.chagok.server.member.repository.MemberRepository;
@@ -16,11 +19,9 @@ import site.chagok.server.member.repository.MemberRepository;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-
 public class ContestService {
 
     private final ContestRepository contestRepository;
@@ -32,7 +33,7 @@ public class ContestService {
         return GetContestDto.builder()
                 .title(foundContest.getTitle())
                 .imageUrl(foundContest.getImageUrl())
-                .originalUrl(foundContest.getOriginalUrl())
+                .originalUrl(foundContest.getSourceUrl())
                 .host(foundContest.getHost())
                 .startDate(foundContest.getStartDate().toString())
                 .endDate(foundContest.getEndDate().toString())
@@ -50,22 +51,34 @@ public class ContestService {
 
     @Transactional
     public Long makeComment(CommentDto commentDto){
-        Optional<Contest> contest = contestRepository.findById(commentDto.getContestId());
-        if(!contest.isPresent()) throw new EntityNotFoundException();
+        Contest contest = contestRepository.findById(commentDto.getContestId()).orElseThrow(EntityNotFoundException::new);
         Member member = new Member();
         memberRepository.save(member);
         Comment comment = Comment.builder()
                 .content(commentDto.getContent())
                 .parentId(commentDto.getParentId())
-                .contest(contest.get())
+                .contest(contest)
                 .member(member)
                 .build();
-        contest.get().getComments().add(comment);
+        contest.getComments().add(comment);
+        contest.addCommentCount();
         return comment.getId();
     }
     @Transactional
     public void makeContest(){
         Contest contest = new Contest();
         contestRepository.save(contest);
+    }
+    @Transactional(readOnly = true)
+    public Page<GetContestPreviewDto> getContests(String searchTerm,Pageable pageable){
+        Page<Contest> contests = contestRepository.findByTitleContaining(searchTerm,pageable);
+        return contests.map(c-> GetContestPreviewDto.builder()
+                .contestId(c.getId())
+                .title(c.getTitle())
+                .imageUrl(c.getImageUrl())
+                .host(c.getHost())
+                .scrapCount(c.getScrapCount())
+                .commentCount(c.getCommentCount())
+                .build());
     }
 }
