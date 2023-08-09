@@ -65,7 +65,7 @@ jobs:
           docker pull ${{ secrets.DOCKER_USERNAME }}/chagok:latest
           docker tag app ${{ secrets.DOCKER_USERNAME }}/chagok:latest chagok:latest
           docker stop $(docker ps -a -q)
-          #모든 컨테이너 종료
+          # 모든 컨테이너 종료
           docker log run -d --log-driver=syslog -p 8080:8080 chagok:latest
           #-d(백그라운드) ,--log-driver(로그 출력을 시스템 로그로) 
           docker rm $(docker ps --filter 'status=exited' -a -q)
