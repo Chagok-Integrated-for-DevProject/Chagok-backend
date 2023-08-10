@@ -4,7 +4,7 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ "feature/contest-service" ]
+    branches: [ "deploy" ]
   pull_request:
     branches: [ "deploy" ]
 
@@ -38,6 +38,13 @@ jobs:
           cd ./src/main/resources
           touch ./application-db.properties
           echo "${{ secrets.PROPERTIES_DB }}" > ./application-db.properties
+      shell: bash
+      
+    - name: make application-oauth.properties
+      run: |
+          cd ./src/main/resources
+          touch ./application-oauth.properties
+          echo "${{ secrets.PROPERTIES_OAUTH }}" > ./application-oauth.properties
       shell: bash
             
     - name: 🔧 Build Spring server
