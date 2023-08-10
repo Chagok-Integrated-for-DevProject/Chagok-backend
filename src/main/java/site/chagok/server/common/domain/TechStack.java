@@ -1,4 +1,4 @@
-package site.chagok.server.study.domain;
+package site.chagok.server.common.domain;
 
 public enum TechStack {
     BACKEND,FRONTEND

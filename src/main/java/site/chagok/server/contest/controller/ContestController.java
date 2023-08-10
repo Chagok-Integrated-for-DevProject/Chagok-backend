@@ -26,7 +26,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ContestController {
     private final ContestService contestService;
-    private static final int CONTEST_DEFAULT_SIZE =3;
+    private static final String CONTEST_DEFAULT_SIZE ="3";
+
     private static final String CONTEST_DEFAULT_SORT ="hotCount";
 
     @GetMapping(value ="/contests/{id}")
@@ -53,9 +54,16 @@ public class ContestController {
     }
 
     @GetMapping(value="/contests")
-    @ApiOperation(value = "콘테스트 정렬" ,notes = "파라미터 searchTerm(검색어),pageNumber(기본값 0),pageSize(기본값 3),sort(기본값 hotCount,desc / 마감순은 id,desc)")
-    public Page<GetContestPreviewDto> getContests(@RequestParam(value = "searchTerm",required = false) String searchTerm,@PageableDefault(size =CONTEST_DEFAULT_SIZE,sort = CONTEST_DEFAULT_SORT,direction = Sort.Direction.DESC) Pageable pageable){
-        return contestService.getContests(searchTerm,pageable);
+    @ApiOperation(value = "콘테스트 정렬" ,notes = "page(기본값 0),size(기본값 3),sort(기본값 hotCount),direction(기본값 desc) / 마감순은 id,desc")
+    public Page<GetContestPreviewDto> getContests(
+            @RequestParam(value ="size",required = false,defaultValue = CONTEST_DEFAULT_SIZE) int size
+            ,@RequestParam(value="page",required = false,defaultValue = "0") int page
+            ,@RequestParam(value = "sort",required = false,defaultValue =CONTEST_DEFAULT_SORT) String sort
+            ,@RequestParam(value="direction",required = false,defaultValue = "desc")String direction) {
+        if(direction.equals("desc")){
+            return contestService.getContests(PageRequest.of(page,size,Sort.by(Sort.Direction.DESC,sort)));
+        }
+        return contestService.getContests(PageRequest.of(page,size,Sort.by(Sort.Direction.ASC,sort)));
     }
 
 

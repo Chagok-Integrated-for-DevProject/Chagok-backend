@@ -29,7 +29,7 @@ public class ContestService {
     @Transactional
     public GetContestDto getContest(Long contestId){
         Contest foundContest = contestRepository.findById(contestId).orElseThrow(EntityNotFoundException::new);
-        foundContest.addViewCount(1);
+        foundContest.addViewCount();
         return GetContestDto.builder()
                 .title(foundContest.getTitle())
                 .imageUrl(foundContest.getImageUrl())
@@ -70,15 +70,15 @@ public class ContestService {
         contestRepository.save(contest);
     }
     @Transactional(readOnly = true)
-    public Page<GetContestPreviewDto> getContests(String searchTerm,Pageable pageable){
-        Page<Contest> contests = contestRepository.findByTitleContaining(searchTerm,pageable);
+    public Page<GetContestPreviewDto> getContests(Pageable pageable){
+        Page<Contest> contests = contestRepository.findAll(pageable);
         return contests.map(c-> GetContestPreviewDto.builder()
                 .contestId(c.getId())
                 .title(c.getTitle())
                 .imageUrl(c.getImageUrl())
                 .host(c.getHost())
-                .startDate(c.getStartDate().toString())
-                .endDate(c.getEndDate().toString())
+                .startDate(c.getStartDate())
+                .endDate(c.getEndDate())
                 .scrapCount(c.getScrapCount())
                 .commentCount(c.getCommentCount())
                 .build());
