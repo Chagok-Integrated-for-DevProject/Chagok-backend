@@ -5,6 +5,8 @@ import lombok.Setter;
 import lombok.ToString;
 import site.chagok.server.common.domain.SiteType;
 import site.chagok.server.common.domain.TechStack;
+import site.chagok.server.contest.domain.ContestScrap;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -24,6 +26,9 @@ public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProjectScrap> projectScraps = new ArrayList<>();
 
     private String title;
     private String nickname;

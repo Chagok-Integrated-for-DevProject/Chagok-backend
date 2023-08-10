@@ -5,6 +5,7 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import site.chagok.server.contest.domain.Comment;
 import site.chagok.server.contest.domain.ContestScrap;
+import site.chagok.server.project.domain.ProjectScrap;
 import site.chagok.server.study.domain.StudyScrap;
 import site.chagok.server.common.domain.TechStack;
 
@@ -29,6 +30,9 @@ public class Member {
 
     @OneToMany(mappedBy = "member",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ContestScrap> contestScraps = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member",cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProjectScrap> projectScraps = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
     private List<Comment> comments = new ArrayList<>();
