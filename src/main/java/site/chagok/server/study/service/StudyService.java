@@ -1,0 +1,38 @@
+package site.chagok.server.study.service;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import site.chagok.server.study.domain.Study;
+import site.chagok.server.study.dto.GetStudyPreviewDto;
+import site.chagok.server.study.repository.StudyRepository;
+import site.chagok.server.study.repository.StudySpecification;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class StudyService {
+
+    private final StudyRepository studyRepository;
+
+    @Transactional
+    public Page<GetStudyPreviewDto> getStudy(String searchTerm, List<String> techStacks, Pageable pageable){
+        Specification<Study> spec  = (root, query, criteriaBuilder) ->null;
+        if(searchTerm!=null) {
+            spec = spec.and(StudySpecification.equalsTitle(searchTerm));
+        }
+        Page<Study> studies = studyRepository.findAll(spec,pageable);
+        return studies.map(s-> GetStudyPreviewDto.builder()
+                .title(s.getTitle())
+                .preview(s.getContent()) // 추후 수정
+                .siteType(s.getSiteType())
+                .techStacks(s.getTechStacks())
+                .viewCount(s.getViewCount())
+                .scrapCount(s.getScrapCount())
+                .build());
+    }
+}
