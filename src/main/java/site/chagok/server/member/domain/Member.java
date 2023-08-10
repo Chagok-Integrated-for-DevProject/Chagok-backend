@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import site.chagok.server.contest.domain.Comment;
 import site.chagok.server.contest.domain.ContestScrap;
-import site.chagok.server.project_study.study.domain.StudyScrap;
-import site.chagok.server.project_study.constants.TechStack;
+import site.chagok.server.study.domain.StudyScrap;
+import site.chagok.server.common.domain.TechStack;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

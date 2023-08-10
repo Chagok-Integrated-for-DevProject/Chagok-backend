@@ -36,6 +36,7 @@ public class SecurityConfig {
                                 .successHandler(oAuth2SuccessHandler)) // 인증 성공시, 헤더에 jwt 발급 및 redirect
 /*                .sessionManagement((sessionManagement) ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))*/ // stateless 세팅
+                .csrf().disable()
                 .addFilterAfter(jwtHeaderCheckingFilter, BasicAuthenticationFilter.class); // jwt 헤더 검사
 
         return http.build();

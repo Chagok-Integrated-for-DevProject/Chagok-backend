@@ -1,4 +1,4 @@
-package site.chagok.server.project_study.project.domain;
+package site.chagok.server.project.domain;
 
 import lombok.Getter;
 import site.chagok.server.member.domain.Member;
