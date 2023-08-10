@@ -1,9 +1,7 @@
 package site.chagok.server.member.domain;
 
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import site.chagok.server.contest.domain.Comment;
 import site.chagok.server.contest.domain.ContestScrap;
@@ -19,15 +17,17 @@ import java.util.List;
 //commnet는 맴버가 삭제되어도 남아있어야함
 @Getter
 @Entity
+@Setter(AccessLevel.PROTECTED)
 @NoArgsConstructor
 public class Member {
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "member",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StudyScrap> studyScraps = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member",cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "member",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ContestScrap> contestScraps = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
@@ -49,5 +49,17 @@ public class Member {
         this.nickName = nickName;
         this.email = email;
         this.profileImg = profileImg;
+    }
+
+    public void updateNickName(String nickName) {
+        this.nickName = nickName;
+    }
+
+    public void updateProfileImg(String profileImg) {
+        this.profileImg = profileImg;
+    }
+
+    public void addContestScrap(ContestScrap contestScrap) {
+        contestScraps.add(contestScrap);
     }
 }

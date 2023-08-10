@@ -19,4 +19,9 @@ public class ProjectScrap {
     @ManyToOne(fetch= FetchType.LAZY)
     @JoinColumn(name="project_id")
     private Project project;
+
+    public ProjectScrap(Member member, Project project) {
+        this.member = member;
+        this.project = project;
+    }
 }

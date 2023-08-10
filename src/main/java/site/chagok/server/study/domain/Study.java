@@ -18,7 +18,7 @@ import java.util.List;
 @Table(name = "study")
 public class Study {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @OneToMany(mappedBy = "study")
     private List<StudyScrap> studyScraps = new ArrayList<>();

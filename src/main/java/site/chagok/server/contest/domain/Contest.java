@@ -15,7 +15,8 @@ import java.util.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Contest {
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @OneToMany(mappedBy = "contest",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ContestScrap> contestScraps = new ArrayList<>();

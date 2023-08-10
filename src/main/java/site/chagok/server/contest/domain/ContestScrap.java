@@ -1,13 +1,16 @@
 package site.chagok.server.contest.domain;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import site.chagok.server.member.domain.Member;
 
 import javax.persistence.*;
 @Getter
 @Entity
+@NoArgsConstructor
 public class ContestScrap {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @ManyToOne(fetch= FetchType.LAZY)
@@ -17,4 +20,9 @@ public class ContestScrap {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name ="contest_id")
     private Contest contest;
+
+    public ContestScrap(Member member, Contest contest) {
+        this.member = member;
+        this.contest = contest;
+    }
 }
