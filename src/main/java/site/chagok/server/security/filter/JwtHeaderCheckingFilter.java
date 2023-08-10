@@ -41,7 +41,6 @@ public class JwtHeaderCheckingFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(userAuthToken);
             } catch (InvalidJwtException e) {
 
-
                 if (e.hasExpired()) { // jwt 유효기간 만료
 
                 }

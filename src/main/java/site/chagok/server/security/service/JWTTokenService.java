@@ -70,13 +70,6 @@ public class JWTTokenService {
 
     public Authentication validateJwtToken(String jwt) throws InvalidJwtException {
 
-        // Use JwtConsumerBuilder to construct an appropriate JwtConsumer, which will
-        // be used to validate and process the JWT.
-        // The specific validation requirements for a JWT are context dependent, however,
-        // it is typically advisable to require a (reasonable) expiration time, a trusted issuer, and
-        // an audience that identifies your system as the intended recipient.
-        // If the JWT is encrypted too, you need only provide a decryption key or
-        // decryption key resolver to the builder.
         JwtConsumer jwtConsumer = new JwtConsumerBuilder()
                 .setRequireExpirationTime() // jwt expired time 유무 검사
                 .setAllowedClockSkewInSeconds(30) // allow some leeway in validating time based claims to account for clock skew
