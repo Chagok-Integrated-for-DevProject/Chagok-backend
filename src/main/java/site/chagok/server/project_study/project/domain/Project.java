@@ -15,11 +15,6 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@ToString
-@Table(name = "project")
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Project {
 
     @Id
@@ -27,22 +22,15 @@ public class Project {
     private Long id;
 
     private String title;
-
     private String nickname;
-
     private LocalDateTime createdTime;
-
     private int viewCount;
-
     private String sourceUrl;
-
     private String content;
-
     private int scrapCount;
 
     @Enumerated(EnumType.STRING)
     private SiteType siteType;
-
     @ElementCollection
     @Enumerated(EnumType.STRING)
     private List<TechStack> techStacks = new ArrayList<>();

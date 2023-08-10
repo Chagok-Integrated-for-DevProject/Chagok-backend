@@ -3,7 +3,6 @@ package site.chagok.server.member.domain;
 
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import site.chagok.server.contest.domain.Comment;
 import site.chagok.server.contest.domain.ContestScrap;
 import site.chagok.server.project_study.study.domain.StudyScrap;
@@ -35,14 +34,10 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private List<TechStack> techStacks = new ArrayList<>();
 
-    private String nickName;
-
-    private String email;
-    private String profileImg;
-
     @CreatedDate
     private LocalDateTime createdTime;
 
-    @LastModifiedDate
-    private LocalDateTime lastLoginTime;
+    private String nickName;
+    private String email;
+    private String profileImg;
 }

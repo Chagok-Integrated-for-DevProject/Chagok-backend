@@ -20,17 +20,11 @@ public class Study {
     private List<StudyScrap> studyScraps = new ArrayList<>();
 
     private String title;
-
     private String nickname;
-
     private LocalDateTime createdTime;
-
     private int viewCount;
-
     private String sourceUrl;
-
     private String content;
-
     private int scrapCount;
 
     @Enumerated(EnumType.STRING)
