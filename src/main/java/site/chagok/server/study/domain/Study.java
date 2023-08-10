@@ -41,7 +41,16 @@ public class Study {
     @Enumerated(EnumType.STRING)
     private SiteType siteType;
 
-    @ElementCollection
-    @Enumerated(EnumType.STRING)
-    private List<TechStack> techStacks = new ArrayList<>();
+    @ElementCollection(fetch = FetchType.EAGER)
+//    @Enumerated(EnumType.STRING)
+    private List<String> techStacks = new ArrayList<>();
+
+    public void addViewCount(){
+        this.viewCount++;
+        this.hotCount++;
+    }
+    public void addScrapCount(int add){
+        this.scrapCount += add;
+        this.hotCount -= (add*5);
+    }
 }

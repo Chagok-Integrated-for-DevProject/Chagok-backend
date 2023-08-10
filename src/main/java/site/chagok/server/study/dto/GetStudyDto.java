@@ -7,19 +7,21 @@ import lombok.NoArgsConstructor;
 import site.chagok.server.common.domain.SiteType;
 import site.chagok.server.common.domain.TechStack;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @Getter
-public class GetStudyPreviewDto {
+@Builder
+public class GetStudyDto {
     private String title;
+    private String nickName;
+    private String content;
+    private String sourceUrl;
+    private LocalDateTime createdTime;
+    private int scrapCount;
+    private int viewCount;
     private SiteType siteType;
     private List<String> techStacks;
-    private Long studyId;
-    private int viewCount;
-    private int scrapCount;
-    private String preview;
-    private String nickName;
 }
