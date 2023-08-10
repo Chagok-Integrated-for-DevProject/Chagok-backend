@@ -1,23 +1,25 @@
 package site.chagok.server.member.domain;
 
 
-import lombok.Generated;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 import site.chagok.server.contest.domain.Comment;
 import site.chagok.server.contest.domain.ContestScrap;
 import site.chagok.server.study.domain.StudyScrap;
-import site.chagok.server.study.domain.TechStack;
+import site.chagok.server.common.domain.TechStack;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 //scrap은 오로지 유저의 것 -> orphanRemoval = true
 //commnet는 맴버가 삭제되어도 남아있어야함
 @Getter
 @Entity
+@NoArgsConstructor
 public class Member {
     @Id @GeneratedValue
     private Long id;
@@ -35,5 +37,17 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private List<TechStack> techStacks = new ArrayList<>();
 
+    @CreatedDate
+    private LocalDateTime createdTime;
+
     private String nickName;
+    private String email;
+    private String profileImg;
+
+    @Builder
+    public Member(String nickName, String email, String profileImg) {
+        this.nickName = nickName;
+        this.email = email;
+        this.profileImg = profileImg;
+    }
 }

@@ -2,7 +2,6 @@ package site.chagok.server.project.domain;
 
 import lombok.Getter;
 import site.chagok.server.member.domain.Member;
-import site.chagok.server.study.domain.Study;
 
 import javax.persistence.*;
 

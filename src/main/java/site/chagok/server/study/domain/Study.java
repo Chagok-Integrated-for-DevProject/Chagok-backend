@@ -1,6 +1,8 @@
 package site.chagok.server.study.domain;
 
 import lombok.*;
+import site.chagok.server.common.domain.SiteType;
+import site.chagok.server.common.domain.TechStack;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -32,14 +34,23 @@ public class Study {
     private String sourceUrl;
 
     private String content;
+    private int hotCount;
 
     private int scrapCount;
 
-    private String siteType;
+    @Enumerated(EnumType.STRING)
+    private SiteType siteType;
 
-    @ElementCollection(targetClass = String.class, fetch = FetchType.LAZY)
-    @CollectionTable(name = "study_tech_stacks", joinColumns = @JoinColumn(name = "study_id"))
-    @Column(name = "tech", nullable = false)
+    @ElementCollection(fetch = FetchType.EAGER)
+//    @Enumerated(EnumType.STRING)
     private List<String> techStacks = new ArrayList<>();
 
+    public void addViewCount(){
+        this.viewCount++;
+        this.hotCount++;
+    }
+    public void addScrapCount(int add){
+        this.scrapCount += add;
+        this.hotCount -= (add*5);
+    }
 }

@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 
-//commnet,scrap은 글이 삭제된다면 남아있을 필요가 없음
+//comment,scrap은 글이 삭제된다면 남아있을 필요가 없음
 @Getter
 @Entity
 @NoArgsConstructor
@@ -34,10 +34,16 @@ public class Contest {
     private int viewCount;
     private int commentCount;
 
-    public void addViewCount(int viewCount){
-        this.viewCount += viewCount;
+    public void addViewCount(){
+        this.viewCount++;
+        this.hotCount++;
     }
     public void addCommentCount(){
         this.commentCount++;
+        this.hotCount +=5;
+    }
+    public void addScrapCount(){
+        this.scrapCount++;
+        this.hotCount +=10;
     }
 }
