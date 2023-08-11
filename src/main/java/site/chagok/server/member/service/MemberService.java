@@ -1,9 +1,9 @@
 package site.chagok.server.member.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import site.chagok.server.member.dto.BoardScrap;
 import site.chagok.server.contest.domain.Contest;
 import site.chagok.server.contest.domain.ContestScrap;
 import site.chagok.server.contest.repository.ContestRepository;
@@ -24,7 +24,6 @@ import site.chagok.server.study.repository.StudyScrapRepository;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -81,12 +80,15 @@ public class MemberService {
 
     // 스크랩 추가
     @Transactional
-    public void addBoardScrap(String category, Long boardId) {
-        
+    public void addBoardScrap(BoardScrap boardScrap) {
+
+        String category = boardScrap.getCategory();
+        Long boardId = boardScrap.getBoardId();
+
         if (!categoryList.contains(category)) {
             throw new IllegalStateException();
         }
-        
+
         String userEmail = MemberCredential.getLoggedMemberEmail();
         Member member = memberRepository.findByEmail(userEmail).orElseThrow(EntityExistsException::new);
 
