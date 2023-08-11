@@ -1,15 +1,15 @@
 package site.chagok.server.member.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.chagok.server.contest.domain.Contest;
 import site.chagok.server.contest.domain.ContestScrap;
 import site.chagok.server.contest.repository.ContestRepository;
 import site.chagok.server.contest.repository.ContestScrapRepository;
+import site.chagok.server.member.constants.ActionType;
 import site.chagok.server.member.domain.Member;
-import site.chagok.server.member.dto.BoardScrap;
+import site.chagok.server.member.dto.BoardScrapDto;
 import site.chagok.server.member.exception.NickNameExistsException;
 import site.chagok.server.member.repository.MemberRepository;
 import site.chagok.server.project.domain.Project;
@@ -25,7 +25,6 @@ import site.chagok.server.study.repository.StudyScrapRepository;
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -82,10 +81,10 @@ public class MemberService {
 
     // 스크랩 추가
     @Transactional
-    public void addBoardScrap(BoardScrap boardScrap) {
+    public void manageBoardScrap(BoardScrapDto boardScrapDto, ActionType action) {
 
-        String category = boardScrap.getCategory();
-        Long boardId = boardScrap.getBoardId();
+        String category = boardScrapDto.getCategory();
+        Long boardId = boardScrapDto.getBoardId();
 
         if (!categoryList.contains(category)) {
             throw new IllegalStateException();
@@ -96,25 +95,48 @@ public class MemberService {
 
         switch (category) {
             case "contest" : {
-                Contest scrapContest = contestRepository.findById(boardId).orElseThrow(EntityExistsException::new);
-                ContestScrap contestScrap = new ContestScrap(member, scrapContest);
-                contestScrapRepository.save(contestScrap);
+                if (action == ActionType.POST) {
+                    Contest scrapContest = contestRepository.findById(boardId).orElseThrow(EntityExistsException::new);
+                    ContestScrap contestScrap = new ContestScrap(member, scrapContest);
+                    contestScrapRepository.save(contestScrap);
+                } else if (action == ActionType.DELETE) {
+                    contestScrapRepository.deleteByContestId(boardId).orElseThrow(EntityNotFoundException::new);
+                }
                 break;
             }
             case "project" : {
-                Project scrapProject = projectRepository.findById(boardId).orElseThrow(EntityExistsException::new);
-                ProjectScrap projectScrap = new ProjectScrap(member, scrapProject);
-                projectScrapRepository.save(projectScrap);
+                if (action == ActionType.POST) {
+                    Project scrapProject = projectRepository.findById(boardId).orElseThrow(EntityExistsException::new);
+                    ProjectScrap projectScrap = new ProjectScrap(member, scrapProject);
+                    projectScrapRepository.save(projectScrap);
+                } else if (action == ActionType.DELETE) {
+                    projectScrapRepository.deleteByProjectId(boardId).orElseThrow(EntityNotFoundException::new);
+                }
                 break;
             }
             case "study" : {
-                Study scrapStudy = studyRepository.findById(boardId).orElseThrow(EntityExistsException::new);
-                StudyScrap studyScrap = new StudyScrap(member, scrapStudy);
-                studyScrapRepository.save(studyScrap);
+                if (action == ActionType.POST) {
+                    Study scrapStudy = studyRepository.findById(boardId).orElseThrow(EntityExistsException::new);
+                    StudyScrap studyScrap = new StudyScrap(member, scrapStudy);
+                    studyScrapRepository.save(studyScrap);
+                } else if (action == ActionType.DELETE) {
+                    studyScrapRepository.deleteByStudyId(boardId).orElseThrow(EntityNotFoundException::new);
+                }
                 break;
             }
         }
+    }
 
+
+
+    // 기술스택 업데이트
+    @Transactional
+    public void updateTechStacks(List<String> techStacks) {
+        String userEmail = MemberCredential.getLoggedMemberEmail();
+
+        Member member = memberRepository.findByEmail(userEmail).orElseThrow(EntityNotFoundException::new);
+
+        member.updateTechStacks(techStacks);
     }
 
 }

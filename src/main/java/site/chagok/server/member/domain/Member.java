@@ -37,9 +37,10 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private List<Comment> comments = new ArrayList<>();
 
-    @ElementCollection
-    @Enumerated(EnumType.STRING)
-    private List<TechStack> techStacks = new ArrayList<>();
+    @ElementCollection(targetClass = String.class, fetch = FetchType.LAZY)
+    @CollectionTable(name = "member_tech_stacks", joinColumns = @JoinColumn(name = "member_id"))
+    @Column(name = "tech_stack", nullable = false)
+    private List<String> techStacks = new ArrayList<>();
 
     @CreatedDate
     private LocalDateTime createdTime;
@@ -65,5 +66,11 @@ public class Member {
 
     public void addContestScrap(ContestScrap contestScrap) {
         contestScraps.add(contestScrap);
+    }
+
+    public void updateTechStacks(List<String> techStacks) {
+        // 초기화 하고, 추가할 데이터 업데이트
+        this.techStacks.clear();
+        this.techStacks.addAll(techStacks);
     }
 }
