@@ -25,13 +25,13 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @OneToMany(mappedBy = "member",cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "member", orphanRemoval = true)
     private List<StudyScrap> studyScraps = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member",cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "member", orphanRemoval = true)
     private List<ContestScrap> contestScraps = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member",cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "member", orphanRemoval = true)
     private List<ProjectScrap> projectScraps = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
