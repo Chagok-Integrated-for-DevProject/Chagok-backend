@@ -9,6 +9,7 @@ import site.chagok.server.contest.domain.ContestScrap;
 import site.chagok.server.contest.repository.ContestRepository;
 import site.chagok.server.contest.repository.ContestScrapRepository;
 import site.chagok.server.member.domain.Member;
+import site.chagok.server.member.dto.BoardScrap;
 import site.chagok.server.member.exception.NickNameExistsException;
 import site.chagok.server.member.repository.MemberRepository;
 import site.chagok.server.project.domain.Project;
@@ -81,8 +82,11 @@ public class MemberService {
 
     // 스크랩 추가
     @Transactional
-    public void addBoardScrap(String category, Long boardId) {
-        
+    public void addBoardScrap(BoardScrap boardScrap) {
+
+        String category = boardScrap.getCategory();
+        Long boardId = boardScrap.getBoardId();
+
         if (!categoryList.contains(category)) {
             throw new IllegalStateException();
         }
