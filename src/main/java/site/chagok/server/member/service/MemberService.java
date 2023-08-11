@@ -1,8 +1,10 @@
 package site.chagok.server.member.service;
 
 import lombok.RequiredArgsConstructor;
+import org.aspectj.weaver.MemberImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import site.chagok.server.contest.domain.Contest;
 import site.chagok.server.contest.domain.ContestScrap;
 import site.chagok.server.contest.repository.ContestRepository;
@@ -24,6 +26,7 @@ import site.chagok.server.study.repository.StudyScrapRepository;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -31,7 +34,9 @@ import java.util.List;
 public class MemberService {
 
     /*
-    사용자 회원가입 및 회원탈퇴, 사용자 정보 관리
+    사용자 정보 관리 서비스
+
+    이미지 수정, 닉네임 수정, 기술태크 수정, 스크랩 추가 및 삭제
      */
 
     private final MemberRepository memberRepository;
@@ -41,30 +46,12 @@ public class MemberService {
     private final ProjectScrapRepository projectScrapRepository;
     private final StudyRepository studyRepository;
     private final StudyScrapRepository studyScrapRepository;
+    private final ImgService imgService;
 
+
+    // 닉네임 변경
     @Transactional
-    public void signUp(ChagokOAuth2User user) { // 회원가입
-
-        String userEmail = user.getName();
-
-        Boolean alreadySaved = memberRepository.findByEmail(userEmail).isPresent();
-
-        // DB에 없으면 회원가입
-        if (!alreadySaved) {
-            Member newMember = Member.builder()
-                    .email(userEmail)
-                    .build();
-
-            memberRepository.save(newMember);
-        }
-    }
-
-    /*
-       이미지 수정, 닉네임 수정, 기술태크 수정, 스크랩
-     */
-
-    @Transactional
-    public void updateNickName(String nickName) { // 닉네임 변경
+    public void updateNickName(String nickName) {
         Boolean alreadyUsed = memberRepository.findByEmail(nickName).isPresent();
 
         if (alreadyUsed)
@@ -137,6 +124,12 @@ public class MemberService {
         Member member = memberRepository.findByEmail(userEmail).orElseThrow(EntityNotFoundException::new);
 
         member.updateTechStacks(techStacks);
+    }
+
+
+    // 이미지 업데이트
+    public void updateProfileImg(MultipartFile profileFile) throws IOException {
+        imgService.updateFile(profileFile);
     }
 
 }

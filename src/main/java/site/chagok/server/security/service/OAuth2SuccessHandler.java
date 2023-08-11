@@ -8,6 +8,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
+import site.chagok.server.member.service.MemberLoggingService;
 import site.chagok.server.member.service.MemberService;
 import site.chagok.server.security.constants.SecutiryHeader;
 import site.chagok.server.security.dto.ChagokOAuth2User;
@@ -24,7 +25,7 @@ import java.util.Set;
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JWTTokenService jwtTokenService;
-    private final MemberService memberService;
+    private final MemberLoggingService memberLoggingService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
@@ -32,7 +33,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         ChagokOAuth2User oAuth2User = (ChagokOAuth2User)authentication.getPrincipal();
 
         // DB에 없을 경우 회원가입
-        memberService.signUp(oAuth2User);
+        memberLoggingService.signUp(oAuth2User);
 
         // jwt토큰 발급
         String jwtToken = jwtTokenService.constructJWTToken(oAuth2User.getName(), (Set<GrantedAuthority>) oAuth2User.getAuthorities());
