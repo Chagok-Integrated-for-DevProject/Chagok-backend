@@ -27,7 +27,7 @@ public class Project {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "project", orphanRemoval = true)
     private List<ProjectScrap> projectScraps = new ArrayList<>();
 
     private String title;
