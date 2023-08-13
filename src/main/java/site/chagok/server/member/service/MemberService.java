@@ -127,8 +127,6 @@ public class MemberService {
         }
     }
 
-
-
     // 기술스택 업데이트
     @Transactional
     public void updateTechStacks(List<String> techStacks) {
@@ -138,5 +136,4 @@ public class MemberService {
 
         member.updateTechStacks(techStacks);
     }
-
 }
