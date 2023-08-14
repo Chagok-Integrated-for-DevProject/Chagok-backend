@@ -1,11 +1,9 @@
 package site.chagok.server.study.repository;
 
 import org.springframework.data.jpa.domain.Specification;
-import site.chagok.server.common.domain.TechStack;
+import site.chagok.server.common.contstans.contstans.TechStack;
 import site.chagok.server.study.domain.Study;
-import site.chagok.server.study.dto.GetStudyPreviewDto;
 
-import javax.lang.model.element.Element;
 import javax.persistence.criteria.*;
 import java.util.List;
 

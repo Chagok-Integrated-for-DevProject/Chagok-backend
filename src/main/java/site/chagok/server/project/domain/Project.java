@@ -3,9 +3,7 @@ package site.chagok.server.project.domain;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import site.chagok.server.common.domain.SiteType;
-import site.chagok.server.common.domain.TechStack;
-import site.chagok.server.contest.domain.ContestScrap;
+import site.chagok.server.common.contstans.contstans.SiteType;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -37,6 +35,7 @@ public class Project {
     private String sourceUrl;
     private String content;
     private int scrapCount;
+    private int hotCount;
 
     @Enumerated(EnumType.STRING)
     private SiteType siteType;
@@ -51,4 +50,12 @@ public class Project {
 //    @Enumerated(EnumType.STRING)
 //    private List<TechStack> techStacks = new ArrayList<>();
 
+    public void addViewCount(){
+        this.viewCount++;
+        this.hotCount++;
+    }
+    public void addScrapCount(int add){
+        this.scrapCount += add;
+        this.hotCount -= (add*5);
+    }
 }

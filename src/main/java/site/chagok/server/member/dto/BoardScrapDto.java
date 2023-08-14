@@ -10,7 +10,6 @@ import lombok.Setter;
 @Setter
 public class BoardScrapDto {
 
-
     @ApiModelProperty(name = "category", value = "project or study or contest 값만 가능", example = "only, project or study or contest")
     private String category;
 

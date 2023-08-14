@@ -1,4 +1,4 @@
-package site.chagok.server.contest;
+package site.chagok.server.contest.util;
 
 import site.chagok.server.contest.domain.Comment;
 import site.chagok.server.contest.dto.GetContestCommentDto;

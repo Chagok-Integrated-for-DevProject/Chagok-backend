@@ -5,7 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import site.chagok.server.contest.CommentSorter;
+import site.chagok.server.contest.util.CommentSorter;
 import site.chagok.server.contest.domain.Comment;
 import site.chagok.server.contest.domain.Contest;
 import site.chagok.server.contest.dto.CommentDto;
@@ -82,5 +82,23 @@ public class ContestService {
                 .scrapCount(c.getScrapCount())
                 .commentCount(c.getCommentCount())
                 .build());
+    }
+
+    // 사용자 공모전 스크랩 미리보기
+    @Transactional(readOnly = true)
+    public GetContestPreviewDto getContestPreview(Long contestId) {
+        Contest contest = contestRepository.findById(contestId).orElseThrow(EntityNotFoundException::new);
+
+        // 공모전 스크랩 미리보기 dto 반환
+        return GetContestPreviewDto.builder()
+                .contestId(contest.getId())
+                .title(contest.getTitle())
+                .imageUrl(contest.getImageUrl())
+                .host(contest.getHost())
+                .startDate(contest.getStartDate())
+                .endDate(contest.getEndDate())
+                .scrapCount(contest.getScrapCount())
+                .commentCount(contest.getCommentCount())
+                .build();
     }
 }

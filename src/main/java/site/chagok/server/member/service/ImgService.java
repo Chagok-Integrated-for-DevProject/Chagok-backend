@@ -8,13 +8,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import site.chagok.server.member.domain.Member;
 import site.chagok.server.member.repository.MemberRepository;
+import site.chagok.server.member.util.MemberCredential;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.FileSystemException;
 import java.nio.file.Files;
 import java.util.Objects;
 import java.util.UUID;

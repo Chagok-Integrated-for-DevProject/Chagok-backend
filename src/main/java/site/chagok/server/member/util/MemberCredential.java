@@ -1,4 +1,4 @@
-package site.chagok.server.member.service;
+package site.chagok.server.member.util;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 

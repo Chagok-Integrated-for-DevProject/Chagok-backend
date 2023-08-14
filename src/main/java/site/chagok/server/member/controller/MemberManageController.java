@@ -20,7 +20,7 @@ import java.util.List;
 
 @Api(tags ="사용자 데이터 관리")
 @RestController
-@RequestMapping
+@RequestMapping("/update")
 @RequiredArgsConstructor
 public class MemberManageController {
 
@@ -33,7 +33,7 @@ public class MemberManageController {
     private final MemberService memberService;
     private final ImgService imgService;
 
-    @GetMapping("/update/nickname")
+    @GetMapping("/nickname")
     @ApiOperation(value="닉네임 업데이트")
     @ApiImplicitParam(name = "nickname", value = "변경할 닉네임")
     @ApiResponses({@ApiResponse(code = 200, message = "닉네임 변경성공"), @ApiResponse(code = 409, message = "error code, 이미 존재하는 닉네임")})
@@ -48,7 +48,7 @@ public class MemberManageController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @PostMapping("/update/scrap")
+    @PostMapping("/scrap")
     @ApiOperation(value = "게시글 스크랩 추가")
     @ApiResponses({@ApiResponse(code = 200, message = "스크랩 추가 성공"), @ApiResponse(code = 400, message = "error code 스크랩 추가 오류")})
     public ResponseEntity addScrapBoard(@RequestBody BoardScrapDto boardScrapDto) {
@@ -64,7 +64,7 @@ public class MemberManageController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @DeleteMapping("/update/scrap")
+    @DeleteMapping("/scrap")
     @ApiOperation(value = "게시글 스크랩 삭제")
     @ApiResponses({@ApiResponse(code = 200, message = "스크랩 삭제 성공"), @ApiResponse(code = 400, message = "error code 스크랩 삭제 오류")})
     public ResponseEntity deleteScrapBoard(@RequestBody BoardScrapDto boardScrapDto) {
@@ -82,7 +82,7 @@ public class MemberManageController {
 
 
     // 사용자 스택 추가
-    @PostMapping("/update/skills")
+    @PostMapping("/skills")
     @ApiOperation(value = "사용자 기술스택 업데이트")
     @ApiResponses({@ApiResponse(code = 200, message = "스크랩 추가 성공")})
     public ResponseEntity updateTechStacks(@RequestBody List<String> skills) {
@@ -93,7 +93,7 @@ public class MemberManageController {
     }
 
     // 이미지 저장
-    @PostMapping("/update/profile/image")
+    @PostMapping("/profile/image")
     @ApiOperation(value = "사용자 프로필 이미지 업데이트")
     @ApiResponses({@ApiResponse(code = 200, message = "스크랩 삭제 성공"), @ApiResponse(code = 400, message = "프로필 이미지 업데이트 오류")})
     public ResponseEntity updateProfile(@RequestPart(name = "image")MultipartFile profileFile) {
@@ -107,20 +107,5 @@ public class MemberManageController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @GetMapping("/profile/{image}")
-    @ApiOperation(value = "사용자 이미지 조회")
-    @ApiResponses({@ApiResponse(code = 200, message = "스크랩 조회 성공"), @ApiResponse(code = 400, message = "프로필 조회 오류")})
-    public ResponseEntity getProfile(@PathVariable("image")String image) {
 
-        byte[] savedFile = null;
-        MediaType mediaType = null;
-        try {
-            savedFile = imgService.getProfileImg(image);
-            mediaType = imgService.getMediaType(image);
-        } catch (IOException e) {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
-        }
-
-        return ResponseEntity.ok().contentType(mediaType).body(savedFile);
-    }
 }

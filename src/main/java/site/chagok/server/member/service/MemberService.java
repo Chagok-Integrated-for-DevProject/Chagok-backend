@@ -12,6 +12,7 @@ import site.chagok.server.member.domain.Member;
 import site.chagok.server.member.dto.BoardScrapDto;
 import site.chagok.server.member.exception.NickNameExistsException;
 import site.chagok.server.member.repository.MemberRepository;
+import site.chagok.server.member.util.MemberCredential;
 import site.chagok.server.project.domain.Project;
 import site.chagok.server.project.domain.ProjectScrap;
 import site.chagok.server.project.repository.ProjectRepository;
@@ -53,6 +54,7 @@ public class MemberService {
         if (!alreadySaved) {
             Member newMember = Member.builder()
                     .email(userEmail)
+                    .socialType(user.getSocialType())
                     .build();
 
             memberRepository.save(newMember);

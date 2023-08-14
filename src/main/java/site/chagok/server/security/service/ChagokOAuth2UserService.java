@@ -37,7 +37,8 @@ public class ChagokOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                 Collections.singleton(new SimpleGrantedAuthority("USER")),
                 attributes.getAttributes(),
                 attributes.getNameAttributeKey(),
-                attributes.getEmail()
+                attributes.getEmail(),
+                attributes.getSocialType()
         );
     }
 }
