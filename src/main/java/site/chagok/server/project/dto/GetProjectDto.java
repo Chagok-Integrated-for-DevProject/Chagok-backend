@@ -1,4 +1,4 @@
-package site.chagok.server.study.dto;
+package site.chagok.server.project.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,11 +9,13 @@ import site.chagok.server.common.contstans.contstans.SiteType;
 import java.time.LocalDateTime;
 import java.util.List;
 
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Builder
-public class GetStudyDto {
+public class GetProjectDto {
+
     private String title;
     private String nickName;
     private String content;

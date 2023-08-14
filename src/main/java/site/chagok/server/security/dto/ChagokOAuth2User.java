@@ -4,6 +4,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.util.Assert;
+import site.chagok.server.common.contstans.contstans.SocialType;
 
 import java.io.Serializable;
 import java.util.*;
@@ -16,11 +17,13 @@ public class ChagokOAuth2User implements OAuth2User, Serializable {
 
     private final String nameAttributeKey;
     private String email;
+    private SocialType socialType;
+
 
     public ChagokOAuth2User(Collection<? extends GrantedAuthority> authorities, Map<String, Object> attributes,
-                            String nameAttributeKey, String email) {
+                            String nameAttributeKey, String email, SocialType socialType) {
         Assert.notEmpty(attributes, "attributes cannot be empty");
-        Assert.hasText(nameAttributeKey, "nameAttributeKey cannot be empty");
+
         if (!attributes.containsKey(nameAttributeKey)) {
             throw new IllegalArgumentException("Missing attribute '" + nameAttributeKey + "' in attributes");
         }
@@ -30,6 +33,7 @@ public class ChagokOAuth2User implements OAuth2User, Serializable {
         this.attributes = Collections.unmodifiableMap(new LinkedHashMap<>(attributes));
         this.nameAttributeKey = nameAttributeKey;
         this.email = email;
+        this.socialType = socialType;
     }
     private Set<GrantedAuthority> sortAuthorities(Collection<? extends GrantedAuthority> authorities) {
         SortedSet<GrantedAuthority> sortedAuthorities = new TreeSet<>(
@@ -56,5 +60,9 @@ public class ChagokOAuth2User implements OAuth2User, Serializable {
     @Override
     public String getName() {
         return email;
+    }
+
+    public SocialType getSocialType() {
+        return this.socialType;
     }
 }

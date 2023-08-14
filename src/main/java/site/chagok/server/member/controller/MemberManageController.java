@@ -3,12 +3,14 @@ package site.chagok.server.member.controller;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import site.chagok.server.member.constants.ActionType;
 import site.chagok.server.member.dto.BoardScrapDto;
 import site.chagok.server.member.exception.NickNameExistsException;
+import site.chagok.server.member.service.ImgService;
 import site.chagok.server.member.service.MemberService;
 
 import javax.persistence.EntityNotFoundException;
@@ -18,7 +20,7 @@ import java.util.List;
 
 @Api(tags ="사용자 데이터 관리")
 @RestController
-@RequestMapping("/member/update")
+@RequestMapping("/update")
 @RequiredArgsConstructor
 public class MemberManageController {
 
@@ -29,6 +31,7 @@ public class MemberManageController {
      */
 
     private final MemberService memberService;
+    private final ImgService imgService;
 
     @GetMapping("/nickname")
     @ApiOperation(value="닉네임 업데이트")
@@ -96,11 +99,13 @@ public class MemberManageController {
     public ResponseEntity updateProfile(@RequestPart(name = "image")MultipartFile profileFile) {
 
         try {
-            memberService.updateProfileImg(profileFile);
+            imgService.updateProfileImg(profileFile);
         } catch (IOException e) {
             return new ResponseEntity("cannot update profile image file", HttpStatus.BAD_REQUEST);
         }
 
         return new ResponseEntity(HttpStatus.OK);
     }
+
+
 }

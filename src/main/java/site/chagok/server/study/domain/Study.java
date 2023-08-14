@@ -1,8 +1,7 @@
 package site.chagok.server.study.domain;
 
 import lombok.*;
-import site.chagok.server.common.domain.SiteType;
-import site.chagok.server.common.domain.TechStack;
+import site.chagok.server.common.contstans.contstans.SiteType;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -41,9 +40,15 @@ public class Study {
     @Enumerated(EnumType.STRING)
     private SiteType siteType;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-//    @Enumerated(EnumType.STRING)
+
+    @ElementCollection(targetClass = String.class, fetch = FetchType.LAZY)
+    @CollectionTable(name = "study_tech_stacks", joinColumns = @JoinColumn(name = "study_id"))
+    @Column(name = "tech_stacks", nullable = false)
     private List<String> techStacks = new ArrayList<>();
+
+//    @ElementCollection(fetch = FetchType.EAGER)
+//    @Enumerated(EnumType.STRING)
+//    private List<String> techStacks = new ArrayList<>();
 
     public void addViewCount(){
         this.viewCount++;
