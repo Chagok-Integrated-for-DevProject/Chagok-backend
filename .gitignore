@@ -7,6 +7,7 @@ build/
 **/src/main/resources/application-local.properties
 **/src/main/resources/application-db.properties
 **/src/main/resources/application-oauth.properties
+**/src/main/resources/chagok-project-firebase-secure.json
 
 ### STS ###
 .apt_generated
@@ -38,3 +39,4 @@ out/
 
 ### VS Code ###
 .vscode/
+

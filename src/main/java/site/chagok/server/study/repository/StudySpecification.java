@@ -1,7 +1,7 @@
 package site.chagok.server.study.repository;
 
 import org.springframework.data.jpa.domain.Specification;
-import site.chagok.server.common.contstans.contstans.TechStack;
+import site.chagok.server.common.contstans.TechStack;
 import site.chagok.server.study.domain.Study;
 
 import javax.persistence.criteria.*;

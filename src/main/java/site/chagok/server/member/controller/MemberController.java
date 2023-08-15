@@ -6,17 +6,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import site.chagok.server.member.constants.ActionType;
-import site.chagok.server.member.dto.BoardScrapDto;
 import site.chagok.server.member.dto.MemberInfoDto;
-import site.chagok.server.member.exception.NickNameExistsException;
 import site.chagok.server.member.service.ImgService;
 import site.chagok.server.member.service.MemberInfoService;
-import site.chagok.server.member.service.MemberService;
+import site.chagok.server.member.util.MediaTypeSelector;
 
-import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
-import java.util.List;
 
 
 @Api(tags ="사용자 데이터 조회")
@@ -46,7 +41,7 @@ public class MemberController {
         MediaType mediaType = null;
         try {
             savedFile = imgService.getProfileImg(image);
-            mediaType = imgService.getMediaType(image);
+            mediaType = MediaTypeSelector.getMediaType(image);
         } catch (IOException e) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }

@@ -2,9 +2,7 @@ package site.chagok.server.member.domain;
 
 
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import site.chagok.server.common.contstans.contstans.SocialType;
+import site.chagok.server.common.contstans.SocialType;
 import site.chagok.server.common.domain.BaseTime;
 import site.chagok.server.contest.domain.Comment;
 import site.chagok.server.contest.domain.ContestScrap;
@@ -12,7 +10,6 @@ import site.chagok.server.project.domain.ProjectScrap;
 import site.chagok.server.study.domain.StudyScrap;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 

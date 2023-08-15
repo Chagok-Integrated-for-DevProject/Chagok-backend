@@ -1,7 +1,7 @@
 package site.chagok.server.member.dto;
 
 import lombok.*;
-import site.chagok.server.common.contstans.contstans.SocialType;
+import site.chagok.server.common.contstans.SocialType;
 import site.chagok.server.contest.dto.GetContestPreviewDto;
 import site.chagok.server.project.dto.GetProjectPreviewDto;
 import site.chagok.server.study.dto.GetStudyPreviewDto;

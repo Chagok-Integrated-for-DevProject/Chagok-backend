@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import site.chagok.server.common.contstans.contstans.SiteType;
+import site.chagok.server.common.contstans.SiteType;
 
 import java.time.LocalDateTime;
 import java.util.List;

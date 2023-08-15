@@ -4,7 +4,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.util.Assert;
-import site.chagok.server.common.contstans.contstans.SocialType;
+import site.chagok.server.common.contstans.SocialType;
 
 import java.io.Serializable;
 import java.util.*;

@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import site.chagok.server.common.contstans.contstans.SocialType;
+import site.chagok.server.common.contstans.SocialType;
 
 import java.util.Map;
 

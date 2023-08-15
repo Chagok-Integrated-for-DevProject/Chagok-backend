@@ -1,7 +1,7 @@
 package site.chagok.server.study.domain;
 
 import lombok.*;
-import site.chagok.server.common.contstans.contstans.SiteType;
+import site.chagok.server.common.contstans.SiteType;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

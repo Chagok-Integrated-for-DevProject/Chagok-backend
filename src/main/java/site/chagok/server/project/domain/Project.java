@@ -3,7 +3,7 @@ package site.chagok.server.project.domain;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import site.chagok.server.common.contstans.contstans.SiteType;
+import site.chagok.server.common.contstans.SiteType;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

@@ -1,6 +1,7 @@
 package site.chagok.server.member.service;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.FileSystemException;
 import java.nio.file.Files;
 import java.util.Objects;
 import java.util.UUID;
@@ -27,10 +29,8 @@ public class ImgService {
      이미지 업데이트, 조회 서비스
      */
 
-    @Value("${profileImgLocation}")
-    String basePath;
-
     private final MemberRepository memberRepository;
+    private final FireBaseService fireBaseService;
 
 
     @Transactional
@@ -39,7 +39,7 @@ public class ImgService {
 
         // 시큐어코딩 - 이미지 형식만 허용
         if(!Objects.requireNonNull(imgFile.getContentType()).startsWith("image")){
-            return;
+            throw new FileUploadException();
         }
 
         String userEmail = MemberCredential.getLoggedMemberEmail();
@@ -47,42 +47,14 @@ public class ImgService {
         Member member = memberRepository.findByEmail(userEmail).orElseThrow(EntityNotFoundException::new);
 
         // 파일 저장
-        String fileName = saveFile(Objects.requireNonNull(imgFile.getOriginalFilename()), imgFile.getBytes());
+        String fileName = fireBaseService.saveImage(imgFile);
 
         // 설정했던 이미지 삭제
         if (member.getProfileImg() != null)
-            deleteFile(member.getProfileImg());
+            fireBaseService.deleteImg(member.getProfileImg());
 
         // 사용자 엔티티에 파일 이름 갱신
         member.updateProfileImg(fileName);
-    }
-
-    // 이미지 저장
-    private String saveFile(String originalFIleName, byte[] fileData) throws IOException {
-
-        // 확장자
-        String extension = originalFIleName.substring(originalFIleName.lastIndexOf("."));
-        // 랜덤 uuid
-        String uuidToPath = UUID.randomUUID().toString();
-        // path 생성
-        String uploadFilePath = basePath + "/" + uuidToPath + extension;
-        // 저장
-        try (FileOutputStream fos = new FileOutputStream(uploadFilePath)) {
-            fos.write(fileData);
-        };
-        // 파일이름 및 확장자 return
-        return uuidToPath + extension;
-    }
-
-    private void deleteFile(String fileName) {
-        String deleteFilePath = basePath + "/" + fileName;
-
-        File deleteFile = new File(deleteFilePath);
-
-
-        if (deleteFile.exists()) {
-            deleteFile.delete();
-        }
     }
 
     // 이미지 조회
@@ -90,32 +62,8 @@ public class ImgService {
     public byte[] getProfileImg(String image) throws IOException {
 
         String fileName = memberRepository.findByProfileImg(image).orElseThrow(FileNotFoundException::new).getProfileImg();
-        File savedFile = getFile(fileName);
-
-        return Files.readAllBytes(savedFile.toPath());
-    }
-
-    private File getFile(String fileName) throws FileNotFoundException {
-        String deleteFilePath = basePath + "/" + fileName;
-
-        File savedFile = new File(deleteFilePath);
-
-        if (!savedFile.exists())
-            throw new FileNotFoundException();
+        byte[] savedFile = fireBaseService.getImg(fileName);
 
         return savedFile;
-    }
-
-    public MediaType getMediaType(String fileName) throws FileNotFoundException {
-        String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
-
-        switch (extension) {
-            case "jpg":
-                return MediaType.IMAGE_JPEG;
-            case "png":
-                return MediaType.IMAGE_PNG;
-            default:
-                throw new FileNotFoundException();
-        }
     }
 }
