@@ -15,6 +15,7 @@ import site.chagok.server.contest.dto.GetContestPreviewDto;
 import site.chagok.server.contest.repository.ContestRepository;
 import site.chagok.server.member.domain.Member;
 import site.chagok.server.member.repository.MemberRepository;
+import site.chagok.server.member.util.MemberCredential;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
@@ -26,6 +27,7 @@ public class ContestService {
 
     private final ContestRepository contestRepository;
     private final MemberRepository memberRepository;
+
     @Transactional
     public GetContestDto getContest(Long contestId){
         Contest foundContest = contestRepository.findById(contestId).orElseThrow(EntityNotFoundException::new);
@@ -52,14 +54,18 @@ public class ContestService {
     @Transactional
     public Long makeComment(CommentDto commentDto){
         Contest contest = contestRepository.findById(commentDto.getContestId()).orElseThrow(EntityNotFoundException::new);
-        Member member = new Member();
-        memberRepository.save(member);
+
+        // 로그인 사용자 조회
+        String email = MemberCredential.getLoggedMemberEmail();
+        Member member = memberRepository.findByEmail(email).orElseThrow(EntityNotFoundException::new);
+
         Comment comment = Comment.builder()
                 .content(commentDto.getContent())
                 .parentId(commentDto.getParentId())
                 .contest(contest)
                 .member(member)
                 .build();
+
         contest.getComments().add(comment);
         contest.addCommentCount();
         return comment.getId();

@@ -28,14 +28,14 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests(auth -> auth
-                        //.anyRequest().authenticated()
+                        .antMatchers("/update/**", "/member/info", "/contests/comments").authenticated()
                         .anyRequest().permitAll())
                 .oauth2Login(oauth2 -> oauth2
                                 .userInfoEndpoint(userInfo ->
                                         userInfo.userService(chagokOAuth2UserService)) // oauth 사용자 정보 얻음
                                 .successHandler(oAuth2SuccessHandler)) // 인증 성공시, 헤더에 jwt 발급 및 redirect
-/*                .sessionManagement((sessionManagement) ->
-                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))*/ // stateless 세팅
+                .sessionManagement((sessionManagement) ->
+                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // stateless 세팅
                 .csrf().disable()
                 .addFilterAfter(jwtHeaderCheckingFilter, BasicAuthenticationFilter.class); // jwt 헤더 검사
 
