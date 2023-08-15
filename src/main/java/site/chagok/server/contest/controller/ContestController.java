@@ -41,8 +41,8 @@ public class ContestController {
         return contestService.getContestComments(id);
     }
 
-    @PostMapping(value ="secure - /contests/comments")
-    @ApiOperation(value ="새로운 댓글 등록",notes = "대댓글이 아니라면 parentId = -1")
+    @PostMapping(value ="/contests/comments")
+    @ApiOperation(value ="secure - 새로운 댓글 등록",notes = "대댓글이 아니라면 parentId = -1")
     public Long addComment(@RequestBody CommentDto commentDto){
         return contestService.makeComment(commentDto);
     }
