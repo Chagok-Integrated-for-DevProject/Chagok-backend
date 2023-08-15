@@ -29,7 +29,7 @@ public class MemberController {
     private final MemberInfoService memberInfoService;
 
     @GetMapping("/info")
-    @ApiOperation(value = "사용자 정보조회(마이페이지)")
+    @ApiOperation(value = "secure - 사용자 정보조회(마이페이지)")
     public MemberInfoDto getMemberInfo() {
 
         MemberInfoDto memberInfoDto = memberInfoService.getMemberInfoDto();

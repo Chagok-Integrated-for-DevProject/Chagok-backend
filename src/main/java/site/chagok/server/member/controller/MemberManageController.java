@@ -34,7 +34,7 @@ public class MemberManageController {
     private final ImgService imgService;
 
     @GetMapping("/nickname")
-    @ApiOperation(value="닉네임 업데이트")
+    @ApiOperation(value="secure - 닉네임 업데이트")
     @ApiImplicitParam(name = "nickname", value = "변경할 닉네임")
     @ApiResponses({@ApiResponse(code = 200, message = "닉네임 변경성공"), @ApiResponse(code = 409, message = "error code, 이미 존재하는 닉네임")})
     public ResponseEntity updateNickName(@RequestParam("nickname")String nickName) {
@@ -49,7 +49,7 @@ public class MemberManageController {
     }
 
     @PostMapping("/scrap")
-    @ApiOperation(value = "게시글 스크랩 추가")
+    @ApiOperation(value = "secure - 게시글 스크랩 추가")
     @ApiResponses({@ApiResponse(code = 200, message = "스크랩 추가 성공"), @ApiResponse(code = 400, message = "error code 스크랩 추가 오류")})
     public ResponseEntity addScrapBoard(@RequestBody BoardScrapDto boardScrapDto) {
 
@@ -65,7 +65,7 @@ public class MemberManageController {
     }
 
     @DeleteMapping("/scrap")
-    @ApiOperation(value = "게시글 스크랩 삭제")
+    @ApiOperation(value = "secure - 게시글 스크랩 삭제")
     @ApiResponses({@ApiResponse(code = 200, message = "스크랩 삭제 성공"), @ApiResponse(code = 400, message = "error code 스크랩 삭제 오류")})
     public ResponseEntity deleteScrapBoard(@RequestBody BoardScrapDto boardScrapDto) {
 
@@ -83,7 +83,7 @@ public class MemberManageController {
 
     // 사용자 스택 추가
     @PostMapping("/skills")
-    @ApiOperation(value = "사용자 기술스택 업데이트")
+    @ApiOperation(value = "secure - 사용자 기술스택 업데이트")
     @ApiResponses({@ApiResponse(code = 200, message = "스크랩 추가 성공")})
     public ResponseEntity updateTechStacks(@RequestBody List<String> skills) {
 
@@ -94,7 +94,7 @@ public class MemberManageController {
 
     // 이미지 저장
     @PostMapping("/profile/image")
-    @ApiOperation(value = "사용자 프로필 이미지 업데이트")
+    @ApiOperation(value = "secure - 사용자 프로필 이미지 업데이트")
     @ApiResponses({@ApiResponse(code = 200, message = "스크랩 삭제 성공"), @ApiResponse(code = 400, message = "프로필 이미지 업데이트 오류")})
     public ResponseEntity updateProfile(@RequestPart(name = "image")MultipartFile profileFile) {
 

@@ -41,7 +41,7 @@ public class ContestController {
         return contestService.getContestComments(id);
     }
 
-    @PostMapping(value ="/contests/comments")
+    @PostMapping(value ="secure - /contests/comments")
     @ApiOperation(value ="새로운 댓글 등록",notes = "대댓글이 아니라면 parentId = -1")
     public Long addComment(@RequestBody CommentDto commentDto){
         return contestService.makeComment(commentDto);
@@ -49,7 +49,7 @@ public class ContestController {
 
     @PostMapping(value="/contests")
     @ApiOperation(value ="새로운 콘테스트 등록(테스트)")
-    public void addContest(){
+    public void addContest() {
         contestService.makeContest();
     }
 
