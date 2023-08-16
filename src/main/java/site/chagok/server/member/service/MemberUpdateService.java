@@ -41,6 +41,7 @@ public class MemberUpdateService {
     private final ProjectScrapRepository projectScrapRepository;
     private final StudyRepository studyRepository;
     private final StudyScrapRepository studyScrapRepository;
+    private final MemberInfoService memberInfoService;
 
     /*
        이미지 수정, 닉네임 수정, 기술태크 수정, 스크랩
@@ -48,7 +49,7 @@ public class MemberUpdateService {
 
     @Transactional
     public void updateNickName(String nickName) { // 닉네임 변경
-        Boolean alreadyUsed = memberRepository.findByEmail(nickName).isPresent();
+        Boolean alreadyUsed = memberInfoService.checkNicknameExists(nickName);
 
         if (alreadyUsed)
             throw new NickNameExistsException("nickname already exists");

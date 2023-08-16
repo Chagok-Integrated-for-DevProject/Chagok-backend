@@ -51,7 +51,7 @@ public class ImgService {
 
         // 설정했던 이미지 삭제
         if (member.getProfileImg() != null)
-            fireBaseService.deleteImg(member.getProfileImg());
+            fireBaseService.deleteImage(member.getProfileImg());
 
         // 사용자 엔티티에 파일 이름 갱신
         member.updateProfileImg(fileName);
@@ -62,7 +62,7 @@ public class ImgService {
     public byte[] getProfileImg(String image) throws IOException {
 
         String fileName = memberRepository.findByProfileImg(image).orElseThrow(FileNotFoundException::new).getProfileImg();
-        byte[] savedFile = fireBaseService.getImg(fileName);
+        byte[] savedFile = fireBaseService.getImage(fileName);
 
         return savedFile;
     }

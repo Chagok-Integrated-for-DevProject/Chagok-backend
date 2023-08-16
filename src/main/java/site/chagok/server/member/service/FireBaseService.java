@@ -62,7 +62,7 @@ public class FireBaseService {
     }
 
     // firebase storage image 조회
-    public byte[] getImg(String imageFileName) throws FileNotFoundException {
+    public byte[] getImage(String imageFileName) throws FileNotFoundException {
         Bucket bucket = StorageClient.getInstance().bucket();
 
         Blob blob = bucket.get(imageFileName);
@@ -74,7 +74,7 @@ public class FireBaseService {
     }
 
     // firebase storage image 삭제
-    public void deleteImg(String imageFileName) {
+    public void deleteImage(String imageFileName) {
         Bucket bucket = StorageClient.getInstance().bucket();
 
         Blob blob = bucket.get(imageFileName);

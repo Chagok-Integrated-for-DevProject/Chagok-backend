@@ -33,12 +33,13 @@ public class ContestService {
         Contest foundContest = contestRepository.findById(contestId).orElseThrow(EntityNotFoundException::new);
         foundContest.addViewCount();
         return GetContestDto.builder()
+                .contestId(foundContest.getId())
                 .title(foundContest.getTitle())
                 .imageUrl(foundContest.getImageUrl())
                 .originalUrl(foundContest.getSourceUrl())
                 .host(foundContest.getHost())
-                .startDate(foundContest.getStartDate().toString())
-                .endDate(foundContest.getEndDate().toString())
+                .startDate(foundContest.getStartDate())
+                .endDate(foundContest.getEndDate())
                 .viewCount(foundContest.getViewCount())
                 .scrapCount(foundContest.getScrapCount())
                 .build();

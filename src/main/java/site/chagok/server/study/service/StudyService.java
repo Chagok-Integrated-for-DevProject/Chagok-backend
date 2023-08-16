@@ -32,6 +32,7 @@ public class StudyService {
         }
         Page<Study> studies = studyRepository.findAll(spec,pageable);
         return studies.map(s-> GetStudyPreviewDto.builder()
+                .studyId(s.getId())
                 .title(s.getTitle())
                 .preview(s.getContent()) // 추후 수정
                 .siteType(s.getSiteType())
@@ -50,6 +51,7 @@ public class StudyService {
         Study study = studyRepository.findById(studyId).orElseThrow(EntityNotFoundException::new);
 
         return GetStudyPreviewDto.builder()
+                .studyId(study.getId())
                 .title(study.getTitle())
                 .preview(study.getContent()) // 추후 수정
                 .siteType(study.getSiteType())

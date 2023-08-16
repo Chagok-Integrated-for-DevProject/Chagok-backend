@@ -24,7 +24,7 @@ public class MemberController {
     private final MemberInfoService memberInfoService;
 
     @GetMapping("/info")
-    @ApiOperation(value = "secure - 사용자 정보조회(마이페이지)")
+    @ApiOperation(value = "secure - 사용자 정보조회(마이페이지)", response = MemberInfoDto.class)
     public MemberInfoDto getMemberInfo() {
 
         MemberInfoDto memberInfoDto = memberInfoService.getMemberInfoDto();
@@ -34,6 +34,7 @@ public class MemberController {
 
     @GetMapping("/profile/{image}")
     @ApiOperation(value = "사용자 이미지 조회")
+    @ApiImplicitParam(name = "image", value = "조회할 사용자 프로필 이미지( 파일이름.확장자 로 이루어짐 )")
     @ApiResponses({@ApiResponse(code = 200, message = "스크랩 조회 성공"), @ApiResponse(code = 400, message = "프로필 조회 오류")})
     public ResponseEntity getProfile(@PathVariable("image")String image) {
 
@@ -50,9 +51,11 @@ public class MemberController {
     }
 
     @GetMapping("/check/nickname")
+    @ApiOperation(value = "사용자 닉네임 중복 여부 확인")
+    @ApiImplicitParam(name = "nickname", value = "사용자 중복 확인할 닉네임")
     public ResponseEntity checkNickName(@RequestParam("nickname") String nickName) {
         if (memberInfoService.checkNicknameExists(nickName))
-            return new ResponseEntity(HttpStatus.CONFLICT);
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
         return new ResponseEntity(HttpStatus.OK);
     }
 }

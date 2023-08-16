@@ -36,13 +36,13 @@ public class MemberManageController {
     @PostMapping("/nickname")
     @ApiOperation(value="secure - 닉네임 업데이트")
     @ApiImplicitParam(name = "nickname", value = "변경할 닉네임")
-    @ApiResponses({@ApiResponse(code = 200, message = "닉네임 변경성공"), @ApiResponse(code = 409, message = "error code, 이미 존재하는 닉네임")})
+    @ApiResponses({@ApiResponse(code = 200, message = "닉네임 변경성공"), @ApiResponse(code = 400, message = "error code, 이미 존재하는 닉네임")})
     public ResponseEntity updateNickName(@RequestParam("nickname")String nickName) {
 
         try {
             memberUpdateService.updateNickName(nickName);
         } catch (NickNameExistsException e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.CONFLICT);
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
         return new ResponseEntity(HttpStatus.OK);
@@ -81,7 +81,7 @@ public class MemberManageController {
     }
 
     @PostMapping("/skills")
-    @ApiOperation(value = "secure - 사용자 기술스택 업데이트")
+    @ApiOperation(value = "secure - 사용자 기술스택 업데이트", notes = "request body: skills - 사용자 기술 스택에 대한 String list")
     @ApiResponses({@ApiResponse(code = 200, message = "스크랩 추가 성공")})
     public ResponseEntity updateTechStacks(@RequestBody List<String> skills) {
 
@@ -91,7 +91,7 @@ public class MemberManageController {
     }
 
     @PostMapping("/profile/image")
-    @ApiOperation(value = "secure - 사용자 프로필 이미지 업데이트")
+    @ApiOperation(value = "secure - 사용자 프로필 이미지 업데이트", notes = "request body: image - 사용자가 업데이트할 프로필 이미지( multipart형식)")
     @ApiResponses({@ApiResponse(code = 200, message = "스크랩 삭제 성공"), @ApiResponse(code = 400, message = "프로필 이미지 업데이트 오류")})
     public ResponseEntity updateProfile(@RequestPart(name = "image")MultipartFile profileFile) {
 

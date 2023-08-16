@@ -1,5 +1,6 @@
 package site.chagok.server.study.domain;
 
+import io.swagger.annotations.ApiModel;
 import lombok.*;
 import site.chagok.server.common.contstans.SiteType;
 

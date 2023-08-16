@@ -30,7 +30,7 @@ public class ProjectService {
                 .techStacks(project.getTechStacks())
                 .viewCount(project.getViewCount())
                 .scrapCount(project.getScrapCount())
-                .studyId(project.getId())
+                .projectId(project.getId())
                 .nickName(project.getNickname())
                 .build();
     }
