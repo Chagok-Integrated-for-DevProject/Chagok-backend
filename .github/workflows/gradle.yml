@@ -48,11 +48,13 @@ jobs:
       shell: bash
 
     - name: make chagok-project-firebase-secure.json
-      run: |
-        cd ./src/main/resources
-        touch ./chagok-project-firebase-secure.json
-        echo "${{ secrets.FIREBASE_KEY }}" > ./chagok-project-firebase-secure.json
-      shell: bash
+      id: create-json
+      uses: jsdaniell/create-json@v1.2.2
+      with:
+          name: "chagok-project-firebase-secure.json"
+          json: ${{ secrets.FIREBASE_KEY }}
+          dir: './src/main/resources'
+      
             
     - name: 🔧 Build Spring server
       run: |
@@ -79,7 +81,7 @@ jobs:
           docker pull ${{ secrets.DOCKER_USERNAME }}/chagok:latest
           docker tag ${{ secrets.DOCKER_USERNAME }}/chagok:latest chagok:latest
           docker stop $(docker ps -a -q) 
-          docker run -d --rm -p 8080:8080 chagok:latest --name chagok:latest
+          docker run -d --rm -p 8080:8080 chagok:latest
           
           docker rm $(docker ps --filter 'status=exited' -a -q)
           # 실행 중이지 않으 모든 컨테인 삭제
