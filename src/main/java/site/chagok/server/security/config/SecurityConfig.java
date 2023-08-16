@@ -28,7 +28,7 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests(auth -> auth
-                        .antMatchers("/update/**", "/member/info", "/contests/comments").authenticated()
+                        .antMatchers("/member/update/**", "/member/info", "/contests/comments").authenticated()
                         .anyRequest().permitAll())
                 .oauth2Login(oauth2 -> oauth2
                                 .userInfoEndpoint(userInfo ->

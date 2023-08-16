@@ -70,4 +70,10 @@ public class MemberInfoService {
                 .map(project -> projectService.getProjectPreview(project.getProject().getId()))
                 .collect(Collectors.toList());
     }
+
+    // 닉네임 있는지 확인
+    @Transactional
+    public boolean checkNicknameExists(String nickName) {
+        return memberRepository.findByNickName(nickName).isPresent();
+    }
 }

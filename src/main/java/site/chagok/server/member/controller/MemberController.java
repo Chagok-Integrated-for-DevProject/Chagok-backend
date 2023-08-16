@@ -48,4 +48,11 @@ public class MemberController {
 
         return ResponseEntity.ok().contentType(mediaType).body(savedFile);
     }
+
+    @GetMapping("/check/nickname")
+    public ResponseEntity checkNickName(@RequestParam("nickname") String nickName) {
+        if (memberInfoService.checkNicknameExists(nickName))
+            return new ResponseEntity(HttpStatus.CONFLICT);
+        return new ResponseEntity(HttpStatus.OK);
+    }
 }

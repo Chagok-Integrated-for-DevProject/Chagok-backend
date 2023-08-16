@@ -17,7 +17,6 @@ import site.chagok.server.project.domain.Project;
 import site.chagok.server.project.domain.ProjectScrap;
 import site.chagok.server.project.repository.ProjectRepository;
 import site.chagok.server.project.repository.ProjectScrapRepository;
-import site.chagok.server.security.dto.ChagokOAuth2User;
 import site.chagok.server.study.domain.Study;
 import site.chagok.server.study.domain.StudyScrap;
 import site.chagok.server.study.repository.StudyRepository;
@@ -29,10 +28,10 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class MemberService {
+public class MemberUpdateService {
 
     /*
-    사용자 회원가입 및 회원탈퇴, 사용자 정보 관리
+    사용자 정보 관리
      */
 
     private final MemberRepository memberRepository;
@@ -42,24 +41,6 @@ public class MemberService {
     private final ProjectScrapRepository projectScrapRepository;
     private final StudyRepository studyRepository;
     private final StudyScrapRepository studyScrapRepository;
-
-    @Transactional
-    public void signUp(ChagokOAuth2User user) { // 회원가입
-
-        String userEmail = user.getName();
-
-        Boolean alreadySaved = memberRepository.findByEmail(userEmail).isPresent();
-
-        // DB에 없으면 회원가입
-        if (!alreadySaved) {
-            Member newMember = Member.builder()
-                    .email(userEmail)
-                    .socialType(user.getSocialType())
-                    .build();
-
-            memberRepository.save(newMember);
-        }
-    }
 
     /*
        이미지 수정, 닉네임 수정, 기술태크 수정, 스크랩
