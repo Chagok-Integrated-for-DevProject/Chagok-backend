@@ -78,7 +78,9 @@ jobs:
         script: |
           docker pull ${{ secrets.DOCKER_USERNAME }}/chagok:latest
           docker tag ${{ secrets.DOCKER_USERNAME }}/chagok:latest chagok:latest
-          docker stop $(docker ps -a -q) 
+          # docker stop $(docker ps -a -q)
+          docker container stop chagok:latest
+          
           docker run -d --rm -p 8080:8080 chagok:latest --name chagok:latest
           
           docker rm $(docker ps --filter 'status=exited' -a -q)
