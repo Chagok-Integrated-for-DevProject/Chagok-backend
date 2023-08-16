@@ -46,6 +46,13 @@ jobs:
           touch ./application-oauth.properties
           echo "${{ secrets.PROPERTIES_OAUTH }}" > ./application-oauth.properties
       shell: bash
+
+    - name: make chagok-project-firebase-secure.json
+      run: |
+        cd ./src/main/resources
+        touch ./chagok-project-firebase-secure.json
+        echo "${{ secrets.FIREBASE_KEY }}" > ./chagok-project-firebase-secure.json
+      shell: bash
             
     - name: 🔧 Build Spring server
       run: |
