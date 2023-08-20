@@ -11,14 +11,16 @@ public class StudySpecification {
 
 
 
+
     public static Specification<Study> equalsTitle(String title){
         return (root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("title"),"%"+title+"%");
     }
     public static Specification<Study> equalsTechStack(List<String> techStacks){
+        System.out.println(techStacks);
         return (root, query, criteriaBuilder) -> {
-            Join<Study, TechStack> join = root.join("techStacks", JoinType.LEFT);
-            System.out.println(join.get("id"));
-            return join.get("techStack").in(techStacks);
+            Expression<List<String>> techStacksPath = root.join("techStacks");
+            //techStacks는 다른 테이블이기에 .get이 아닌 .join
+            return techStacksPath.in(techStacks);
         };
     }
 }

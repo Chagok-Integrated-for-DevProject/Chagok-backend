@@ -18,9 +18,10 @@ public class CommentSorter {
         for(int commentIndex=0;commentIndex<comments.size();commentIndex++){
             Comment comment = comments.get(commentIndex);
             Long parent = comment.getParentId();
-            if(parent == hasParent){ //첫번째 댓글이라면
+            if(parent == hasParent) { //첫번째 댓글이라면
                 addParentComment(originalComment, comment);
-            } else if(parent != hasParent){ // 대댓글 이라면
+            }
+            if(parent != hasParent){ // 대댓글 이라면
                 addToParentComment(originalComment, comment, parent);
             }
         }
@@ -42,7 +43,6 @@ public class CommentSorter {
 
     private static void addToParentComment(Map<Long, GetContestCommentDto> originalComment, Comment comment, Long parent) {
         List<GetContestCommentDto> linkedComment = originalComment.get(parent).getLinkedComment();
-
         linkedComment.add(GetContestCommentDto.builder()
                 .content(comment.getContent())
                 .createdDate(comment.getCreatedTime())
