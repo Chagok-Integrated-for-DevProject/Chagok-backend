@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class CommentSorter {
-    public static Long ORIGINAL_COMMENT_PARENT_ID =-1L;
+    public static Long hasParent =-1L;
 
 
     public static List<GetContestCommentDto> getSort(List<Comment> comments) {
@@ -18,33 +18,34 @@ public class CommentSorter {
         for(int commentIndex=0;commentIndex<comments.size();commentIndex++){
             Comment comment = comments.get(commentIndex);
             Long parent = comment.getParentId();
-            if(parent ==ORIGINAL_COMMENT_PARENT_ID){ //첫번쨰 댓글이라면
+            if(parent == hasParent){ //첫번째 댓글이라면
                 addParentComment(originalComment, comment);
-            }
-            if(parent != ORIGINAL_COMMENT_PARENT_ID){
+            } else if(parent != hasParent){ // 대댓글 이라면
                 addToParentComment(originalComment, comment, parent);
             }
         }
-        return originalComment.values().stream().collect(Collectors.toList());
+        return new ArrayList<>(originalComment.values());
     }
 
     private static void addParentComment(Map<Long, GetContestCommentDto> originalComment, Comment comment) {
         originalComment.put(comment.getId(),GetContestCommentDto.builder()
                 .content(comment.getContent())
-                .createdDate(comment.getCreatedDate().toString())
+                .createdDate(comment.getCreatedTime())
                 .deleted(comment.isDeleted())
                 .memberNickName(comment.getMember().getNickName())
                 .commentId(comment.getId())
                 .parentId(comment.getParentId())
+                .kakaoRef(comment.getKakaoRef())
+                .linkedComment(new ArrayList<>())
                 .build());
     }
 
     private static void addToParentComment(Map<Long, GetContestCommentDto> originalComment, Comment comment, Long parent) {
         List<GetContestCommentDto> linkedComment = originalComment.get(parent).getLinkedComment();
-        if(linkedComment==null) linkedComment = new ArrayList<>();
+
         linkedComment.add(GetContestCommentDto.builder()
                 .content(comment.getContent())
-                .createdDate(comment.getCreatedDate().toString())
+                .createdDate(comment.getCreatedTime())
                 .deleted(comment.isDeleted())
                 .memberNickName(comment.getMember().getNickName())
                 .commentId(comment.getId())
