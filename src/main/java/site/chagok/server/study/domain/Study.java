@@ -2,6 +2,7 @@ package site.chagok.server.study.domain;
 
 import io.swagger.annotations.ApiModel;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 import site.chagok.server.common.contstans.SiteType;
 import site.chagok.server.common.contstans.TechStack;
 
