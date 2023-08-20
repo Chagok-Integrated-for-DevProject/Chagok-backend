@@ -47,4 +47,8 @@ public class Contest {
         this.scrapCount++;
         this.hotCount +=10;
     }
+    public void minusCommentCount() {
+        this.commentCount--;
+        this.hotCount -=5;
+    }
 }

@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
+import site.chagok.server.study.dto.GetRecommendedStudyDto;
 import site.chagok.server.study.dto.GetStudyDto;
 import site.chagok.server.study.dto.GetStudyPreviewDto;
 import site.chagok.server.study.service.StudyService;
@@ -41,5 +42,11 @@ public class StudyController {
     @ApiOperation(value = "스터디 상세보기")
     public GetStudyDto getStudies(@PathVariable("id") Long studyId){
         return studyService.getStudy(studyId);
+    }
+
+    @GetMapping (value="/studies/recommend")
+    @ApiOperation(value = "스터디 추천 받기")
+    public List<GetRecommendedStudyDto> getRecommendedStudy(){
+        return studyService.getRecommendedStudy();
     }
 }
