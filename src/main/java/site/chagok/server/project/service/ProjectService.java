@@ -3,6 +3,7 @@ package site.chagok.server.project.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import site.chagok.server.common.contstans.PostType;
 import site.chagok.server.project.domain.Project;
 import site.chagok.server.project.dto.GetProjectPreviewDto;
 import site.chagok.server.project.repository.ProjectRepository;
@@ -27,6 +28,7 @@ public class ProjectService {
                 .title(project.getTitle())
                 .preview(project.getContent()) // 추후 수정
                 .siteType(project.getSiteType())
+                .postType(PostType.PROJECT)
                 .techStacks(project.getTechStacks())
                 .viewCount(project.getViewCount())
                 .scrapCount(project.getScrapCount())

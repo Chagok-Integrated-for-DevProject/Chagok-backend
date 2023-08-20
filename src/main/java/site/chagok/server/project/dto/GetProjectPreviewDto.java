@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import site.chagok.server.common.contstans.PostType;
 import site.chagok.server.common.contstans.SiteType;
 
 import java.util.List;
@@ -18,11 +19,15 @@ import java.util.List;
 @ApiModel(value = "GetProjectPreviewDto", description = "서버측 response 프로젝트 미리보기 정보")
 public class GetProjectPreviewDto {
 
+
+
     @ApiModelProperty(notes = "프로젝트 게시글 ID", example = "230")
     @JsonProperty("id")
     private Long projectId;
     @ApiModelProperty(notes = "사이트 종류", example = "OKKY or INFLEARN or HOLA")
     private SiteType siteType;
+    @ApiModelProperty(notes = "글 종류", example = "Project or study")
+    private PostType postType;
     @ApiModelProperty(notes = "프로젝트 제목", example = "xx프로젝트 모집합니다")
     private String title;
     @ApiModelProperty(notes = "조회수", example = "113")

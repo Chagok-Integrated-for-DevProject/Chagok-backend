@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import site.chagok.server.common.contstans.PostType;
 import site.chagok.server.study.domain.Study;
 import site.chagok.server.study.dto.GetStudyDto;
 import site.chagok.server.study.dto.GetStudyPreviewDto;
@@ -55,6 +56,7 @@ public class StudyService {
                 .title(study.getTitle())
                 .preview(study.getContent()) // 추후 수정
                 .siteType(study.getSiteType())
+                .postType(PostType.STUDY)
                 .techStacks(study.getTechStacks())
                 .viewCount(study.getViewCount())
                 .scrapCount(study.getScrapCount())
@@ -62,8 +64,6 @@ public class StudyService {
                 .nickName(study.getNickname())
                 .build();
     }
-
-
     @Transactional
     public GetStudyDto getStudy(Long studyId){
         Study study = studyRepository.findById(studyId).orElseThrow(EntityNotFoundException::new);
