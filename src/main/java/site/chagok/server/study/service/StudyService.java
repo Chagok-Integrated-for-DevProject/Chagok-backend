@@ -55,7 +55,7 @@ public class StudyService {
     @Transactional
     public List<GetRecommendedStudyDto> getRecommendedStudy(){
         String userEmail = MemberCredential.getLoggedMemberEmail();
-        Member member = memberRepository.findByEmail(userEmail).orElseThrow(EntityExistsException::new);
+        Member member = memberRepository.findByEmail(userEmail).orElseThrow(EntityNotFoundException::new);
         return studyRepository.getRecommendedStudy(member.getTechStacks()).stream().map(
                 s-> GetRecommendedStudyDto.builder()
                         .studyId(s.getId())
@@ -63,13 +63,6 @@ public class StudyService {
                         .build()
         ).collect(Collectors.toList());
     }
-
-    private static Specification<Study> getRecommendStandard(List<String> techStack) {
-        Specification<Study> spec  = (root, query, criteriaBuilder) ->null;
-        spec = spec.and(StudySpecification.equalsTechStack(techStack));
-        return spec;
-    }
-
     // 사용자 스터디 스크랩 미리보기
     @Transactional(readOnly = true)
     public GetStudyPreviewDto getStudyPreview(Long studyId) {
