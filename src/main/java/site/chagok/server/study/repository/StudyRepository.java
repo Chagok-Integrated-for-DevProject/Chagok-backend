@@ -7,11 +7,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 import site.chagok.server.study.domain.Study;
 
 import java.util.List;
 import java.util.Optional;
 
+
+@Repository
 public interface StudyRepository extends JpaRepository<Study,Long>, JpaSpecificationExecutor<Study> {
     Optional<Study> findByTitle(String title);
     Page<Study> findAll(Specification<Study> spec, Pageable pageable);
