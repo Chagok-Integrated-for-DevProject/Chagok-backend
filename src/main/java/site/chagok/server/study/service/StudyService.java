@@ -48,8 +48,8 @@ public class StudyService {
                 .techStacks(s.getTechStacks())
                 .viewCount(s.getViewCount())
                 .scrapCount(s.getScrapCount())
-                .studyId(s.getId())
                 .nickName(s.getNickname())
+                .postType(PostType.STUDY)
                 .build());
     }
     @Transactional

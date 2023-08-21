@@ -40,7 +40,7 @@ public class StudyController {
 
     @GetMapping (value="/studies/{id}")
     @ApiOperation(value = "스터디 상세보기")
-    public GetStudyDto getStudies(@PathVariable("id") Long studyId){
+    public GetStudyDto getStudy(@PathVariable("id") Long studyId){
         return studyService.getStudy(studyId);
     }
 
