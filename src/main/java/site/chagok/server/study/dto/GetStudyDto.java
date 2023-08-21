@@ -45,4 +45,7 @@ public class GetStudyDto {
     @ApiModelProperty(notes = "기술스택", example = "String list")
     @JsonProperty("skills")
     private List<String> techStacks;
+
+    @ApiModelProperty(notes ="스크랩 여부")
+    private boolean scraped;
 }
