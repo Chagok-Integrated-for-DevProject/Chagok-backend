@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import site.chagok.server.common.contstans.PostType;
 import site.chagok.server.common.contstans.SiteType;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @NoArgsConstructor
@@ -38,6 +39,8 @@ public class GetProjectPreviewDto {
     private String preview;
     @ApiModelProperty(notes = "사용자닉네임", example = "apple123")
     private String nickName;
+    @ApiModelProperty(notes = "글 올린 시간", example = "2023-08-09 15:36:08.762")
+    private LocalDateTime createdTime;
 
     @ApiModelProperty(notes = "기술스택", example = "String list")
     @JsonProperty("skills")

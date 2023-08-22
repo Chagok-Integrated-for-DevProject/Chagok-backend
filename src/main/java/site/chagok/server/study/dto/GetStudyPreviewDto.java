@@ -11,6 +11,7 @@ import site.chagok.server.common.contstans.PostType;
 import site.chagok.server.common.contstans.SiteType;
 import site.chagok.server.common.contstans.TechStack;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @NoArgsConstructor
@@ -37,6 +38,8 @@ public class GetStudyPreviewDto {
     private int scrapCount;
     @ApiModelProperty(notes = "미리보기", example = "xx 스터디 모집합니다. 현재...")
     private String preview;
+    @ApiModelProperty(notes = "글 올린 시간", example = "2023-08-09 15:36:08.762")
+    private LocalDateTime createdTime;
     @ApiModelProperty(notes = "사용자닉네임", example = "apple123")
     private String nickName;
 }

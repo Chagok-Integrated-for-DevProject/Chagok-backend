@@ -54,6 +54,7 @@ public class ProjectService {
                 .scrapCount(s.getScrapCount())
                 .nickName(s.getNickname())
                 .postType(PostType.PROJECT)
+                .createdTime(s.getCreatedTime())
                 .build());
     }
 

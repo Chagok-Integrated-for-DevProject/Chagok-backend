@@ -50,6 +50,7 @@ public class StudyService {
                 .scrapCount(s.getScrapCount())
                 .nickName(s.getNickname())
                 .postType(PostType.STUDY)
+                .createdTime(s.getCreatedTime())
                 .build());
     }
     @Transactional
