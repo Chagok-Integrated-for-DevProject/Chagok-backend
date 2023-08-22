@@ -40,7 +40,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         log.info("generated jwtToken: " + response.getHeader(SecutiryHeader.JWT_HEADER));
 
         // 테스트용
-        getRedirectStrategy().sendRedirect(request, response, "/api/oauthSuccess");
+        getRedirectStrategy().sendRedirect(request, response, "https://chagok.site/");
     }
 }
 
