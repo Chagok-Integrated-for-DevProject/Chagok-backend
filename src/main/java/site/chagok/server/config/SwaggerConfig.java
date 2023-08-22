@@ -27,9 +27,6 @@ public class SwaggerConfig {
     private static final String API_VERSION = "1.0.0";
     private static final String API_DESCRIPTION = "CHAGOK API 명세서";
 
-
-
-
     public ApiInfo apiInfo() {  // API의 이름, 현재 버전, API에 대한 정보
         return new ApiInfoBuilder()
                 .title(API_NAME)

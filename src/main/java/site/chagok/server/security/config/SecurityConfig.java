@@ -40,8 +40,8 @@ public class SecurityConfig {
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(new AuthenticationEntryPoint())) // 인증받지 않은 사용자에 대한 처리
                 .oauth2Login(oauth2 -> oauth2
-                                .userInfoEndpoint(userInfo ->
-                                        userInfo.userService(chagokOAuth2UserService)) // oauth 사용자 정보 얻음
+                                .userInfoEndpoint(userInfo -> userInfo
+                                        .userService(chagokOAuth2UserService)) // oauth 사용자 정보 얻음
                                 .successHandler(oAuth2SuccessHandler)) // 인증 성공시, 헤더에 jwt 발급 및 redirect
                 .sessionManagement((sessionManagement) ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // stateless 세팅

@@ -32,6 +32,8 @@ public class GetContestDto  {
     private LocalDate startDate;
     @ApiModelProperty(notes = "모집 종료날짜", example = "yyyy-mm-dd")
     private LocalDate endDate;
+    @ApiModelProperty(notes = "공모전 본문 태그포함")
+    private String content;
 
     @ApiModelProperty(notes = "조회수", example = "113")
     private int viewCount;

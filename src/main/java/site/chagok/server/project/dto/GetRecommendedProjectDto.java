@@ -1,0 +1,21 @@
+package site.chagok.server.project.dto;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+public class GetRecommendedProjectDto {
+    @ApiModelProperty(notes = "프로젝트 게시글 제목", example = "구합니다")
+    private String title;
+    @ApiModelProperty(notes = "프로젝트 게시글 ID", example = "330")
+    @JsonProperty("id")
+    private Long projectId;
+}

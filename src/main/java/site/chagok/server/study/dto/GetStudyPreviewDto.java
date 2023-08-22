@@ -7,7 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import site.chagok.server.common.contstans.PostType;
 import site.chagok.server.common.contstans.SiteType;
+import site.chagok.server.common.contstans.TechStack;
 
 import java.util.List;
 
@@ -24,6 +26,8 @@ public class GetStudyPreviewDto {
     private String title;
     @ApiModelProperty(notes = "사이트 종류", example = "OKKY or INFLEARN or HOLA")
     private SiteType siteType;
+    @ApiModelProperty(notes = "글 종류", example = "Project or study")
+    private PostType postType;
     @ApiModelProperty(notes = "기술스택", example = "String list")
     @JsonProperty("skills")
     private List<String> techStacks;

@@ -4,6 +4,8 @@ import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import site.chagok.server.member.constants.ActionType;
@@ -37,7 +39,7 @@ public class MemberManageController {
     @ApiOperation(value="secure - 닉네임 업데이트")
     @ApiImplicitParam(name = "nickname", value = "변경할 닉네임")
     @ApiResponses({@ApiResponse(code = 200, message = "닉네임 변경성공"), @ApiResponse(code = 400, message = "error code, 이미 존재하는 닉네임")})
-    public ResponseEntity updateNickName(@RequestParam("nickname")String nickName) {
+    public ResponseEntity updateNickName(@RequestParam("nickname")String nickName, @AuthenticationPrincipal User user) {
 
         try {
             memberUpdateService.updateNickName(nickName);

@@ -3,21 +3,22 @@ package site.chagok.server.contest.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AuthorizationServiceException;
+import org.springframework.security.oauth2.client.ClientAuthorizationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import site.chagok.server.contest.dto.*;
+import site.chagok.server.contest.repository.CommentRepository;
 import site.chagok.server.contest.util.CommentSorter;
 import site.chagok.server.contest.domain.Comment;
 import site.chagok.server.contest.domain.Contest;
-import site.chagok.server.contest.dto.CommentDto;
-import site.chagok.server.contest.dto.GetContestCommentDto;
-import site.chagok.server.contest.dto.GetContestDto;
-import site.chagok.server.contest.dto.GetContestPreviewDto;
 import site.chagok.server.contest.repository.ContestRepository;
 import site.chagok.server.member.domain.Member;
 import site.chagok.server.member.repository.MemberRepository;
 import site.chagok.server.member.util.MemberCredential;
 
 import javax.persistence.EntityNotFoundException;
+import javax.security.sasl.AuthenticationException;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +28,7 @@ public class ContestService {
 
     private final ContestRepository contestRepository;
     private final MemberRepository memberRepository;
+    private final CommentRepository commentRepository;
 
     @Transactional
     public GetContestDto getContest(Long contestId){
@@ -42,40 +44,10 @@ public class ContestService {
                 .endDate(foundContest.getEndDate())
                 .viewCount(foundContest.getViewCount())
                 .scrapCount(foundContest.getScrapCount())
+                .content(foundContest.getContent())
                 .build();
     }
-    @Transactional(readOnly = true)
-    public List<GetContestCommentDto> getContestComments(Long contestId){
-        Optional<Contest> contest = contestRepository.findContestByIdFetchCommentsAndMemberName(contestId);
-        if(!contest.isPresent()) throw new EntityNotFoundException();
-        List<Comment> comments = contest.get().getComments();
-        return CommentSorter.getSort(comments);
-    }
 
-    @Transactional
-    public Long makeComment(CommentDto commentDto){
-        Contest contest = contestRepository.findById(commentDto.getContestId()).orElseThrow(EntityNotFoundException::new);
-
-        // 로그인 사용자 조회
-        String email = MemberCredential.getLoggedMemberEmail();
-        Member member = memberRepository.findByEmail(email).orElseThrow(EntityNotFoundException::new);
-
-        Comment comment = Comment.builder()
-                .content(commentDto.getContent())
-                .parentId(commentDto.getParentId())
-                .contest(contest)
-                .member(member)
-                .build();
-
-        contest.getComments().add(comment);
-        contest.addCommentCount();
-        return comment.getId();
-    }
-    @Transactional
-    public void makeContest(){
-        Contest contest = new Contest();
-        contestRepository.save(contest);
-    }
     @Transactional(readOnly = true)
     public Page<GetContestPreviewDto> getContests(Pageable pageable){
         Page<Contest> contests = contestRepository.findAll(pageable);
@@ -107,5 +79,81 @@ public class ContestService {
                 .scrapCount(contest.getScrapCount())
                 .commentCount(contest.getCommentCount())
                 .build();
+    }
+
+    // 공모전 글에 대한 댓글 조회
+    @Transactional(readOnly = true)
+    public List<GetContestCommentDto> getContestComments(Long contestId){
+        Contest contest = contestRepository.findContestByIdFetchCommentsAndMemberName(contestId).orElseThrow(EntityNotFoundException::new);
+
+        List<Comment> comments = contest.getComments();
+        return CommentSorter.getSort(comments);
+    }
+
+
+    // 댓글 추가
+    @Transactional
+    public Long makeComment(CommentDto commentDto){
+        Contest contest = contestRepository.findById(commentDto.getContestId()).orElseThrow(EntityNotFoundException::new);
+        // 로그인 사용자 조회
+        String email = MemberCredential.getLoggedMemberEmail();
+        Member member = memberRepository.findByEmail(email).orElseThrow(EntityNotFoundException::new);
+
+        // 댓글 생성 Dto to Entity
+        Comment comment = Comment.builder()
+                .content(commentDto.getContent())
+                .parentId(commentDto.getParentId())
+                .kakaoRef(commentDto.getKakaoRef())
+                .contest(contest)
+                .member(member)
+                .build();
+
+        commentRepository.save(comment);
+
+        // 공모전 댓글에 추가
+        contest.getComments().add(comment);
+        // 공모전 댓글 개수
+        contest.addCommentCount();
+        return comment.getId();
+    }
+
+
+    // 댓글 수정
+    @Transactional
+    public Long updateComment(CommentUpdateDto commentUpdateDto) {
+
+        // 사용자 조회
+        String userEmail = MemberCredential.getLoggedMemberEmail();
+        Member member = memberRepository.findByEmail(userEmail).orElseThrow(EntityNotFoundException::new);
+
+        // 댓글 조회
+        Comment comment = commentRepository.findById(commentUpdateDto.getCommentId()).orElseThrow(EntityNotFoundException::new);
+
+        if (member.getNickName() != comment.getMember().getNickName())
+            throw new AuthorizationServiceException("cannot update - not authorized");
+
+        comment.updateComment(commentUpdateDto.getContent(), commentUpdateDto.getKakaoRef());
+
+        return comment.getId();
+    }
+
+    // 댓글 삭제
+    @Transactional
+    public Long deleteComment(Long commentId) {
+
+        // 사용자 조회
+        String userEmail = MemberCredential.getLoggedMemberEmail();
+        Member member = memberRepository.findByEmail(userEmail).orElseThrow(EntityNotFoundException::new);
+
+        // 댓글 조회
+        Comment comment = commentRepository.findById(commentId).orElseThrow(EntityNotFoundException::new);
+        comment.getContest().minusCommentCount();
+
+        if (member.getNickName() != comment.getMember().getNickName())
+            throw new AuthorizationServiceException("cannot delete - not authorized");
+
+        comment.setDeleted();
+
+        return comment.getId();
     }
 }
