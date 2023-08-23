@@ -63,14 +63,16 @@ public class SecurityConfig {
         return http.build();
     }
 
+
+    // chagok.site 간 cors config
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(Arrays.asList("https://chagok.site"));
+        configuration.setAllowedOrigins(Arrays.asList("https://chagok.site", "https://localhost:3000", "http://localhost:3000"));
         configuration.setAllowedMethods(Arrays.asList("GET","POST", "DELETE", "PUT"));
         configuration.setAllowedHeaders(List.of("*"));
-        configuration.setExposedHeaders(List.of(SecutiryHeader.JWT_HEADER));
+        configuration.setExposedHeaders(List.of(SecutiryHeader.JWT_HEADER)); // custom 설정 중 해당 헤더만 허용
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
