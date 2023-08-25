@@ -33,7 +33,7 @@ public class SecurityController {
         } catch (JsonProcessingException e) {
             return new ResponseEntity("cannot get data", HttpStatus.BAD_REQUEST);
         } catch(AuthorizationServiceException e) {
-            return new ResponseEntity("invalid token", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 }

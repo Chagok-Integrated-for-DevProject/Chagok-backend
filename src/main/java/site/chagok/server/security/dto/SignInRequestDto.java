@@ -15,4 +15,6 @@ public class SignInRequestDto {
     String accessToken;
     @ApiModelProperty(name = "socialType", value = "구글 or 카카오 중 하나", example = "Kakao or Google 값으로만 전달")
     SocialType socialType;
+    @ApiModelProperty(name = "authorizationToken", value = "authorization 토큰", example = "23109f0u310qeqeqee3910u3190u390u309u13...")
+    String authorizationToken;
 }
