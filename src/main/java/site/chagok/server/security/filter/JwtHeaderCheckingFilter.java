@@ -36,27 +36,20 @@ public class JwtHeaderCheckingFilter extends OncePerRequestFilter {
         if (jwtHeader != null && jwtHeader.startsWith("Bearer ")) {
             String jwtToken = jwtHeader.substring(7);
 
-            // 테스트 코드
-            if (jwtToken.equals("12345")) {
-                SecurityContextHolder.getContext()
-                        .setAuthentication(new UsernamePasswordAuthenticationToken(
-                                "ydg98381@gmail.com", null, Collections.singleton(new SimpleGrantedAuthority("USER"))));
-            } else {
-                try {
-                    // jwt 기반, UsernamePasswordAuthenticationToken 생성
-                    Authentication userAuthToken = jwtTokenService.validateJwtToken(jwtToken);
+            try {
+                // jwt 기반, UsernamePasswordAuthenticationToken 생성
+                Authentication userAuthToken = jwtTokenService.validateJwtToken(jwtToken);
 
-                    // Security Context에 추가.
-                    SecurityContextHolder.getContext().setAuthentication(userAuthToken);
-                } catch (InvalidJwtException e) {
+                // Security Context에 추가.
+                SecurityContextHolder.getContext().setAuthentication(userAuthToken);
+            } catch (InvalidJwtException e) {
 
-                    if (e.hasExpired()) { // jwt 유효기간 만료
+                if (e.hasExpired()) { // jwt 유효기간 만료
 
-                    } else { //
+                } else { //
 
-                    }
-                    throw new RuntimeException(e);
                 }
+                throw new RuntimeException(e);
             }
         }
 
