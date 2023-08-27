@@ -1,6 +1,7 @@
 package site.chagok.server.project.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +28,7 @@ import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ProjectService {
@@ -36,16 +38,19 @@ public class ProjectService {
 
 
     @Transactional
-    @Cacheable(cacheManager = "homeCacheManager",condition = "#searchTerm ==null and #techStacks==null")
-    //검색어와 필터가 없을 때 캐시 처리
+//    @Cacheable(key = "#pageable.sort.toString"
+//            ,value ="projectTop",cacheManager = "homeCacheManager"
+//            ,condition = "#searchTerm ==null and #techStacks==null and #pageable.pageSize==3")
+    //검색어와 필터가 없고 pageSize==3일때(홈화면에서 불러올 때) 캐시 처리
     public Page<GetProjectPreviewDto> getProjects(String searchTerm, List<String> techStacks, Pageable pageable){
         Specification<Project> spec  = (root, query, criteriaBuilder) ->null;
         if(searchTerm!=null) {
             spec = spec.and(ProjectSpecification.equalsTitle(searchTerm));
         }
-        if(techStacks!=null && !techStacks.isEmpty()){
+        if(techStacks!=null){
             spec = spec.and(ProjectSpecification.equalsTechStack(techStacks));
         }
+
         Page<Project> projects = projectRepository.findAll(spec,pageable);
         return projects.map(s-> GetProjectPreviewDto.builder()
                 .projectId(s.getId())
