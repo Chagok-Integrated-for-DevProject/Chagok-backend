@@ -1,33 +1,30 @@
 package site.chagok.server.security.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.jose4j.jwt.MalformedClaimException;
+import org.jose4j.jwt.consumer.InvalidJwtException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.reactive.function.BodyInserter;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
-import reactor.core.publisher.Mono;
 import site.chagok.server.common.contstans.SocialType;
 import site.chagok.server.member.service.MemberLoggingService;
+import site.chagok.server.security.dto.JwtTokenSetDto;
 import site.chagok.server.security.dto.SignInRequestDto;
 import site.chagok.server.security.dto.SignInResponseDto;
 
-import javax.annotation.PostConstruct;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -60,7 +57,7 @@ public class AuthService {
         2. DB에 없으면 회원가입
         3. 헤더에 JWT 토큰 발급
      */
-    public SignInResponseDto signIn(SignInRequestDto signInRequestDto) throws JsonProcessingException {
+    public SignInResponseDto signIn(SignInRequestDto signInRequestDto) throws JsonProcessingException{
 
         String userEmail = null;
         // userEmail 획득
@@ -75,13 +72,16 @@ public class AuthService {
         boolean isSignUp = memberLoggingService.signUp(userEmail, signInRequestDto.getSocialType());
 
         // jwt토큰 사용자 이메일, 권한
-        String jwtToken = jwtTokenService.constructJWTToken(userEmail, Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")));
+        JwtTokenSetDto newTokenSet = jwtTokenService.issueJWTToken(userEmail, List.of("ROLE_USER"));
 
-        return SignInResponseDto.builder()
-                .signUp(isSignUp)
-                .jwtToken(jwtToken)
-                .refreshToken("12345")
-                .build();
+        return new SignInResponseDto(newTokenSet, isSignUp);
+    }
+
+    public SignInResponseDto refresh(JwtTokenSetDto jwtTokenSetDto)  {
+
+        JwtTokenSetDto newTokenSet = jwtTokenService.validateRefreshToken(jwtTokenSetDto);
+
+        return new SignInResponseDto(newTokenSet, false);
     }
 
     // 소셜 로그인 사용자로부터 이메일 획득
