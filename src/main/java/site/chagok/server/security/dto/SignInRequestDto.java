@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import site.chagok.server.common.contstans.SocialType;
 
 @Getter
@@ -17,4 +18,6 @@ public class SignInRequestDto {
     SocialType socialType;
     @ApiModelProperty(name = "authorizationToken", value = "authorization 토큰", example = "23109f0u310qeqeqee3910u3190u390u309u13...")
     String authorizationToken;
+    @ApiModelProperty(name = "test", value = "test 요청 구분", example = "true or false")
+    Boolean test = false;
 }

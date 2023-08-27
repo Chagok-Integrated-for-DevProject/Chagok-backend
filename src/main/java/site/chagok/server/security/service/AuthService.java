@@ -42,6 +42,8 @@ public class AuthService {
 
     @Value("${front.kakao.redirect-uri}")
     private String kakaoRedirectUri;
+    @Value("${front.kakao.redirect-test-uri}")
+    private String kakaoTestRedirectUri;
     @Value("${front.kakao.client-id}")
     private String kakaoClientId;
 
@@ -67,7 +69,7 @@ public class AuthService {
         if (signInRequestDto.getSocialType() == SocialType.Google)
             userEmail = getGoogleCredential(signInRequestDto.getAccessToken());
         else if (signInRequestDto.getSocialType() == SocialType.Kakao)
-            userEmail = getKakaoResponse(signInRequestDto.getAuthorizationToken());
+            userEmail = getKakaoResponse(signInRequestDto.getAuthorizationToken(), signInRequestDto.getTest());
         else
             throw new RuntimeException("social type error");
 
@@ -110,7 +112,7 @@ public class AuthService {
         return userMap.get("email").asText();
     }
 
-    private String getKakaoResponse(String authorizationToken) throws JsonProcessingException {
+    private String getKakaoResponse(String authorizationToken, boolean isTest) throws JsonProcessingException {
         /*
             authorizationToken 전달받고,
             카카오 authorization server에서 액세스 토큰 획득 이후,
@@ -122,7 +124,7 @@ public class AuthService {
         MultiValueMap<String, String> bodyMap = new LinkedMultiValueMap<>();
         bodyMap.add("grant_type", "authorization_code");
         bodyMap.add("client_id", kakaoClientId);
-        bodyMap.add("redirect_uri", kakaoRedirectUri);
+        bodyMap.add("redirect_uri", (isTest) ? kakaoTestRedirectUri : kakaoRedirectUri);
         bodyMap.add("code", authorizationToken);
 
         String authTokenJsonStr = webClient.post()
