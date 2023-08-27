@@ -1,6 +1,7 @@
 package site.chagok.server.project.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -35,6 +36,8 @@ public class ProjectService {
 
 
     @Transactional
+    @Cacheable(cacheManager = "homeCacheManager",condition = "#searchTerm ==null and #techStacks==null")
+    //검색어와 필터가 없을 때 캐시 처리
     public Page<GetProjectPreviewDto> getProjects(String searchTerm, List<String> techStacks, Pageable pageable){
         Specification<Project> spec  = (root, query, criteriaBuilder) ->null;
         if(searchTerm!=null) {
