@@ -76,10 +76,10 @@ public class JWTTokenService {
             // redis 에 저장
             refreshTokenRepository.save(refreshToken);
 
-            return new AuthInfo(jwt, refreshTokenValue);
+            return new AuthInfo(jwt, refreshTokenValue, true);
 
         } catch (JoseException | MalformedClaimException e) {
-            throw new JwtException("access token issue error");
+            throw new AuthorizationServiceException("access token issue error");
         }
     }
 
@@ -113,7 +113,7 @@ public class JWTTokenService {
 
     public AuthInfo renewRefreshToken(JwtTokenSetDto jwtTokenSetDto) {
 
-        RefreshToken savedRefreshToken = refreshTokenRepository.findByRefreshToken(jwtTokenSetDto.getRefreshToken()).orElseThrow(EntityNotFoundException::new);
+        RefreshToken savedRefreshToken = refreshTokenRepository.findByRefreshToken(jwtTokenSetDto.getRefreshToken()).orElseThrow(() -> new EntityNotFoundException("invalid refresh token"));
 
         /*
             1. 요청한 refreshToken 값과 저장 된 refresh token 값을 비교

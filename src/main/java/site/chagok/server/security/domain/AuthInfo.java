@@ -1,24 +1,22 @@
 package site.chagok.server.security.domain;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import site.chagok.server.security.dto.SignInResponseDto;
+import lombok.*;
+import site.chagok.server.security.dto.ResSignInDto;
 
 @Getter
 @Setter
+@AllArgsConstructor
 public class AuthInfo {
 
-    String jwtToken;
-    String refreshToken;
-    boolean signUp;
+    private String jwtToken;
+    private String refreshToken;
+    private boolean isSignUp;
 
-    public AuthInfo(String jwtToken, String refreshToken) {
-        this.jwtToken = jwtToken;
-        this.refreshToken = refreshToken;
+    public AuthInfo(boolean isSignUp) {
+        this.isSignUp = isSignUp;
     }
 
-    public SignInResponseDto getSignInResDto() {
-        return new SignInResponseDto(this.jwtToken, this.signUp);
+    public ResSignInDto getSignInResDto() {
+        return new ResSignInDto(this.jwtToken, this.isSignUp);
     }
 }
