@@ -136,8 +136,8 @@ public class JWTTokenService {
                 서버측 refresh token과 요청 refresh token 불일치,
                 refresh 의 jwt Id와 요청 jwt 토큰의 id 불일치 시 에러
              */
-            if (isExpiredTime(jwtClaims.getExpirationTime()) || !jwtTokenSetDto.getRefreshToken().equals(savedRefreshToken.getRefreshToken()) || !savedRefreshToken.getJwtId().equals(jwtClaims.getJwtId())) {
-                throw new AuthorizationServiceException("invalid refresh token");
+            if (isNotExpiredTime(jwtClaims.getExpirationTime()) || !jwtTokenSetDto.getRefreshToken().equals(savedRefreshToken.getRefreshToken()) || !savedRefreshToken.getJwtId().equals(jwtClaims.getJwtId())) {
+                throw new AuthorizationServiceException("invalid request or invalid refresh token");
             }
 
             String jwtUserEmail = jwtClaims.getClaimValue("email").toString();
@@ -154,8 +154,8 @@ public class JWTTokenService {
         }
     }
 
-    private boolean isExpiredTime(NumericDate secondsTimeStamp) {
+    private boolean isNotExpiredTime(NumericDate secondsTimeStamp) {
         return LocalDateTime.ofInstant(Instant.ofEpochSecond(secondsTimeStamp.getValue()), TimeZone.getDefault().toZoneId())
-                .isBefore(LocalDateTime.now());
+                .isAfter(LocalDateTime.now());
     }
 }
