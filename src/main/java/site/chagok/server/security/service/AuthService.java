@@ -4,13 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.jose4j.jwt.MalformedClaimException;
-import org.jose4j.jwt.consumer.InvalidJwtException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AuthorizationServiceException;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -22,8 +19,8 @@ import site.chagok.server.member.service.MemberLoggingService;
 import site.chagok.server.security.dto.JwtTokenSetDto;
 import site.chagok.server.security.dto.SignInRequestDto;
 import site.chagok.server.security.dto.SignInResponseDto;
+import site.chagok.server.security.domain.AuthInfo;
 
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -59,7 +56,7 @@ public class AuthService {
         2. DB에 없으면 회원가입
         3. 헤더에 JWT 토큰 발급
      */
-    public SignInResponseDto signIn(SignInRequestDto signInRequestDto) throws JsonProcessingException {
+    public AuthInfo signIn(SignInRequestDto signInRequestDto) throws JsonProcessingException {
 
         String userEmail = null;
         // userEmail 획득
@@ -74,16 +71,15 @@ public class AuthService {
         boolean isSignUp = memberLoggingService.signUp(userEmail, signInRequestDto.getSocialType());
 
         // jwt토큰 사용자 이메일, 권한
-        JwtTokenSetDto newTokenSet = jwtTokenService.issueJWTToken(userEmail, List.of("ROLE_USER"));
+        AuthInfo authInfo = jwtTokenService.issueJWTToken(userEmail, List.of("ROLE_USER"));
+        authInfo.setSignUp(isSignUp);
 
-        return new SignInResponseDto(newTokenSet, isSignUp);
+        return authInfo;
     }
 
-    public SignInResponseDto refresh(JwtTokenSetDto jwtTokenSetDto)  {
+    public AuthInfo refresh(JwtTokenSetDto jwtTokenSetDto)  {
 
-        JwtTokenSetDto newTokenSet = jwtTokenService.validateRefreshToken(jwtTokenSetDto);
-
-        return new SignInResponseDto(newTokenSet, false);
+        return jwtTokenService.validateRefreshToken(jwtTokenSetDto);
     }
 
     // 소셜 로그인 사용자로부터 이메일 획득

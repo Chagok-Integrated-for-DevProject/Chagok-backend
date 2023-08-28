@@ -13,10 +13,12 @@ import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import site.chagok.server.security.domain.AuthInfo;
 import site.chagok.server.security.dto.JwtTokenSetDto;
 import site.chagok.server.security.dto.SignInRequestDto;
 import site.chagok.server.security.dto.SignInResponseDto;
 import site.chagok.server.security.service.AuthService;
+import site.chagok.server.security.util.ResponseUtil;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -33,7 +35,8 @@ public class SecurityController {
     public ResponseEntity<SignInResponseDto> accessTokenEndPoint(@RequestBody SignInRequestDto signInRequestDto){
 
         try {
-            return ResponseEntity.ok().body(authService.signIn(signInRequestDto));
+            return ResponseUtil.createResponseWithCookieAndBody(authService.signIn(signInRequestDto));
+
         } catch (JsonProcessingException e) {
             return new ResponseEntity("cannot get data", HttpStatus.BAD_REQUEST);
         } catch (JwtException e) {
@@ -47,7 +50,7 @@ public class SecurityController {
     public ResponseEntity<SignInResponseDto> getTokenSetEndPoint(@RequestBody JwtTokenSetDto jwtTokenSetDto) {
 
         try {
-            return ResponseEntity.ok().body(authService.refresh(jwtTokenSetDto));
+            return ResponseUtil.createResponseWithCookieAndBody(authService.refresh(jwtTokenSetDto));
         } catch (AuthorizationServiceException | JwtException e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (EntityNotFoundException e) {

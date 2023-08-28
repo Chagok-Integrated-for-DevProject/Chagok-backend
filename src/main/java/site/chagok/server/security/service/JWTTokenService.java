@@ -22,6 +22,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
 import site.chagok.server.security.dto.JwtTokenSetDto;
+import site.chagok.server.security.domain.AuthInfo;
 import site.chagok.server.security.redis.domain.RefreshToken;
 import site.chagok.server.security.redis.domain.RefreshTokenRepository;
 
@@ -39,7 +40,7 @@ public class JWTTokenService {
     private final RsaJsonWebKey rsaJsonWebKey;
     private final RefreshTokenRepository refreshTokenRepository;
 
-    public JwtTokenSetDto issueJWTToken(String email, List<String> roles){
+    public AuthInfo issueJWTToken(String email, List<String> roles){
         rsaJsonWebKey.setKeyId("k1");
 
         JwtClaims claims = new JwtClaims();
@@ -75,7 +76,7 @@ public class JWTTokenService {
             // redis 에 저장
             refreshTokenRepository.save(refreshToken);
 
-            return new JwtTokenSetDto(jwt, refreshTokenValue);
+            return new AuthInfo(jwt, refreshTokenValue);
 
         } catch (JoseException | MalformedClaimException e) {
             throw new JwtException("access token issue error");
@@ -110,7 +111,7 @@ public class JWTTokenService {
         return roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     }
 
-    public JwtTokenSetDto validateRefreshToken(JwtTokenSetDto jwtTokenSetDto) {
+    public AuthInfo validateRefreshToken(JwtTokenSetDto jwtTokenSetDto) {
 
         RefreshToken savedRefreshToken = refreshTokenRepository.findByRefreshToken(jwtTokenSetDto.getRefreshToken()).orElseThrow(EntityNotFoundException::new);
 
