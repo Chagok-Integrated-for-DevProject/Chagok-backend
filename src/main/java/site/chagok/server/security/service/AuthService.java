@@ -6,20 +6,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import site.chagok.server.common.contstans.SocialType;
-import site.chagok.server.member.service.MemberLoggingService;
 import site.chagok.server.security.dto.JwtTokenSetDto;
-import site.chagok.server.security.dto.SignInRequestDto;
-import site.chagok.server.security.dto.SignInResponseDto;
+import site.chagok.server.security.dto.ReqSignInDto;
 import site.chagok.server.security.domain.AuthInfo;
+import site.chagok.server.security.dto.SignUpDto;
 
 import java.util.List;
 
@@ -28,134 +23,61 @@ import java.util.List;
 public class AuthService {
 
     /*
-    프론트측, OAuth 로그인 방식 기반, 소셜 로그인, 로그아웃 서비스
-     */
+        사용자 회원가입, 로그인, 토큰 발급 관리 서비스
+    */
 
-    private final MemberLoggingService memberLoggingService;
+    private final AccountService accountService;
     private final JWTTokenService jwtTokenService;
+    private final OAuthService oAuthService;
 
-    @Value("${front.kakao.redirect-uri}")
-    private String kakaoRedirectUri;
-    @Value("${front.kakao.redirect-test-uri}")
-    private String kakaoTestRedirectUri;
-    @Value("${front.kakao.client-id}")
-    private String kakaoClientId;
 
-    private WebClient webClient = WebClient.create();
+    // 사용자 로그인
+    public AuthInfo signIn(ReqSignInDto reqSignInDto) {
 
-    // 구글 액세스 토큰 주소
-    private final String googleAccessTokenUri = "https://openidconnect.googleapis.com/v1/userinfo";
-    // 카카오 authrization 토큰 주소
-    private final String kakaoAuthTokenUri = "https://kauth.kakao.com/oauth/token";
-    private final String kakaoAccessTokenUri = "https://kapi.kakao.com/v2/user/me";
-
-    // 로그인 서비스
-    /*
-        로그인 과정
-        1. 액세스 토큰으로 인증서버에서 회원 정보 얻어옴
-        2. DB에 없으면 회원가입
-        3. 헤더에 JWT 토큰 발급
-     */
-    public AuthInfo signIn(SignInRequestDto signInRequestDto) throws JsonProcessingException {
-
-        String userEmail = null;
-        // userEmail 획득
-        if (signInRequestDto.getSocialType() == SocialType.Google)
-            userEmail = getGoogleCredential(signInRequestDto.getAccessToken());
-        else if (signInRequestDto.getSocialType() == SocialType.Kakao)
-            userEmail = getKakaoResponse(signInRequestDto.getAuthorizationToken(), signInRequestDto.getTest());
-        else
-            throw new RuntimeException("social type error");
+        String userEmail = getUserEmail(reqSignInDto.getAccessToken(), reqSignInDto.getSocialType());
 
         // 회원가입 유무
-        boolean isSignUp = memberLoggingService.signUp(userEmail, signInRequestDto.getSocialType());
+        boolean isSignUp = accountService.isSignUp(userEmail);
+
+        if (!isSignUp) // 가입이 안되어 있다면,
+            return new AuthInfo(false);
 
         // jwt토큰 사용자 이메일, 권한
-        AuthInfo authInfo = jwtTokenService.issueJWTToken(userEmail, List.of("ROLE_USER"));
-        authInfo.setSignUp(isSignUp);
-
-        return authInfo;
+        return jwtTokenService.issueJWTToken(userEmail, List.of("ROLE_USER"));
     }
 
+    // refresh 토큰 재발급
     public AuthInfo refresh(JwtTokenSetDto jwtTokenSetDto)  {
 
-        return jwtTokenService.validateRefreshToken(jwtTokenSetDto);
+        return jwtTokenService.renewRefreshToken(jwtTokenSetDto);
     }
 
-    // 소셜 로그인 사용자로부터 이메일 획득
-    private String getGoogleCredential(String accessToken) throws JsonProcessingException {
+    // 사용자 회원가입
+    public AuthInfo signUp(SignUpDto signUpDto){
 
-        // access token으로 사용자 정보 획득
-        UriComponentsBuilder googleUriBuilder = UriComponentsBuilder
-                .fromUriString(googleAccessTokenUri)
-                .queryParam("access_token", accessToken);
+        String userEmail = getUserEmail(signUpDto.getAccessToken(), signUpDto.getSocialType());
 
-        String userJsonStr = webClient.get()
-                .uri(googleUriBuilder.toUriString())
-                .retrieve()
-                .onStatus(HttpStatus::is4xxClientError, response -> { // invalid token 에러시,
-                    if (response.statusCode().is4xxClientError())
-                        throw new AuthorizationServiceException("invalid access code");
-                    return null;
-                })
-                .bodyToMono(String.class)
-                .block();
+        accountService.signUp(userEmail, signUpDto);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        JsonNode userMap = objectMapper.readTree(userJsonStr);
-
-        return userMap.get("email").asText();
+        // 회원가입 성공 후 jwt 토큰 발급
+        return jwtTokenService.issueJWTToken(userEmail, List.of("ROLE_USER"));
     }
 
-    private String getKakaoResponse(String authorizationToken, boolean isTest) throws JsonProcessingException {
-        /*
-            authorizationToken 전달받고,
-            카카오 authorization server에서 액세스 토큰 획득 이후,
-            사용자 정보 획득.
-         */
+    // 사용자 user email 얻어오기
+    private String getUserEmail(String accessToken, SocialType socialType){
 
-
-        // authorization token으로 access token 획득
-        MultiValueMap<String, String> bodyMap = new LinkedMultiValueMap<>();
-        bodyMap.add("grant_type", "authorization_code");
-        bodyMap.add("client_id", kakaoClientId);
-        bodyMap.add("redirect_uri", (isTest) ? kakaoTestRedirectUri : kakaoRedirectUri);
-        bodyMap.add("code", authorizationToken);
-
-        String authTokenJsonStr = webClient.post()
-                                .uri(kakaoAuthTokenUri)
-                                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                                .body(BodyInserters.fromFormData(bodyMap))
-                                .retrieve()
-                                .onStatus(HttpStatus::is4xxClientError, response -> { // invalid token 에러시,
-                                    if (response.statusCode().is4xxClientError())
-                                        throw new AuthorizationServiceException("invalid authorization code");
-                                    return null;
-                                })
-                                .bodyToMono(String.class)
-                                .block();
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode authJson = objectMapper.readTree(authTokenJsonStr);
-        String accessToken = authJson.get("access_token").asText();
-
-        // access token 으로 사용자 정보 획득
-        String userJsonStr = webClient.post()
-                .uri(kakaoAccessTokenUri)
-                .header("Authorization", "Bearer " + accessToken)
-                .retrieve()
-                .onStatus(HttpStatus::is4xxClientError, response -> { // invalid token 에러시,
-                    if (response.statusCode().is4xxClientError())
-                        throw new AuthorizationServiceException("invalid access code");
-                    return null;
-                })
-                .bodyToMono(String.class)
-                .block();
-
-        JsonNode userJson = objectMapper.readTree(userJsonStr);
-
-        // 사용자 이메일 반환
-        return userJson.get("kakao_account").get("email").asText();
+         try {
+             switch (socialType) {
+                 case Google:
+                     return oAuthService.getGoogleCredential(accessToken);
+                 case Kakao:
+                     return oAuthService.getKakaoResponse(accessToken);
+                 default:
+                     throw new AuthorizationServiceException("social type error");
+             }
+         } catch (JsonProcessingException e) {
+             throw new AuthorizationServiceException("cannot get user data");
+         }
     }
+
 }

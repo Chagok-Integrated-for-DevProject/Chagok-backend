@@ -105,6 +105,4 @@ public class MemberManageController {
 
         return new ResponseEntity(HttpStatus.OK);
     }
-
-
 }

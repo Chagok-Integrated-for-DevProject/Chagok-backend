@@ -49,11 +49,12 @@ public class Member extends BaseTime {
     private SocialType socialType;
 
     @Builder
-    public Member(String nickName, String email, String profileImg, SocialType socialType) {
+    public Member(String nickName, String email, String profileImg, SocialType socialType, List<String> techStacks) {
         this.nickName = nickName;
         this.email = email;
         this.profileImg = profileImg;
         this.socialType = socialType;
+        this.techStacks = techStacks;
     }
 
     public void updateNickName(String nickName) {
