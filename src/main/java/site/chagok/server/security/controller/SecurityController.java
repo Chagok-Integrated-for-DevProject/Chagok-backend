@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.security.oauth2.jwt.JwtException;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -47,10 +48,10 @@ public class SecurityController {
     @PostMapping("/auth/refresh")
     @ApiOperation(value = "리프레시 토큰 전달")
     @ApiResponses({@ApiResponse(code = 200, message = "리프레시 토큰 갱신 성공"), @ApiResponse(code = 400, message = "refresh token 에러 또는 access token 에러")})
-    public ResponseEntity<SignInResponseDto> getTokenSetEndPoint(@RequestBody JwtTokenSetDto jwtTokenSetDto) {
+    public ResponseEntity<SignInResponseDto> getTokenSetEndPoint(@CookieValue("refreshToken") String refreshToken, @RequestBody String jwtToken) {
 
         try {
-            return ResponseUtil.createResponseWithCookieAndBody(authService.refresh(jwtTokenSetDto));
+            return ResponseUtil.createResponseWithCookieAndBody(authService.refresh(new JwtTokenSetDto(jwtToken, refreshToken)));
         } catch (AuthorizationServiceException | JwtException e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (EntityNotFoundException e) {

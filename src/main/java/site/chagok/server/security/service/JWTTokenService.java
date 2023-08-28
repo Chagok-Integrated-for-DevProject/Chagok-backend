@@ -111,7 +111,7 @@ public class JWTTokenService {
         return roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     }
 
-    public AuthInfo validateRefreshToken(JwtTokenSetDto jwtTokenSetDto) {
+    public AuthInfo renewRefreshToken(JwtTokenSetDto jwtTokenSetDto) {
 
         RefreshToken savedRefreshToken = refreshTokenRepository.findByRefreshToken(jwtTokenSetDto.getRefreshToken()).orElseThrow(EntityNotFoundException::new);
 
@@ -137,7 +137,8 @@ public class JWTTokenService {
                 서버측 refresh token과 요청 refresh token 불일치,
                 refresh 의 jwt Id와 요청 jwt 토큰의 id 불일치 시 에러
              */
-            if (isNotExpiredTime(jwtClaims.getExpirationTime()) || !jwtTokenSetDto.getRefreshToken().equals(savedRefreshToken.getRefreshToken()) || !savedRefreshToken.getJwtId().equals(jwtClaims.getJwtId())) {
+            if (isNotExpiredTime(jwtClaims.getExpirationTime()) || !jwtTokenSetDto.getRefreshToken().equals(savedRefreshToken.getRefreshToken()) ||
+                    !savedRefreshToken.getJwtId().equals(jwtClaims.getJwtId())) {
                 throw new AuthorizationServiceException("invalid request or invalid refresh token");
             }
 

@@ -79,7 +79,7 @@ public class AuthService {
 
     public AuthInfo refresh(JwtTokenSetDto jwtTokenSetDto)  {
 
-        return jwtTokenService.validateRefreshToken(jwtTokenSetDto);
+        return jwtTokenService.renewRefreshToken(jwtTokenSetDto);
     }
 
     // 소셜 로그인 사용자로부터 이메일 획득
