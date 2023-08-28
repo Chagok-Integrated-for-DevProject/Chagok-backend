@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jwt.consumer.InvalidJwtException;
+import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -43,13 +44,10 @@ public class JwtHeaderCheckingFilter extends OncePerRequestFilter {
                 // Security Context에 추가.
                 SecurityContextHolder.getContext().setAuthentication(userAuthToken);
             } catch (InvalidJwtException e) {
-
                 if (e.hasExpired()) { // jwt 유효기간 만료
-
-                } else { //
-
+                    throw new AuthorizationServiceException("access token is expired");
                 }
-                throw new RuntimeException(e);
+                throw new AuthorizationServiceException("access token error");
             }
         }
 

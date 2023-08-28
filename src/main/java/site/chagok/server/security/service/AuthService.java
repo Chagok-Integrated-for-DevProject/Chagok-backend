@@ -59,7 +59,7 @@ public class AuthService {
         2. DB에 없으면 회원가입
         3. 헤더에 JWT 토큰 발급
      */
-    public SignInResponseDto signIn(SignInRequestDto signInRequestDto) throws JsonProcessingException{
+    public SignInResponseDto signIn(SignInRequestDto signInRequestDto) throws JsonProcessingException {
 
         String userEmail = null;
         // userEmail 획득

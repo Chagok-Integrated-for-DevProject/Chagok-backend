@@ -8,6 +8,7 @@ import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.MalformedClaimException;
+import org.jose4j.jwt.NumericDate;
 import org.jose4j.jwt.consumer.InvalidJwtException;
 import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
@@ -16,14 +17,19 @@ import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
 import site.chagok.server.security.dto.JwtTokenSetDto;
 import site.chagok.server.security.redis.domain.RefreshToken;
 import site.chagok.server.security.redis.domain.RefreshTokenRepository;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -33,7 +39,7 @@ public class JWTTokenService {
     private final RsaJsonWebKey rsaJsonWebKey;
     private final RefreshTokenRepository refreshTokenRepository;
 
-    public JwtTokenSetDto issueJWTToken(String email, List<String> roles) {
+    public JwtTokenSetDto issueJWTToken(String email, List<String> roles){
         rsaJsonWebKey.setKeyId("k1");
 
         JwtClaims claims = new JwtClaims();
@@ -71,10 +77,8 @@ public class JWTTokenService {
 
             return new JwtTokenSetDto(jwt, refreshTokenValue);
 
-        } catch (JoseException e) {
-            throw new RuntimeException(e);
-        } catch (MalformedClaimException e) {
-            throw new RuntimeException(e);
+        } catch (JoseException | MalformedClaimException e) {
+            throw new JwtException("access token issue error");
         }
     }
 
@@ -96,10 +100,14 @@ public class JWTTokenService {
         String jwtUserEmail = jwtClaims.getClaimValue("email").toString();
 
         // 권한 설정
-        List<GrantedAuthority> roles = (List<GrantedAuthority>) jwtClaims.getClaimValue("roles");
+        List<GrantedAuthority> roles = getRoles((List<String>) jwtClaims.getClaimValue("roles"));
         User jwtClient = new User(jwtUserEmail, "", roles);
 
         return new UsernamePasswordAuthenticationToken(jwtClient, "", roles); // authentication token return
+    }
+
+    private List<GrantedAuthority> getRoles(List<String> roles) {
+        return roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     }
 
     public JwtTokenSetDto validateRefreshToken(JwtTokenSetDto jwtTokenSetDto) {
@@ -122,10 +130,13 @@ public class JWTTokenService {
         try {
             //  jwt validating
             JwtClaims jwtClaims = jwtConsumer.processToClaims(jwtTokenSetDto.getJwtToken());
-            log.info("JWT validation succeeded! " + jwtClaims);
 
-            // 서버측 refresh token과 요청 refresh token 불일치 또는 refresh 의 jwt Id와 요청 jwt 토큰의 id 불일치 시 에러
-            if (!jwtTokenSetDto.getRefreshToken().equals(savedRefreshToken.getRefreshToken()) || !savedRefreshToken.getJwtId().equals(jwtClaims.getJwtId())) {
+            /*
+                아직 jwt 토큰의 유효기간이 남아있거나,
+                서버측 refresh token과 요청 refresh token 불일치,
+                refresh 의 jwt Id와 요청 jwt 토큰의 id 불일치 시 에러
+             */
+            if (isExpiredTime(jwtClaims.getExpirationTime()) || !jwtTokenSetDto.getRefreshToken().equals(savedRefreshToken.getRefreshToken()) || !savedRefreshToken.getJwtId().equals(jwtClaims.getJwtId())) {
                 throw new AuthorizationServiceException("invalid refresh token");
             }
 
@@ -138,12 +149,13 @@ public class JWTTokenService {
             // jwt 토큰, refresh 토큰 새로 발급
             return this.issueJWTToken(jwtUserEmail, roles);
 
-
-        } catch (InvalidJwtException e) { // exception 처리
-            throw new AuthorizationServiceException("invalid refresh token");
-        } catch (MalformedClaimException e) {
-            throw new AuthorizationServiceException("jwt token error");
+        } catch (MalformedClaimException | InvalidJwtException e) {
+            throw new JwtException("jwt token error");
         }
+    }
 
+    private boolean isExpiredTime(NumericDate secondsTimeStamp) {
+        return LocalDateTime.ofInstant(Instant.ofEpochSecond(secondsTimeStamp.getValue()), TimeZone.getDefault().toZoneId())
+                .isBefore(LocalDateTime.now());
     }
 }
