@@ -28,7 +28,7 @@ public class FireBaseService {
 
 
     // firebase 초기화
-//    @PostConstruct
+    @PostConstruct
     public void init() throws IOException {
 
         FirebaseOptions options = FirebaseOptions.builder()
