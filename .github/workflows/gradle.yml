@@ -81,7 +81,8 @@ jobs:
           docker pull ${{ secrets.DOCKER_USERNAME }}/chagok:latest
           docker tag ${{ secrets.DOCKER_USERNAME }}/chagok:latest chagok:latest
           docker stop $(docker ps -a -q) 
-          docker run -d --rm -p 8080:8080 chagok:latest
+          docker run -d --rm -p 8080:8080 chagok:latest --network redis-network --memory 1024m chagok:latest
+          docker run -d --rm -p 6379:6379 redis:latest --network redis-network --memory 256m redis
 
           
           docker rm $(docker ps --filter 'status=exited' -a -q)
