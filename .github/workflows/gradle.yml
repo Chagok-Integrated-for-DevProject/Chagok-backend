@@ -47,6 +47,13 @@ jobs:
           echo "${{ secrets.PROPERTIES_OAUTH }}" > ./application-oauth.properties
       shell: bash
 
+    - name: make application-real.properties
+      run: |
+          cd ./src/main/resources
+          touch ./application-real.properties
+          echo "${{ secrets.PROPERTIES_REAL }}" > ./application-real.properties
+      shell: bash
+
     - name: make chagok-project-firebase-secure.json
       id: create-json
       uses: jsdaniell/create-json@v1.2.2
