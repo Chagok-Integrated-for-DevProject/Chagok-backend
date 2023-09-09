@@ -47,6 +47,13 @@ jobs:
           echo "${{ secrets.PROPERTIES_OAUTH }}" > ./application-oauth.properties
       shell: bash
 
+    - name: make application-real.properties
+      run: |
+          cd ./src/main/resources
+          touch ./application-real.properties
+          echo "${{ secrets.PROPERTIES_REAL }}" > ./application-real.properties
+      shell: bash
+
     - name: make chagok-project-firebase-secure.json
       id: create-json
       uses: jsdaniell/create-json@v1.2.2
@@ -81,7 +88,7 @@ jobs:
           docker pull ${{ secrets.DOCKER_USERNAME }}/chagok:latest
           docker tag ${{ secrets.DOCKER_USERNAME }}/chagok:latest chagok:latest
           docker stop $(docker ps -a -q) 
-          docker run -d --rm -p 8080:8080 --net redis-network --memory 1024m chagok:latest
+          docker run -d --rm -p 8443:8443 --net redis-network --memory 1024m chagok:latest
           docker run -d --rm -p 6379:6379 --net redis-network --memory 256m redis:latest
 
 
