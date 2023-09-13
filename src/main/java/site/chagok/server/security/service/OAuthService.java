@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.grpc.netty.shaded.io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,16 +39,15 @@ public class OAuthService {
 
     // 카카오 access 토큰 주소
     private final String kakaoAccessTokenUri = "https://kapi.kakao.com/v2/user/me";
-    public WebClient getHttpsEnableWebClient(){
-        HttpClient httpClient = HttpClient.create().secure(t -> {
-            try {
-                t.sslContext(SslContextBuilder.forClient().trustManager(InsecureTrustManagerFactory.INSTANCE).build());
-            } catch (SSLException e) {
-                log.error("SSLException\n", e);
-            }
-        });
+
+    public OAuthService() throws SSLException {
+    }
+
+    public WebClient getHttpsEnableWebClient() throws SSLException {
+        SslContext sslContext = SslContextBuilder.forClient().build();
         return WebClient.builder()
-                .clientConnector(new ReactorClientHttpConnector(httpClient))
+                .clientConnector(new ReactorClientHttpConnector
+                        (HttpClient.create().secure(t->t.sslContext(sslContext))))
                 .build();
     }
 
