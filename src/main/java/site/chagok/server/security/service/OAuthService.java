@@ -34,10 +34,10 @@ public class OAuthService {
     private WebClient webClient = getHttpsEnableWebClient();
 
     // 구글 액세스 토큰 주소
-    private final String googleAccessTokenUri = "http://openidconnect.googleapis.com/v1/userinfo";
+    private final String googleAccessTokenUri = "https://openidconnect.googleapis.com/v1/userinfo";
 
     // 카카오 access 토큰 주소
-    private final String kakaoAccessTokenUri = "http://kapi.kakao.com/v2/user/me";
+    private final String kakaoAccessTokenUri = "https://kapi.kakao.com/v2/user/me";
     public WebClient getHttpsEnableWebClient(){
         HttpClient httpClient = HttpClient.create().secure(t -> {
             try {
