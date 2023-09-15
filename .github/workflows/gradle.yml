@@ -47,12 +47,12 @@ jobs:
           echo "${{ secrets.PROPERTIES_OAUTH }}" > ./application-oauth.properties
       shell: bash
 
-    - name: make application-real.properties
-      run: |
-          cd ./src/main/resources
-          touch ./application-real.properties
-          echo "${{ secrets.PROPERTIES_REAL }}" > ./application-real.properties
-      shell: bash
+    # - name: make application-real.properties
+    #   run: |
+    #       cd ./src/main/resources
+    #       touch ./application-real.properties
+    #       echo "${{ secrets.PROPERTIES_REAL }}" > ./application-real.properties
+    #   shell: bash
 
     - name: make chagok-project-firebase-secure.json
       id: create-json
@@ -84,6 +84,7 @@ jobs:
         host: ${{ secrets.SSH_HOST}}
         username: root
         password: ${{ secrets.SSH_PASSWORD }}
+        port: 2022
         script: |
           docker pull ${{ secrets.DOCKER_USERNAME }}/chagok:latest
           docker tag ${{ secrets.DOCKER_USERNAME }}/chagok:latest chagok:latest
