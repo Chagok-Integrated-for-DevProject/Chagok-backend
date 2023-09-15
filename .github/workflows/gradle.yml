@@ -47,12 +47,12 @@ jobs:
           echo "${{ secrets.PROPERTIES_OAUTH }}" > ./application-oauth.properties
       shell: bash
 
-    - name: make application-real.properties
-      run: |
-          cd ./src/main/resources
-          touch ./application-real.properties
-          echo "${{ secrets.PROPERTIES_REAL }}" > ./application-real.properties
-      shell: bash
+    # - name: make application-real.properties
+    #   run: |
+    #       cd ./src/main/resources
+    #       touch ./application-real.properties
+    #       echo "${{ secrets.PROPERTIES_REAL }}" > ./application-real.properties
+    #   shell: bash
 
     - name: make chagok-project-firebase-secure.json
       id: create-json
@@ -82,6 +82,7 @@ jobs:
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.SSH_HOST}}
+        port: 2022
         username: root
         password: ${{ secrets.SSH_PASSWORD }}
         script: |
