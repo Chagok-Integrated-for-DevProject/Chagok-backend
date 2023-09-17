@@ -67,7 +67,7 @@ public class AuthService {
 
     // 사용자 user email 얻어오기
     private String getUserEmail(String accessToken, SocialType socialType){
-        disableSslVerification();
+        //disableSslVerification();
 
          try {
              switch (socialType) {

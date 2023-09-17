@@ -17,6 +17,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import reactor.netty.http.client.HttpClient;
 
 import javax.net.ssl.SSLException;
+import java.time.Duration;
 
 @Slf4j
 @Service
@@ -32,7 +33,7 @@ public class OAuthService {
         3. 헤더에 JWT 토큰 발급
      */
 
-    private WebClient webClient = getHttpsEnableWebClient();
+    private WebClient webClient = getProxyEnableWebClient();
 
     // 구글 액세스 토큰 주소
     private final String googleAccessTokenUri = "https://openidconnect.googleapis.com/v1/userinfo";
@@ -43,11 +44,13 @@ public class OAuthService {
     public OAuthService() throws SSLException {
     }
 
-    public WebClient getHttpsEnableWebClient() throws SSLException {
-        SslContext sslContext = SslContextBuilder.forClient().build();
+    public WebClient getProxyEnableWebClient(){
+        HttpClient httpClient = HttpClient.create()
+                .responseTimeout(Duration.ofMillis(20000))
+                .proxyWithSystemProperties();
+//        SslContext sslContext = SslContextBuilder.forClient().build();
         return WebClient.builder()
-                .clientConnector(new ReactorClientHttpConnector
-                        (HttpClient.create().secure(t->t.sslContext(sslContext))))
+                .clientConnector(new ReactorClientHttpConnector(httpClient))
                 .build();
     }
 
