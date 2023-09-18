@@ -3,13 +3,23 @@ package site.chagok.server.security.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.grpc.netty.shaded.io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
+import reactor.netty.http.client.HttpClient;
 
+import javax.net.ssl.SSLException;
+import java.time.Duration;
+
+@Slf4j
 @Service
 public class OAuthService {
 
@@ -23,7 +33,7 @@ public class OAuthService {
         3. 헤더에 JWT 토큰 발급
      */
 
-    private WebClient webClient = WebClient.create();
+    private WebClient webClient = getProxyEnableWebClient();
 
     // 구글 액세스 토큰 주소
     private final String googleAccessTokenUri = "https://openidconnect.googleapis.com/v1/userinfo";
@@ -31,6 +41,18 @@ public class OAuthService {
     // 카카오 access 토큰 주소
     private final String kakaoAccessTokenUri = "https://kapi.kakao.com/v2/user/me";
 
+    public OAuthService() throws SSLException {
+    }
+
+    public WebClient getProxyEnableWebClient(){
+        HttpClient httpClient = HttpClient.create()
+                .responseTimeout(Duration.ofMillis(20000))
+                .proxyWithSystemProperties();
+//        SslContext sslContext = SslContextBuilder.forClient().build();
+        return WebClient.builder()
+                .clientConnector(new ReactorClientHttpConnector(httpClient))
+                .build();
+    }
 
     // 소셜 로그인 사용자로부터 이메일 획득
     public String getGoogleCredential(String accessToken) throws JsonProcessingException {
@@ -64,7 +86,6 @@ public class OAuthService {
             카카오 authorization server에서 액세스 토큰 획득 이후,
             사용자 정보 획득.
          */
-
         // access token 으로 사용자 정보 획득
         String userJsonStr = webClient.post()
                 .uri(kakaoAccessTokenUri)
@@ -85,4 +106,5 @@ public class OAuthService {
         // 사용자 이메일 반환
         return userJson.get("kakao_account").get("email").asText();
     }
+
 }
