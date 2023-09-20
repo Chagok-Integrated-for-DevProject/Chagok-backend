@@ -16,6 +16,7 @@ import site.chagok.server.security.dto.JwtTokenSetDto;
 import site.chagok.server.security.dto.ReqSignInDto;
 import site.chagok.server.security.dto.ResSignInDto;
 import site.chagok.server.security.dto.SignUpDto;
+import site.chagok.server.security.service.AccountService;
 import site.chagok.server.security.service.AuthService;
 import site.chagok.server.security.util.ResponseUtil;
 
@@ -28,6 +29,7 @@ import javax.persistence.EntityNotFoundException;
 public class SecurityController {
 
     private final AuthService authService;
+    private final AccountService accountService;
 
     @PostMapping("/signIn")
     @ApiOperation(value = "로그인", notes = "가입이 되지 않은 상태라면, isSignUp 이 false, 가입이 되어있는 상태라면, isSignUp이 true 및 jwt, refresh 토큰(쿠키:refreshToken - httpOnly, secure 적용) 발급")
@@ -69,6 +71,20 @@ public class SecurityController {
             return ResponseUtil.createResponseWithCookieAndBody(authService.signUp(signUpDto));
         } catch (AuthorizationServiceException e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/delete")
+    @ApiOperation(value = "사용자 회원탈퇴", notes = "회원탈퇴 api")
+    @ApiResponses({@ApiResponse(code = 200, message = "회원탈퇴 성공"), @ApiResponse(code = 400, message = "회원탈퇴 에러")})
+    public ResponseEntity deleteAccount() {
+
+        try {
+            accountService.deleteAccount();
+            return new ResponseEntity(HttpStatus.OK);
+
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity("invalid member", HttpStatus.BAD_REQUEST);
         }
     }
 

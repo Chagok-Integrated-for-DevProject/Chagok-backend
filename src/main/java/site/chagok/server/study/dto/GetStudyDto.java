@@ -25,9 +25,6 @@ public class GetStudyDto {
 
     @ApiModelProperty(notes = "스터디 제목", example = "xx스터디 구해요")
     private String title;
-    @ApiModelProperty(notes = "사용자닉네임", example = "apple123")
-    private String nickName;
-
     @ApiModelProperty(notes = "스터디 본문 (html 태그 포함)")
     private String content;
 

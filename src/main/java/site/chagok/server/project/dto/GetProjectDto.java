@@ -26,8 +26,6 @@ public class GetProjectDto {
 
     @ApiModelProperty(notes = "프로젝트 제목", example = "xx프로젝트 모집합니다")
     private String title;
-    @ApiModelProperty(notes = "사용자 닉네임", example = "apple123")
-    private String nickName;
     @ApiModelProperty(notes = "프로젝트 본문 (html 태그 포함)")
     private String content;
     @ApiModelProperty(notes = "프로젝트 url", example = "https://hoooollaaaa.com/...")

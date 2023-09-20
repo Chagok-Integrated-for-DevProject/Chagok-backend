@@ -1,10 +1,7 @@
 package site.chagok.server.study.domain;
 
-import io.swagger.annotations.ApiModel;
 import lombok.*;
-import org.hibernate.annotations.BatchSize;
 import site.chagok.server.common.contstans.SiteType;
-import site.chagok.server.common.contstans.TechStack;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -22,12 +19,10 @@ public class Study {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @OneToMany(mappedBy = "study")
+    @OneToMany(mappedBy = "study", cascade = CascadeType.REMOVE)
     private List<StudyScrap> studyScraps = new ArrayList<>();
 
     private String title;
-
-    private String nickname;
 
     private LocalDateTime createdTime;
 
@@ -47,16 +42,13 @@ public class Study {
     @ElementCollection(targetClass = String.class,fetch = FetchType.LAZY)
     @CollectionTable(name = "study_tech_stacks", joinColumns = @JoinColumn(name = "study_id"))
     @Column(name = "tech_stack", nullable = false)
-    private List<String> techStacks = new ArrayList<>();
-
-//    @ElementCollection(fetch = FetchType.EAGER)
-//    @Enumerated(EnumType.STRING)
-//    private List<String> techStacks = new ArrayList<>();
+    private List<String> techStacks = new ArrayList<>();;
 
     public void addViewCount(){
         this.viewCount++;
         this.hotCount++;
     }
+
     public void addScrapCount(int add){
         this.scrapCount += add;
         this.hotCount -= (add*5);

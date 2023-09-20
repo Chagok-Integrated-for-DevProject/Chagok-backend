@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AuthorizationServiceException;
-import org.springframework.security.oauth2.client.ClientAuthorizationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.chagok.server.contest.dto.*;
@@ -14,21 +13,18 @@ import site.chagok.server.contest.domain.Comment;
 import site.chagok.server.contest.domain.Contest;
 import site.chagok.server.contest.repository.ContestRepository;
 import site.chagok.server.member.domain.Member;
-import site.chagok.server.member.repository.MemberRepository;
-import site.chagok.server.member.util.MemberCredential;
+import site.chagok.server.member.service.MemberCredentialService;
 
 import javax.persistence.EntityNotFoundException;
-import javax.security.sasl.AuthenticationException;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class ContestService {
 
     private final ContestRepository contestRepository;
-    private final MemberRepository memberRepository;
     private final CommentRepository commentRepository;
+    private final MemberCredentialService credentialService;
 
     @Transactional
     public GetContestDto getContest(Long contestId){
@@ -96,8 +92,7 @@ public class ContestService {
     public Long makeComment(CommentDto commentDto){
         Contest contest = contestRepository.findById(commentDto.getContestId()).orElseThrow(EntityNotFoundException::new);
         // 로그인 사용자 조회
-        String email = MemberCredential.getLoggedMemberEmail();
-        Member member = memberRepository.findByEmail(email).orElseThrow(EntityNotFoundException::new);
+        Member member = credentialService.getMember();
 
         // 댓글 생성 Dto to Entity
         Comment comment = Comment.builder()
@@ -123,8 +118,7 @@ public class ContestService {
     public Long updateComment(CommentUpdateDto commentUpdateDto) {
 
         // 사용자 조회
-        String userEmail = MemberCredential.getLoggedMemberEmail();
-        Member member = memberRepository.findByEmail(userEmail).orElseThrow(EntityNotFoundException::new);
+        Member member = credentialService.getMember();
 
         // 댓글 조회
         Comment comment = commentRepository.findById(commentUpdateDto.getCommentId()).orElseThrow(EntityNotFoundException::new);
@@ -142,8 +136,7 @@ public class ContestService {
     public Long deleteComment(Long commentId) {
 
         // 사용자 조회
-        String userEmail = MemberCredential.getLoggedMemberEmail();
-        Member member = memberRepository.findByEmail(userEmail).orElseThrow(EntityNotFoundException::new);
+        Member member = credentialService.getMember();
 
         // 댓글 조회
         Comment comment = commentRepository.findById(commentId).orElseThrow(EntityNotFoundException::new);

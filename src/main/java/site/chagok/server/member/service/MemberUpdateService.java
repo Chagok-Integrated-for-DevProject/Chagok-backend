@@ -12,7 +12,6 @@ import site.chagok.server.member.domain.Member;
 import site.chagok.server.member.dto.BoardScrapDto;
 import site.chagok.server.member.exception.NickNameExistsException;
 import site.chagok.server.member.repository.MemberRepository;
-import site.chagok.server.member.util.MemberCredential;
 import site.chagok.server.project.domain.Project;
 import site.chagok.server.project.domain.ProjectScrap;
 import site.chagok.server.project.repository.ProjectRepository;
@@ -31,10 +30,9 @@ import java.util.List;
 public class MemberUpdateService {
 
     /*
-    사용자 정보 관리
+    멤버관리 - 사용자 정보 관리 서비스
      */
 
-    private final MemberRepository memberRepository;
     private final ContestRepository contestRepository;
     private final ContestScrapRepository contestScrapRepository;
     private final ProjectRepository projectRepository;
@@ -42,6 +40,8 @@ public class MemberUpdateService {
     private final StudyRepository studyRepository;
     private final StudyScrapRepository studyScrapRepository;
     private final MemberInfoService memberInfoService;
+    private final MemberCredentialService credentialService;
+
 
     /*
        이미지 수정, 닉네임 수정, 기술태크 수정, 스크랩
@@ -54,10 +54,7 @@ public class MemberUpdateService {
         if (alreadyUsed)
             throw new NickNameExistsException("nickname already exists");
 
-        // 해당 닉네임이 존재하지 않을때,
-        String memberEmail = MemberCredential.getLoggedMemberEmail();
-
-        Member member = memberRepository.findByEmail(memberEmail).orElseThrow(EntityNotFoundException::new);
+        Member member = credentialService.getMember();
         member.updateNickName(nickName);
     }
 
@@ -73,9 +70,8 @@ public class MemberUpdateService {
         if (!categoryList.contains(category)) {
             throw new IllegalStateException();
         }
-        
-        String userEmail = MemberCredential.getLoggedMemberEmail();
-        Member member = memberRepository.findByEmail(userEmail).orElseThrow(EntityExistsException::new);
+
+        Member member = credentialService.getMember();
 
         switch (category) {
             case "contest" : {
@@ -114,9 +110,7 @@ public class MemberUpdateService {
     // 기술스택 업데이트
     @Transactional
     public void updateTechStacks(List<String> techStacks) {
-        String userEmail = MemberCredential.getLoggedMemberEmail();
-
-        Member member = memberRepository.findByEmail(userEmail).orElseThrow(EntityNotFoundException::new);
+        Member member = credentialService.getMember();
 
         member.updateTechStacks(techStacks);
     }

@@ -1,6 +1,5 @@
 package site.chagok.server.study.service;
 
-import io.grpc.netty.shaded.io.netty.handler.codec.socks.SocksRequestType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,8 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.chagok.server.common.contstans.PostType;
 import site.chagok.server.member.domain.Member;
-import site.chagok.server.member.repository.MemberRepository;
-import site.chagok.server.member.util.MemberCredential;
+import site.chagok.server.member.service.MemberCredentialService;
 import site.chagok.server.study.domain.Study;
 import site.chagok.server.study.dto.GetRecommendedStudyDto;
 import site.chagok.server.study.dto.GetStudyDto;
@@ -18,7 +16,6 @@ import site.chagok.server.study.dto.GetStudyPreviewDto;
 import site.chagok.server.study.repository.StudyRepository;
 import site.chagok.server.study.repository.StudySpecification;
 
-import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,7 +25,7 @@ import java.util.stream.Collectors;
 public class StudyService {
 
     private final StudyRepository studyRepository;
-    private final MemberRepository memberRepository;
+    private final MemberCredentialService credentialService;
 
     @Transactional
     public Page<GetStudyPreviewDto> getStudies(String searchTerm, List<String> techStacks, Pageable pageable){
@@ -48,15 +45,14 @@ public class StudyService {
                 .techStacks(s.getTechStacks())
                 .viewCount(s.getViewCount())
                 .scrapCount(s.getScrapCount())
-                .nickName(s.getNickname())
                 .postType(PostType.STUDY)
                 .createdTime(s.getCreatedTime())
                 .build());
     }
     @Transactional
     public List<GetRecommendedStudyDto> getRecommendedStudy(){
-        String userEmail = MemberCredential.getLoggedMemberEmail();
-        Member member = memberRepository.findByEmail(userEmail).orElseThrow(EntityNotFoundException::new);
+
+        Member member = credentialService.getMember();
         return studyRepository.getRecommendedStudy(member.getTechStacks()).stream().map(
                 s-> GetRecommendedStudyDto.builder()
                         .studyId(s.getId())
@@ -80,7 +76,6 @@ public class StudyService {
                 .viewCount(study.getViewCount())
                 .scrapCount(study.getScrapCount())
                 .studyId(study.getId())
-                .nickName(study.getNickname())
                 .build();
     }
     @Transactional
@@ -89,7 +84,6 @@ public class StudyService {
         study.addViewCount();
         return GetStudyDto.builder()
                 .title(study.getTitle())
-                .nickName(study.getNickname())
                 .siteType(study.getSiteType())
                 .createdTime(study.getCreatedTime())
                 .content(study.getContent())

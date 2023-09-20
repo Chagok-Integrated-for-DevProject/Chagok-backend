@@ -20,5 +20,7 @@ public interface ContestRepository extends JpaRepository<Contest,Long> {
 
 
     Page<Contest> findByTitleContaining(@Nullable  @Param("title") String searchTerm , Pageable pageable);
+
+    @Query("select c from Contest c where c.endDate > current_timestamp")
     Page<Contest> findAll(Pageable pageable);
 }

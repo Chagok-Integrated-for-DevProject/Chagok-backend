@@ -25,11 +25,10 @@ public class Project {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @OneToMany(mappedBy = "project", orphanRemoval = true)
+    @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE)
     private List<ProjectScrap> projectScraps = new ArrayList<>();
 
     private String title;
-    private String nickname;
     private LocalDateTime createdTime;
     private int viewCount;
     private String sourceUrl;
@@ -45,10 +44,6 @@ public class Project {
     @CollectionTable(name = "project_tech_stacks", joinColumns = @JoinColumn(name = "project_id"))
     @Column(name = "tech_stacks", nullable = false)
     private List<String> techStacks = new ArrayList<>();
-
-//    @ElementCollection
-//    @Enumerated(EnumType.STRING)
-//    private List<TechStack> techStacks = new ArrayList<>();
 
     public void addViewCount(){
         this.viewCount++;

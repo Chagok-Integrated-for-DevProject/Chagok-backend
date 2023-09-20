@@ -18,9 +18,9 @@ public class Contest {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @OneToMany(mappedBy = "contest", orphanRemoval = true)
+    @OneToMany(mappedBy = "contest", cascade = CascadeType.REMOVE)
     private List<ContestScrap> contestScraps = new ArrayList<>();
-    @OneToMany(mappedBy = "contest",orphanRemoval = true)
+    @OneToMany(mappedBy = "contest")
     private List<Comment> comments = new ArrayList<>();
 
     private String title;

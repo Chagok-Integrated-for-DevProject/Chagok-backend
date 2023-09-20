@@ -32,7 +32,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Slf4j
 @RequiredArgsConstructor
 @Service
 public class JWTTokenService {
@@ -96,7 +95,6 @@ public class JWTTokenService {
 
         //  jwt validating
         JwtClaims jwtClaims = jwtConsumer.processToClaims(jwt);
-        log.info("JWT validation succeeded! " + jwtClaims);
 
         String jwtUserEmail = jwtClaims.getClaimValue("email").toString();
 

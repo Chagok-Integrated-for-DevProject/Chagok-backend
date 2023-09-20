@@ -13,7 +13,7 @@ public class ProjectSpecification {
         return (root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("title"),"%"+title+"%");
     }
     public static Specification<Project> equalsTechStack(List<String> techStacks){
-        System.out.println(techStacks);
+
         return (root, query, criteriaBuilder) -> {
             Expression<List<String>> techStacksPath = root.join("techStacks");
             //techStacks는 다른 테이블이기에 .get이 아닌 .join

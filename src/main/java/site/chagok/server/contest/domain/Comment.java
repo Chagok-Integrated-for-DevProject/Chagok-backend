@@ -51,6 +51,11 @@ public class Comment extends BaseTime {
         this.deleted = true;
     }
 
+    public void setDeletedNoMember() {
+        this.deleted = true;
+        this.member = null;
+    }
+
     public void updateComment(String content, String kakaoRef) {
         this.content = content;
         this.kakaoRef = kakaoRef;
