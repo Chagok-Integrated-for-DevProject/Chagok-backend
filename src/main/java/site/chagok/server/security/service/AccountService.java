@@ -58,6 +58,14 @@ public class AccountService {
 
         Member member = credentialService.getMember();
 
+        deleteInfo(member);
+
+        // member 삭제
+        memberRepository.delete(member);
+    }
+
+    private void deleteInfo(Member member) { // 사용자 정보 삭제
+
         List<Comment> comments = member.getComments();
 
         // 댓글 삭제처리
@@ -66,7 +74,6 @@ public class AccountService {
         // 프로필 이미지 삭제처리
         memberImgService.deleteProfileImg();
 
-        // member 삭제
-        memberRepository.delete(member);
+        // 스크랩은 cascade에 따라 삭제 처리.
     }
 }

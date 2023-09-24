@@ -22,7 +22,7 @@ import site.chagok.server.security.util.ResponseUtil;
 
 import javax.persistence.EntityNotFoundException;
 
-@Api(tags = "인증 및 회원가입/탈퇴")
+@Api(tags = "인증 및 회원가입/탈퇴, 전부 secure api endpoint (사용자 인증 필요)")
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -34,7 +34,7 @@ public class SecurityController {
     @PostMapping("/signIn")
     @ApiOperation(value = "로그인", notes = "가입이 되지 않은 상태라면, isSignUp 이 false, 가입이 되어있는 상태라면, isSignUp이 true 및 jwt, refresh 토큰(쿠키:refreshToken - httpOnly, secure 적용) 발급")
     @ApiResponses({@ApiResponse(code = 200, message = "서버 인증 성공"), @ApiResponse(code = 400, message = "사용자 정보 획득 에러(oauth2.0 통신과정) 또는 access code 에러")})
-    public ResponseEntity<ResSignInDto> signIn(@RequestBody ReqSignInDto reqSignInDto){
+    public ResponseEntity<ResSignInDto> signIn(@RequestBody ReqSignInDto reqSignInDto) {
 
         try {
             AuthInfo authInfo = authService.signIn(reqSignInDto);
@@ -74,8 +74,8 @@ public class SecurityController {
         }
     }
 
-    @PostMapping("/delete")
-    @ApiOperation(value = "사용자 회원탈퇴", notes = "회원탈퇴 api")
+    @DeleteMapping("/delete")
+    @ApiOperation(value = "사용자 회원탈퇴", notes = "회원탈퇴 api, 댓글은 삭제처리만 되고, 사용자 관련 데이터는 삭제")
     @ApiResponses({@ApiResponse(code = 200, message = "회원탈퇴 성공"), @ApiResponse(code = 400, message = "회원탈퇴 에러")})
     public ResponseEntity deleteAccount() {
 

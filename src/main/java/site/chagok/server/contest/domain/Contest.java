@@ -43,12 +43,16 @@ public class Contest {
         this.commentCount++;
         this.hotCount +=5;
     }
+    public void minusCommentCount() {
+        this.commentCount--;
+        this.hotCount -=5;
+    }
     public void addScrapCount(){
         this.scrapCount++;
         this.hotCount +=10;
     }
-    public void minusCommentCount() {
-        this.commentCount--;
-        this.hotCount -=5;
+    public void minusScrapCount() {
+        this.scrapCount--;
+        this.hotCount -=10;
     }
 }
