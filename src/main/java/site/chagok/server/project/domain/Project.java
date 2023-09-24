@@ -49,8 +49,12 @@ public class Project {
         this.viewCount++;
         this.hotCount++;
     }
-    public void addScrapCount(int add){
-        this.scrapCount += add;
-        this.hotCount -= (add*5);
+    public void addScrapCount() {
+        this.scrapCount++;
+        this.hotCount += 10;
+    }
+    public void minusScrapCount() {
+        this.scrapCount--;
+        this.hotCount -= 10;
     }
 }

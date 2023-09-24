@@ -107,7 +107,7 @@ public class MemberManageController {
     }
 
     @DeleteMapping("/profile-image")
-    @ApiOperation(value = "secure - 사용자 프로필 이미지 삭제")
+    @ApiOperation(value = "secure - 사용자 프로필 이미지 삭제, 사용자의 프로필 이미지 null처리")
     @ApiResponses({@ApiResponse(code = 200, message = "스크랩 삭제 성공"), @ApiResponse(code = 400, message = "프로필 이미지 업데이트 오류")})
     public ResponseEntity deleteProfileImg() {
 

@@ -73,33 +73,40 @@ public class MemberUpdateService {
 
         Member member = credentialService.getMember();
 
+        // 카테고리 종류에 따른 스크랩 추가/삭제
         switch (category) {
             case "contest" : {
+                Contest scrapContest = contestRepository.findById(boardId).orElseThrow(EntityExistsException::new);
                 if (action == ActionType.POST) {
-                    Contest scrapContest = contestRepository.findById(boardId).orElseThrow(EntityExistsException::new);
+                    scrapContest.addScrapCount();
                     ContestScrap contestScrap = new ContestScrap(member, scrapContest);
                     contestScrapRepository.save(contestScrap);
                 } else if (action == ActionType.DELETE) {
+                    scrapContest.minusScrapCount();
                     contestScrapRepository.deleteByContestId(boardId).orElseThrow(EntityNotFoundException::new);
                 }
                 break;
             }
             case "project" : {
+                Project scrapProject = projectRepository.findById(boardId).orElseThrow(EntityExistsException::new);
                 if (action == ActionType.POST) {
-                    Project scrapProject = projectRepository.findById(boardId).orElseThrow(EntityExistsException::new);
+                    scrapProject.addScrapCount();
                     ProjectScrap projectScrap = new ProjectScrap(member, scrapProject);
                     projectScrapRepository.save(projectScrap);
                 } else if (action == ActionType.DELETE) {
+                    scrapProject.minusScrapCount();
                     projectScrapRepository.deleteByProjectId(boardId).orElseThrow(EntityNotFoundException::new);
                 }
                 break;
             }
             case "study" : {
+                Study scrapStudy = studyRepository.findById(boardId).orElseThrow(EntityExistsException::new);
                 if (action == ActionType.POST) {
-                    Study scrapStudy = studyRepository.findById(boardId).orElseThrow(EntityExistsException::new);
+                    scrapStudy.addScrapCount();
                     StudyScrap studyScrap = new StudyScrap(member, scrapStudy);
                     studyScrapRepository.save(studyScrap);
                 } else if (action == ActionType.DELETE) {
+                    scrapStudy.minusScrapCount();
                     studyScrapRepository.deleteByStudyId(boardId).orElseThrow(EntityNotFoundException::new);
                 }
                 break;

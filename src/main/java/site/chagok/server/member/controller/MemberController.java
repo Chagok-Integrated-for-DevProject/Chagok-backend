@@ -11,6 +11,7 @@ import site.chagok.server.member.service.MemberImgService;
 import site.chagok.server.member.service.MemberInfoService;
 import site.chagok.server.member.util.MediaTypeSelector;
 
+import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
 
 
@@ -25,11 +26,16 @@ public class MemberController {
 
     @GetMapping("/info")
     @ApiOperation(value = "secure - 사용자 정보조회(마이페이지)", response = MemberInfoDto.class)
-    public MemberInfoDto getMemberInfo() {
+    @ApiResponses({@ApiResponse(code = 200, message = "스크랩 조회 성공"), @ApiResponse(code = 400, message = "사용자 조회 오류")})
+    public ResponseEntity<MemberInfoDto> getMemberInfo() {
 
-        MemberInfoDto memberInfoDto = memberInfoService.getMemberInfoDto();
+        try {
+            MemberInfoDto memberInfoDto = memberInfoService.getMemberInfoDto();
 
-        return memberInfoDto;
+            return ResponseEntity.ok(memberInfoDto);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity("invalid member", HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("/profile/{image}")
@@ -55,8 +61,10 @@ public class MemberController {
     @ApiImplicitParam(name = "nickname", value = "사용자 중복 확인할 닉네임")
     @ApiResponses({@ApiResponse(code = 200, message = "닉네임 변경 가능"), @ApiResponse(code = 400, message = "닉네임 중복 오류")})
     public ResponseEntity checkNickName(@RequestParam("nickname") String nickName) {
-        if (memberInfoService.checkNicknameExists(nickName))
+
+        if (memberInfoService.checkNicknameExists(nickName)) // 해당 닉네임이 이미 존재한다면..
             return new ResponseEntity("cannot update nickname", HttpStatus.BAD_REQUEST);
+
         return new ResponseEntity(HttpStatus.OK);
     }
 
