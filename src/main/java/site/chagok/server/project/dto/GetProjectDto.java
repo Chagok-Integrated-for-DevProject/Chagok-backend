@@ -11,6 +11,7 @@ import site.chagok.server.common.contstans.SiteType;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 
 @NoArgsConstructor
@@ -41,5 +42,5 @@ public class GetProjectDto {
     private SiteType siteType;
     @ApiModelProperty(notes = "기술스택", example = "String list")
     @JsonProperty("skills")
-    private List<String> techStacks;
+    private Set<String> techStacks;
 }

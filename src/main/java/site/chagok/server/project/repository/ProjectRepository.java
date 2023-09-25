@@ -12,13 +12,15 @@ import site.chagok.server.project.domain.Project;
 import site.chagok.server.study.domain.Study;
 
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface ProjectRepository extends JpaRepository<Project, Long>, JpaSpecificationExecutor<Project> {
 
 
     Page<Project> findAll(Specification<Project> spec, Pageable pageable);
-    @Query("select p from Project p where p.techStacks in :techStack")
-    List<Project> getRecommendedProject(@Param("techStack") List<String> techStack);
+    @Query(value = "select distinct p from Project p join p.techStacks ts where ts in (:techStack)")
+    List<Project> getRecommendedProject(@Param("techStack") Set<String> techStack);
+
 
 }

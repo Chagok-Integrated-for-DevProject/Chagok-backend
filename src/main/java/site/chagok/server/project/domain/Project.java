@@ -8,9 +8,9 @@ import site.chagok.server.common.contstans.SiteType;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-
-
+import java.util.Set;
 
 
 @Entity
@@ -43,7 +43,7 @@ public class Project {
     @ElementCollection(targetClass = String.class, fetch = FetchType.LAZY)
     @CollectionTable(name = "project_tech_stacks", joinColumns = @JoinColumn(name = "project_id"))
     @Column(name = "tech_stacks", nullable = false)
-    private List<String> techStacks = new ArrayList<>();
+    private Set<String> techStacks = new HashSet<>();
 
     public void addViewCount(){
         this.viewCount++;

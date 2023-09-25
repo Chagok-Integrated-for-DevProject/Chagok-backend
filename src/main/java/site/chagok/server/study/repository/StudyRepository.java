@@ -8,10 +8,12 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import site.chagok.server.project.domain.Project;
 import site.chagok.server.study.domain.Study;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 
 @Repository
@@ -21,6 +23,7 @@ public interface StudyRepository extends JpaRepository<Study,Long>, JpaSpecifica
 
 
 
-    @Query("select s from Study s where s.techStacks in :techStack")
-    List<Study> getRecommendedStudy(@Param("techStack") List<String> techStack);
+    @Query("select distinct s from Study s join s.techStacks ts where ts in (:techStack)")
+    List<Study> getRecommendedStudy(@Param("techStack") Set<String> techStack);
+
 }
