@@ -11,7 +11,9 @@ import site.chagok.server.study.domain.StudyScrap;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 //scrap은 오로지 유저의 것 -> orphanRemoval = true
 //commnet는 맴버가 삭제되어도 남아있어야함
@@ -40,7 +42,7 @@ public class Member extends BaseTime {
     @ElementCollection(targetClass = String.class, fetch = FetchType.LAZY)
     @CollectionTable(name = "member_tech_stacks", joinColumns = @JoinColumn(name = "member_id"))
     @Column(name = "tech_stack", nullable = false)
-    private List<String> techStacks = new ArrayList<>();
+    private Set<String> techStacks = new HashSet<>();
 
     private String nickName;
     private String email;
@@ -50,7 +52,7 @@ public class Member extends BaseTime {
     private SocialType socialType;
 
     @Builder
-    public Member(String nickName, String email, String profileImg, SocialType socialType, List<String> techStacks) {
+    public Member(String nickName, String email, String profileImg, SocialType socialType, Set<String> techStacks) {
         this.nickName = nickName;
         this.email = email;
         this.profileImg = profileImg;

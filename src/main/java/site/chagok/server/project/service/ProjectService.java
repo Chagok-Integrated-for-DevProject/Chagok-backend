@@ -80,6 +80,9 @@ public class ProjectService {
     public List<GetRecommendedProjectDto> getRecommendedProject(){
 
         Member member = credentialService.getMember();
+
+
+
         return projectRepository.getRecommendedProject(member.getTechStacks()).stream().map(
                 p-> GetRecommendedProjectDto.builder()
                         .projectId(p.getId())

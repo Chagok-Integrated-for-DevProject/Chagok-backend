@@ -10,6 +10,7 @@ import site.chagok.server.project.dto.GetProjectPreviewDto;
 import site.chagok.server.study.dto.GetStudyPreviewDto;
 
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Builder
@@ -30,7 +31,7 @@ public class MemberInfoDto {
     private String email;
     @ApiModelProperty(notes = "사용자 기술스택")
     @JsonProperty("skills")
-    private List<String> techStacks;
+    private Set<String> techStacks;
 
     @ApiModelProperty(notes = "사용자가 스크랩한 공모전 미리보기 정보들")
     private List<GetContestPreviewDto> contestScraps;
