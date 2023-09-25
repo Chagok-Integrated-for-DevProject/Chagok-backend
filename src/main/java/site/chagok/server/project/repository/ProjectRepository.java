@@ -16,7 +16,7 @@ import java.util.List;
 @Repository
 public interface ProjectRepository extends JpaRepository<Project, Long>, JpaSpecificationExecutor<Project> {
     Page<Project> findAll(Specification<Project> spec, Pageable pageable);
-    @Query("select p from Project p where p.techStacks in :techStack")
+    @Query("select p from Project p where p.techStacks in (:techStack)")
     List<Project> getRecommendedProject(@Param("techStack") List<String> techStack);
 
 }
