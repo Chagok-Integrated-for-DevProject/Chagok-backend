@@ -2,28 +2,18 @@ package site.chagok.server.member.service;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import site.chagok.server.member.domain.Member;
 import site.chagok.server.member.repository.MemberRepository;
-import site.chagok.server.member.util.MemberCredential;
-
-import javax.persistence.EntityNotFoundException;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.FileSystemException;
-import java.nio.file.Files;
 import java.util.Objects;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class ImgService {
+public class MemberImgService {
 
     /*
      이미지 업데이트, 조회 서비스
@@ -31,6 +21,7 @@ public class ImgService {
 
     private final MemberRepository memberRepository;
     private final FireBaseService fireBaseService;
+    private final MemberCredentialService credentialService;
 
 
     @Transactional
@@ -42,9 +33,7 @@ public class ImgService {
             throw new FileUploadException();
         }
 
-        String userEmail = MemberCredential.getLoggedMemberEmail();
-
-        Member member = memberRepository.findByEmail(userEmail).orElseThrow(EntityNotFoundException::new);
+        Member member = credentialService.getMember();
 
         // 파일 저장
         String fileName = fireBaseService.saveImage(imgFile);
@@ -55,6 +44,18 @@ public class ImgService {
 
         // 사용자 엔티티에 파일 이름 갱신
         member.updateProfileImg(fileName);
+    }
+
+    @Transactional
+    public void deleteProfileImg() {
+
+        Member member = credentialService.getMember();
+
+        // 설정했던 이미지 삭제
+        if (member.getProfileImg() != null)
+            fireBaseService.deleteImage(member.getProfileImg());
+
+        member.updateProfileImg(null);
     }
 
     // 이미지 조회

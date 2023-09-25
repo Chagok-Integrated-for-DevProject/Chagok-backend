@@ -37,8 +37,6 @@ public class GetProjectPreviewDto {
     private int scrapCount;
     @ApiModelProperty(notes = "미리보기", example = "xx 프로젝트 모집합니다. 현재...")
     private String preview;
-    @ApiModelProperty(notes = "사용자닉네임", example = "apple123")
-    private String nickName;
     @ApiModelProperty(notes = "글 올린 시간", example = "2023-08-09 15:36:08.762")
     private LocalDateTime createdTime;
 

@@ -2,7 +2,6 @@ package site.chagok.server.project.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -10,19 +9,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.chagok.server.common.contstans.PostType;
 import site.chagok.server.member.domain.Member;
-import site.chagok.server.member.repository.MemberRepository;
-import site.chagok.server.member.util.MemberCredential;
+import site.chagok.server.member.service.MemberCredentialService;
 import site.chagok.server.project.domain.Project;
 import site.chagok.server.project.dto.GetProjectDto;
 import site.chagok.server.project.dto.GetProjectPreviewDto;
 import site.chagok.server.project.dto.GetRecommendedProjectDto;
 import site.chagok.server.project.repository.ProjectRepository;
 import site.chagok.server.project.repository.ProjectSpecification;
-import site.chagok.server.study.domain.Study;
-import site.chagok.server.study.dto.GetRecommendedStudyDto;
-import site.chagok.server.study.dto.GetStudyPreviewDto;
-import site.chagok.server.study.repository.StudySpecification;
-
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
@@ -34,7 +27,7 @@ import java.util.stream.Collectors;
 public class ProjectService {
 
     private final ProjectRepository projectRepository;
-    private final MemberRepository memberRepository;
+    private final MemberCredentialService credentialService;
 
 
     @Transactional
@@ -60,7 +53,6 @@ public class ProjectService {
                 .techStacks(s.getTechStacks())
                 .viewCount(s.getViewCount())
                 .scrapCount(s.getScrapCount())
-                .nickName(s.getNickname())
                 .postType(PostType.PROJECT)
                 .createdTime(s.getCreatedTime())
                 .build());
@@ -81,14 +73,13 @@ public class ProjectService {
                 .viewCount(project.getViewCount())
                 .scrapCount(project.getScrapCount())
                 .projectId(project.getId())
-                .nickName(project.getNickname())
                 .build();
     }
 
     @Transactional
     public List<GetRecommendedProjectDto> getRecommendedProject(){
-        String userEmail = MemberCredential.getLoggedMemberEmail();
-        Member member = memberRepository.findByEmail(userEmail).orElseThrow(EntityNotFoundException::new);
+
+        Member member = credentialService.getMember();
         return projectRepository.getRecommendedProject(member.getTechStacks()).stream().map(
                 p-> GetRecommendedProjectDto.builder()
                         .projectId(p.getId())
@@ -103,7 +94,6 @@ public class ProjectService {
         project.addViewCount();
         return GetProjectDto.builder()
                 .title(project.getTitle())
-                .nickName(project.getNickname())
                 .siteType(project.getSiteType())
                 .createdTime(project.getCreatedTime())
                 .content(project.getContent())

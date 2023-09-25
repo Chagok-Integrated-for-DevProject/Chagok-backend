@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import site.chagok.server.member.constants.ActionType;
 import site.chagok.server.member.dto.BoardScrapDto;
 import site.chagok.server.member.exception.NickNameExistsException;
-import site.chagok.server.member.service.ImgService;
+import site.chagok.server.member.service.MemberImgService;
 import site.chagok.server.member.service.MemberUpdateService;
 
 import javax.persistence.EntityNotFoundException;
@@ -32,7 +32,7 @@ public class MemberManageController {
      */
 
     private final MemberUpdateService memberUpdateService;
-    private final ImgService imgService;
+    private final MemberImgService memberImgService;
 
 
     @PostMapping("/nickname")
@@ -92,15 +92,29 @@ public class MemberManageController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @PostMapping("/profile/image")
+    @PostMapping("/profile-image")
     @ApiOperation(value = "secure - 사용자 프로필 이미지 업데이트", notes = "request body: image - 사용자가 업데이트할 프로필 이미지( multipart형식)")
     @ApiResponses({@ApiResponse(code = 200, message = "스크랩 삭제 성공"), @ApiResponse(code = 400, message = "프로필 이미지 업데이트 오류")})
-    public ResponseEntity updateProfile(@RequestPart(name = "image")MultipartFile profileFile) {
+    public ResponseEntity updateProfileImg(@RequestPart(name = "image")MultipartFile profileFile) {
 
         try {
-            imgService.updateProfileImg(profileFile);
+            memberImgService.updateProfileImg(profileFile);
         } catch (IOException e) {
             return new ResponseEntity("cannot update profile image file", HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/profile-image")
+    @ApiOperation(value = "secure - 사용자 프로필 이미지 삭제, 사용자의 프로필 이미지 null처리")
+    @ApiResponses({@ApiResponse(code = 200, message = "스크랩 삭제 성공"), @ApiResponse(code = 400, message = "프로필 이미지 업데이트 오류")})
+    public ResponseEntity deleteProfileImg() {
+
+        try {
+            memberImgService.deleteProfileImg();
+        }  catch (EntityNotFoundException e) {
+            return new ResponseEntity("cannot update profile image", HttpStatus.BAD_REQUEST);
         }
 
         return new ResponseEntity(HttpStatus.OK);

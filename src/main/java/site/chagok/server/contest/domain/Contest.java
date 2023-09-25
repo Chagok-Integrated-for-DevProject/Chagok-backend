@@ -18,9 +18,9 @@ public class Contest {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @OneToMany(mappedBy = "contest", orphanRemoval = true)
+    @OneToMany(mappedBy = "contest", cascade = CascadeType.REMOVE)
     private List<ContestScrap> contestScraps = new ArrayList<>();
-    @OneToMany(mappedBy = "contest",orphanRemoval = true)
+    @OneToMany(mappedBy = "contest")
     private List<Comment> comments = new ArrayList<>();
 
     private String title;
@@ -43,12 +43,16 @@ public class Contest {
         this.commentCount++;
         this.hotCount +=5;
     }
+    public void minusCommentCount() {
+        this.commentCount--;
+        this.hotCount -=5;
+    }
     public void addScrapCount(){
         this.scrapCount++;
         this.hotCount +=10;
     }
-    public void minusCommentCount() {
-        this.commentCount--;
-        this.hotCount -=5;
+    public void minusScrapCount() {
+        this.scrapCount--;
+        this.hotCount -=10;
     }
 }

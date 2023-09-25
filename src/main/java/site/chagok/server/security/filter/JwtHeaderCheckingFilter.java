@@ -37,22 +37,18 @@ public class JwtHeaderCheckingFilter extends OncePerRequestFilter {
         if (jwtHeader != null && jwtHeader.startsWith("Bearer ")) {
             String jwtToken = jwtHeader.substring(7);
 
-            if (jwtToken.equals("12345")) {// ---- 테스트 코드
-                SecurityContextHolder.getContext().setAuthentication(
-                        new UsernamePasswordAuthenticationToken("ydg98381@gmail.com", null, Collections.singleton(new SimpleGrantedAuthority("ROLE_USER"))));
-            } else {
-                try {
-                    // jwt 기반, UsernamePasswordAuthenticationToken 생성
-                    Authentication userAuthToken = jwtTokenService.validateJwtToken(jwtToken);
 
-                    // Security Context에 추가.
-                    SecurityContextHolder.getContext().setAuthentication(userAuthToken);
-                } catch (InvalidJwtException e) {
-                    if (e.hasExpired()) { // jwt 유효기간 만료
-                        throw new AuthorizationServiceException("access token is expired");
-                    }
-                    throw new AuthorizationServiceException("access token error");
+            try {
+                // jwt 기반, UsernamePasswordAuthenticationToken 생성
+                Authentication userAuthToken = jwtTokenService.validateJwtToken(jwtToken);
+
+                // Security Context에 추가.
+                SecurityContextHolder.getContext().setAuthentication(userAuthToken);
+            } catch (InvalidJwtException e) {
+                if (e.hasExpired()) { // jwt 유효기간 만료
+                    throw new AuthorizationServiceException("access token is expired");
                 }
+                throw new AuthorizationServiceException("access token error");
             }
         }
 

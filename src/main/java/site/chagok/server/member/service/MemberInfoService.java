@@ -8,13 +8,11 @@ import site.chagok.server.contest.service.ContestService;
 import site.chagok.server.member.domain.Member;
 import site.chagok.server.member.dto.MemberInfoDto;
 import site.chagok.server.member.repository.MemberRepository;
-import site.chagok.server.member.util.MemberCredential;
 import site.chagok.server.project.dto.GetProjectPreviewDto;
 import site.chagok.server.project.service.ProjectService;
 import site.chagok.server.study.dto.GetStudyPreviewDto;
 import site.chagok.server.study.service.StudyService;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,18 +20,21 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MemberInfoService {
 
+    /*
+    멤버관리 - 사용자 정보 제공 서비스
+     */
     private final MemberRepository memberRepository;
     private final ContestService contestService;
     private final StudyService studyService;
     private final ProjectService projectService;
+    private final MemberCredentialService credentialService;
 
     @Transactional
     public MemberInfoDto getMemberInfoDto() {
 
-        String email = MemberCredential.getLoggedMemberEmail();
-        Member member = memberRepository.findByEmail(email).orElseThrow(EntityNotFoundException::new);
+        Member member = credentialService.getMember();
 
-        // 사용자가 스크랩했던 공모전 글을 미리보기 dto로 반환
+        // 사용자가 스크랩 했던 공모전 글을 미리보기 dto로 반환
         List<GetContestPreviewDto> contestScraps = getContestPreviewList(member);
         List<GetStudyPreviewDto> studyScraps = getStudyPreviewList(member);
         List<GetProjectPreviewDto> projectScraps = getProjectPreviewDtoList(member);
