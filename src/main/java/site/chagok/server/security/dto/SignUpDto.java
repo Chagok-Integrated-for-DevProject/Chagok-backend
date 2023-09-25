@@ -8,6 +8,7 @@ import lombok.Setter;
 import site.chagok.server.common.contstans.SocialType;
 
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -25,5 +26,5 @@ public class SignUpDto {
 
     @JsonProperty("skills")
     @ApiModelProperty(notes = "사용자 기술스택")
-    private List<String> techStacks;
+    private Set<String> techStacks;
 }

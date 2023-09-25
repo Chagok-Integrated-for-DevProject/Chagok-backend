@@ -19,7 +19,7 @@ public interface ProjectRepository extends JpaRepository<Project, Long>, JpaSpec
 
 
     Page<Project> findAll(Specification<Project> spec, Pageable pageable);
-    @Query(value = "select p from Project p join p.techStacks ts where ts in (:techStack)")
+    @Query(value = "select distinct p from Project p join p.techStacks ts where ts in (:techStack)")
     List<Project> getRecommendedProject(@Param("techStack") Set<String> techStack);
 
 

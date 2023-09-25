@@ -23,7 +23,7 @@ public interface StudyRepository extends JpaRepository<Study,Long>, JpaSpecifica
 
 
 
-    @Query("select s from Study s join s.techStacks ts where ts in (:techStack)")
+    @Query("select distinct s from Study s join s.techStacks ts where ts in (:techStack)")
     List<Study> getRecommendedStudy(@Param("techStack") Set<String> techStack);
 
 }
