@@ -39,84 +39,48 @@ public class MemberManageController {
     @ApiOperation(value="secure - 닉네임 업데이트")
     @ApiImplicitParam(name = "nickname", value = "변경할 닉네임")
     @ApiResponses({@ApiResponse(code = 200, message = "닉네임 변경성공"), @ApiResponse(code = 400, message = "error code, 이미 존재하는 닉네임")})
-    public ResponseEntity updateNickName(@RequestParam("nickname")String nickName, @AuthenticationPrincipal User user) {
+    public void updateNickName(@RequestParam("nickname")String nickName) {
 
-        try {
-            memberUpdateService.updateNickName(nickName);
-        } catch (NickNameExistsException e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-
-        return new ResponseEntity(HttpStatus.OK);
+        memberUpdateService.updateNickName(nickName);
     }
 
     @PostMapping("/scrap")
     @ApiOperation(value = "secure - 게시글 스크랩 추가")
     @ApiResponses({@ApiResponse(code = 200, message = "스크랩 추가 성공"), @ApiResponse(code = 400, message = "error code 스크랩 추가 오류")})
-    public ResponseEntity addScrapBoard(@RequestBody BoardScrapDto boardScrapDto) {
+    public void addScrapBoard(@RequestBody BoardScrapDto boardScrapDto) {
 
-        try {
-            memberUpdateService.manageBoardScrap(boardScrapDto, ActionType.POST);
-        } catch (IllegalStateException e) {
-            return new ResponseEntity("invalid category type", HttpStatus.BAD_REQUEST);
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity("invalid board id", HttpStatus.BAD_REQUEST);
-        }
-
-        return new ResponseEntity(HttpStatus.OK);
+        memberUpdateService.manageBoardScrap(boardScrapDto, ActionType.POST);
     }
 
     @DeleteMapping("/scrap")
     @ApiOperation(value = "secure - 게시글 스크랩 삭제")
     @ApiResponses({@ApiResponse(code = 200, message = "스크랩 삭제 성공"), @ApiResponse(code = 400, message = "error code 스크랩 삭제 오류")})
-    public ResponseEntity deleteScrapBoard(@RequestBody BoardScrapDto boardScrapDto) {
+    public void deleteScrapBoard(@RequestBody BoardScrapDto boardScrapDto) {
 
-        try {
-            memberUpdateService.manageBoardScrap(boardScrapDto, ActionType.DELETE);
-        } catch (IllegalStateException e) {
-            return new ResponseEntity("invalid category type", HttpStatus.BAD_REQUEST);
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity("invalid board id", HttpStatus.BAD_REQUEST);
-        }
-
-        return new ResponseEntity(HttpStatus.OK);
+        memberUpdateService.manageBoardScrap(boardScrapDto, ActionType.DELETE);
     }
 
     @PostMapping("/skills")
     @ApiOperation(value = "secure - 사용자 기술스택 업데이트", notes = "request body: skills - 사용자 기술 스택에 대한 String list")
     @ApiResponses({@ApiResponse(code = 200, message = "스크랩 추가 성공")})
-    public ResponseEntity updateTechStacks(@RequestBody List<String> skills) {
+    public void updateTechStacks(@RequestBody List<String> skills) {
 
         memberUpdateService.updateTechStacks(skills);
-
-        return new ResponseEntity(HttpStatus.OK);
     }
 
     @PostMapping("/profile-image")
     @ApiOperation(value = "secure - 사용자 프로필 이미지 업데이트", notes = "request body: image - 사용자가 업데이트할 프로필 이미지( multipart형식)")
     @ApiResponses({@ApiResponse(code = 200, message = "스크랩 삭제 성공"), @ApiResponse(code = 400, message = "프로필 이미지 업데이트 오류")})
-    public ResponseEntity updateProfileImg(@RequestPart(name = "image")MultipartFile profileFile) {
+    public void updateProfileImg(@RequestPart(name = "image")MultipartFile profileFile) throws IOException {
 
-        try {
-            memberImgService.updateProfileImg(profileFile);
-        } catch (IOException e) {
-            return new ResponseEntity("cannot update profile image file", HttpStatus.BAD_REQUEST);
-        }
-
-        return new ResponseEntity(HttpStatus.OK);
+        memberImgService.updateProfileImg(profileFile);
     }
 
     @DeleteMapping("/profile-image")
     @ApiOperation(value = "secure - 사용자 프로필 이미지 삭제, 사용자의 프로필 이미지 null처리")
     @ApiResponses({@ApiResponse(code = 200, message = "스크랩 삭제 성공"), @ApiResponse(code = 400, message = "프로필 이미지 업데이트 오류")})
-    public ResponseEntity deleteProfileImg() {
+    public void deleteProfileImg() {
 
-        try {
-            memberImgService.deleteProfileImg();
-        }  catch (EntityNotFoundException e) {
-            return new ResponseEntity("cannot update profile image", HttpStatus.BAD_REQUEST);
-        }
-
-        return new ResponseEntity(HttpStatus.OK);
+        memberImgService.deleteProfileImg();
     }
 }

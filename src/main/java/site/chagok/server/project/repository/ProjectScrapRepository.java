@@ -9,5 +9,5 @@ import java.util.Optional;
 @Repository
 public interface ProjectScrapRepository extends JpaRepository<ProjectScrap, Long> {
 
-    Optional<ProjectScrap> deleteByProjectId(Long project_id);
+    Optional<ProjectScrap> deleteByProjectId(Long projectId);
 }

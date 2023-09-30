@@ -30,7 +30,7 @@ public class MemberImgService {
 
         // 시큐어코딩 - 이미지 형식만 허용
         if(!Objects.requireNonNull(imgFile.getContentType()).startsWith("image")){
-            throw new FileUploadException();
+            throw new FileNotFoundException("cannot get appropriate profile image file");
         }
 
         Member member = credentialService.getMember();
@@ -60,9 +60,9 @@ public class MemberImgService {
 
     // 이미지 조회
     @Transactional
-    public byte[] getProfileImg(String image) throws IOException {
+    public byte[] getProfileImg(String image) throws FileNotFoundException {
 
-        String fileName = memberRepository.findByProfileImg(image).orElseThrow(FileNotFoundException::new).getProfileImg();
+        String fileName = memberRepository.findByProfileImg(image).orElseThrow(() -> new FileNotFoundException("cannot get profile image")).getProfileImg();
         byte[] savedFile = fireBaseService.getImage(fileName);
 
         return savedFile;

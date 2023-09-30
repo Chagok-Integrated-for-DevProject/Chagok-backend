@@ -1,8 +1,8 @@
 package site.chagok.server.member.exception;
 
-public class NickNameExistsException extends RuntimeException{
+public class NickNameExistsException extends UpdateInfoException{
 
-    public NickNameExistsException(String message) {
+    public NickNameExistsException() {
         super("nickname already exists");
     }
 }

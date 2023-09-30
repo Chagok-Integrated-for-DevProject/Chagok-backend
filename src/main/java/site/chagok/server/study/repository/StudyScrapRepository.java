@@ -9,5 +9,5 @@ import java.util.Optional;
 @Repository
 public interface StudyScrapRepository extends JpaRepository<StudyScrap, Long> {
 
-    Optional<StudyScrap> deleteByStudyId(Long study_id);
+    Optional<StudyScrap> deleteByStudyId(Long studyId);
 }

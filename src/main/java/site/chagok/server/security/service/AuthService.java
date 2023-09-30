@@ -67,7 +67,6 @@ public class AuthService {
 
     // 사용자 user email 얻어오기
     private String getUserEmail(String accessToken, SocialType socialType){
-        //disableSslVerification();
 
          try {
              switch (socialType) {
@@ -76,7 +75,7 @@ public class AuthService {
                  case Kakao:
                      return oAuthService.getKakaoResponse(accessToken);
                  default:
-                     throw new AuthorizationServiceException("social type error");
+                     throw new IllegalStateException("social type error");
              }
          } catch (JsonProcessingException e) {
              throw new AuthorizationServiceException("cannot get user data");

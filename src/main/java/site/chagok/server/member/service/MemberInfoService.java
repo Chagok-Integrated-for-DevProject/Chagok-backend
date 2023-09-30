@@ -7,6 +7,7 @@ import site.chagok.server.contest.dto.GetContestPreviewDto;
 import site.chagok.server.contest.service.ContestService;
 import site.chagok.server.member.domain.Member;
 import site.chagok.server.member.dto.MemberInfoDto;
+import site.chagok.server.member.exception.NickNameExistsException;
 import site.chagok.server.member.repository.MemberRepository;
 import site.chagok.server.project.dto.GetProjectPreviewDto;
 import site.chagok.server.project.service.ProjectService;
@@ -73,8 +74,12 @@ public class MemberInfoService {
     }
 
     // 닉네임 있는지 확인
-    @Transactional
-    public boolean checkNicknameExists(String nickName) {
-        return memberRepository.findByNickName(nickName).isPresent();
+    @Transactional(readOnly = true)
+    public void checkNicknameExists(String nickName) {
+
+        if (memberRepository.findByNickName(nickName).isPresent()) { // 이미 존재한다면, exception 처리
+            throw new NickNameExistsException();
+        }
+
     }
 }

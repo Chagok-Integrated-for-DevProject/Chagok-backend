@@ -39,7 +39,7 @@ public class JWTTokenService {
     private final RsaJsonWebKey rsaJsonWebKey;
     private final RefreshTokenRepository refreshTokenRepository;
 
-    public AuthInfo issueJWTToken(String email, List<String> roles){
+    public AuthInfo issueJWTToken(String email, List<String> roles) {
         rsaJsonWebKey.setKeyId("k1");
 
         JwtClaims claims = new JwtClaims();
@@ -150,7 +150,7 @@ public class JWTTokenService {
             return this.issueJWTToken(jwtUserEmail, roles);
 
         } catch (MalformedClaimException | InvalidJwtException e) {
-            throw new JwtException("jwt token error");
+            throw new AuthorizationServiceException("jwt token error");
         }
     }
 

@@ -12,6 +12,7 @@ import site.chagok.server.member.service.MemberInfoService;
 import site.chagok.server.member.util.MediaTypeSelector;
 
 import javax.persistence.EntityNotFoundException;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 
@@ -26,32 +27,23 @@ public class MemberController {
 
     @GetMapping("/info")
     @ApiOperation(value = "secure - 사용자 정보조회(마이페이지)", response = MemberInfoDto.class)
-    @ApiResponses({@ApiResponse(code = 200, message = "스크랩 조회 성공"), @ApiResponse(code = 400, message = "사용자 조회 오류")})
-    public ResponseEntity<MemberInfoDto> getMemberInfo() {
+    @ApiResponses({@ApiResponse(code = 200, message = "스크랩 조회 성공"), @ApiResponse(code = 401, message = "사용자 조회 오류")})
+    public MemberInfoDto getMemberInfo() {
 
-        try {
-            MemberInfoDto memberInfoDto = memberInfoService.getMemberInfoDto();
-
-            return ResponseEntity.ok(memberInfoDto);
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity("invalid member", HttpStatus.BAD_REQUEST);
-        }
+        return memberInfoService.getMemberInfoDto();
     }
 
     @GetMapping("/profile/{image}")
     @ApiOperation(value = "사용자 이미지 조회")
     @ApiImplicitParam(name = "image", value = "조회할 사용자 프로필 이미지( 파일이름.확장자 로 이루어짐 )")
     @ApiResponses({@ApiResponse(code = 200, message = "스크랩 조회 성공"), @ApiResponse(code = 400, message = "프로필 조회 오류")})
-    public ResponseEntity getProfileImg(@PathVariable("image")String image) {
+    public ResponseEntity getProfileImg(@PathVariable("image")String image) throws FileNotFoundException {
 
         byte[] savedFile = null;
         MediaType mediaType = null;
-        try {
-            savedFile = memberImgService.getProfileImg(image);
-            mediaType = MediaTypeSelector.getMediaType(image);
-        } catch (IOException e) {
-            return new ResponseEntity("cannot get profile image", HttpStatus.BAD_REQUEST);
-        }
+
+        savedFile = memberImgService.getProfileImg(image);
+        mediaType = MediaTypeSelector.getMediaType(image);
 
         return ResponseEntity.ok().contentType(mediaType).body(savedFile);
     }
@@ -62,8 +54,8 @@ public class MemberController {
     @ApiResponses({@ApiResponse(code = 200, message = "닉네임 변경 가능"), @ApiResponse(code = 400, message = "닉네임 중복 오류")})
     public ResponseEntity checkNickName(@RequestParam("nickname") String nickName) {
 
-        if (memberInfoService.checkNicknameExists(nickName)) // 해당 닉네임이 이미 존재한다면..
-            return new ResponseEntity("cannot update nickname", HttpStatus.BAD_REQUEST);
+        // 해당 닉네임이 존재하는지 체크
+        memberInfoService.checkNicknameExists(nickName);
 
         return new ResponseEntity(HttpStatus.OK);
     }

@@ -6,13 +6,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import site.chagok.server.common.exception.BoardNotFoundException;
 import site.chagok.server.contest.dto.*;
+import site.chagok.server.contest.exception.CommentNotFoundException;
 import site.chagok.server.contest.repository.CommentRepository;
 import site.chagok.server.contest.util.CommentSorter;
 import site.chagok.server.contest.domain.Comment;
 import site.chagok.server.contest.domain.Contest;
 import site.chagok.server.contest.repository.ContestRepository;
 import site.chagok.server.member.domain.Member;
+import site.chagok.server.member.exception.InvalidMemberException;
 import site.chagok.server.member.service.MemberCredentialService;
 
 import javax.persistence.EntityNotFoundException;
@@ -28,7 +31,7 @@ public class ContestService {
 
     @Transactional
     public GetContestDto getContest(Long contestId){
-        Contest foundContest = contestRepository.findById(contestId).orElseThrow(EntityNotFoundException::new);
+        Contest foundContest = contestRepository.findById(contestId).orElseThrow(BoardNotFoundException::new);
         foundContest.addViewCount();
         return GetContestDto.builder()
                 .contestId(foundContest.getId())
@@ -62,7 +65,7 @@ public class ContestService {
     // 사용자 공모전 스크랩 미리보기
     @Transactional(readOnly = true)
     public GetContestPreviewDto getContestPreview(Long contestId) {
-        Contest contest = contestRepository.findById(contestId).orElseThrow(EntityNotFoundException::new);
+        Contest contest = contestRepository.findById(contestId).orElseThrow(BoardNotFoundException::new);
 
         // 공모전 스크랩 미리보기 dto 반환
         return GetContestPreviewDto.builder()
@@ -80,7 +83,7 @@ public class ContestService {
     // 공모전 글에 대한 댓글 조회
     @Transactional(readOnly = true)
     public List<GetContestCommentDto> getContestComments(Long contestId){
-        Contest contest = contestRepository.findContestByIdFetchCommentsAndMemberName(contestId).orElseThrow(EntityNotFoundException::new);
+        Contest contest = contestRepository.findContestByIdFetchCommentsAndMemberName(contestId).orElseThrow(BoardNotFoundException::new);
 
         List<Comment> comments = contest.getComments();
         return CommentSorter.getSort(comments);
@@ -90,7 +93,7 @@ public class ContestService {
     // 댓글 추가
     @Transactional
     public Long makeComment(CommentDto commentDto){
-        Contest contest = contestRepository.findById(commentDto.getContestId()).orElseThrow(EntityNotFoundException::new);
+        Contest contest = contestRepository.findById(commentDto.getContestId()).orElseThrow(BoardNotFoundException::new);
         // 로그인 사용자 조회
         Member member = credentialService.getMember();
 
@@ -121,10 +124,10 @@ public class ContestService {
         Member member = credentialService.getMember();
 
         // 댓글 조회
-        Comment comment = commentRepository.findById(commentUpdateDto.getCommentId()).orElseThrow(EntityNotFoundException::new);
+        Comment comment = commentRepository.findById(commentUpdateDto.getCommentId()).orElseThrow(CommentNotFoundException::new);
 
         if (member.getNickName() != comment.getMember().getNickName())
-            throw new AuthorizationServiceException("cannot update - not authorized");
+            throw new InvalidMemberException();
 
         comment.updateComment(commentUpdateDto.getContent(), commentUpdateDto.getKakaoRef());
 
@@ -139,11 +142,11 @@ public class ContestService {
         Member member = credentialService.getMember();
 
         // 댓글 조회
-        Comment comment = commentRepository.findById(commentId).orElseThrow(EntityNotFoundException::new);
+        Comment comment = commentRepository.findById(commentId).orElseThrow(CommentNotFoundException::new);
         comment.getContest().minusCommentCount();
 
         if (member.getNickName() != comment.getMember().getNickName())
-            throw new AuthorizationServiceException("cannot delete - not authorized");
+            throw new InvalidMemberException();
 
         comment.setDeleted();
 

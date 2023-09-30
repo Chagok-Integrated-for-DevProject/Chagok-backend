@@ -35,8 +35,8 @@ public class AccountService {
         // DB에 없으면 회원가입
         if (alreadySaved)
             throw new AuthorizationServiceException("cannot sign up - already Exists Member");
-        if (memberInfoService.checkNicknameExists(signUpDto.getNickName()))
-            throw new AuthorizationServiceException("cannot sign up - already Exists Nickname");
+
+        memberInfoService.checkNicknameExists(signUpDto.getNickName());
 
         Member member = Member.builder()
                 .email(userEmail)

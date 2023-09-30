@@ -3,6 +3,8 @@ package site.chagok.server.contest.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import site.chagok.server.contest.dto.*;
 import site.chagok.server.contest.service.ContestService;
+import springfox.documentation.service.Response;
 
 import javax.management.InstanceNotFoundException;
 import java.util.List;
@@ -39,7 +42,7 @@ public class ContestController {
     public Page<GetContestPreviewDto> getContests(
             @RequestParam(value ="size",required = false,defaultValue = CONTEST_DEFAULT_SIZE) int size
             ,@RequestParam(value="page",required = false,defaultValue = "0") int page
-            ,@RequestParam(value = "sort",required = false,defaultValue =CONTEST_DEFAULT_SORT) String sort
+            ,@RequestParam(value = "sort",required = false,defaultValue = CONTEST_DEFAULT_SORT) String sort
             ,@RequestParam(value="direction",required = false,defaultValue = "desc")String direction) {
         if(direction.equals("desc")){
             return contestService.getContests(PageRequest.of(page,size,Sort.by(Sort.Direction.DESC,sort)));
@@ -49,25 +52,23 @@ public class ContestController {
 
     @GetMapping(value="/contests/{id}/comments")
     @ApiOperation(value ="콘테스트 속해 있는 댓글 조회",notes=" 대댓글은 Linked comment")
+    @ApiResponses({@ApiResponse(code = 200, message = "댓글 조회 성공"), @ApiResponse(code = 404, message = "게시글 조회 오류(댓글 못찾음)")})
     public List<GetContestCommentDto> getContestComment(@PathVariable("id") Long id){
         return contestService.getContestComments(id);
     }
 
     @PostMapping(value ="/contests/comments")
     @ApiOperation(value ="secure - 새로운 댓글 등록", notes = "대댓글이 아니라면 parentId = -1")
+    @ApiResponses({@ApiResponse(code = 200, message = "댓글 등록 성공"), @ApiResponse(code = 404, message = "게시글 조회 오류(댓글 못찾음)")})
     public Long addComment(@RequestBody CommentDto commentDto){
         return contestService.makeComment(commentDto);
     }
 
     @PutMapping(value = "/contests/comments")
     @ApiOperation(value ="secure - 댓글 수정")
+    @ApiResponses({@ApiResponse(code = 200, message = "댓글 조회 성공"), @ApiResponse(code = 404, message = "댓글 조회 오류"), })
     public ResponseEntity updateComment(@RequestBody CommentUpdateDto commentUpdateDto) {
-
-        try {
-            contestService.updateComment(commentUpdateDto);
-        } catch (Exception e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        contestService.updateComment(commentUpdateDto);
 
         return new ResponseEntity(HttpStatus.OK);
     }
@@ -75,11 +76,7 @@ public class ContestController {
     @DeleteMapping(value = "/contests/comments/{commentId}")
     @ApiOperation(value ="secure - 댓글 삭제", notes = "삭제할 댓글 id url 파라미터")
     public ResponseEntity deleteComment(@PathVariable("commentId") Long commentId) {
-        try {
-            contestService.deleteComment(commentId);
-        } catch (Exception e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        contestService.deleteComment(commentId);
 
         return new ResponseEntity(HttpStatus.OK);
     }

@@ -3,6 +3,7 @@ package site.chagok.server.member.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import site.chagok.server.common.exception.BoardNotFoundException;
 import site.chagok.server.contest.domain.Contest;
 import site.chagok.server.contest.domain.ContestScrap;
 import site.chagok.server.contest.repository.ContestRepository;
@@ -11,6 +12,7 @@ import site.chagok.server.member.constants.ActionType;
 import site.chagok.server.member.domain.Member;
 import site.chagok.server.member.dto.BoardScrapDto;
 import site.chagok.server.member.exception.NickNameExistsException;
+import site.chagok.server.member.exception.ScrapNotFoundException;
 import site.chagok.server.member.repository.MemberRepository;
 import site.chagok.server.project.domain.Project;
 import site.chagok.server.project.domain.ProjectScrap;
@@ -49,10 +51,7 @@ public class MemberUpdateService {
 
     @Transactional
     public void updateNickName(String nickName) { // 닉네임 변경
-        Boolean alreadyUsed = memberInfoService.checkNicknameExists(nickName);
-
-        if (alreadyUsed)
-            throw new NickNameExistsException("nickname already exists");
+        memberInfoService.checkNicknameExists(nickName);
 
         Member member = credentialService.getMember();
         member.updateNickName(nickName);
@@ -68,7 +67,7 @@ public class MemberUpdateService {
         Long boardId = boardScrapDto.getBoardId();
 
         if (!categoryList.contains(category)) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("invalid category type");
         }
 
         Member member = credentialService.getMember();
@@ -76,38 +75,38 @@ public class MemberUpdateService {
         // 카테고리 종류에 따른 스크랩 추가/삭제
         switch (category) {
             case "contest" : {
-                Contest scrapContest = contestRepository.findById(boardId).orElseThrow(EntityExistsException::new);
+                Contest scrapContest = contestRepository.findById(boardId).orElseThrow(BoardNotFoundException::new);
                 if (action == ActionType.POST) {
                     scrapContest.addScrapCount();
                     ContestScrap contestScrap = new ContestScrap(member, scrapContest);
                     contestScrapRepository.save(contestScrap);
                 } else if (action == ActionType.DELETE) {
                     scrapContest.minusScrapCount();
-                    contestScrapRepository.deleteByContestId(boardId).orElseThrow(EntityNotFoundException::new);
+                    contestScrapRepository.deleteByContestId(boardId).orElseThrow(ScrapNotFoundException::new);
                 }
                 break;
             }
             case "project" : {
-                Project scrapProject = projectRepository.findById(boardId).orElseThrow(EntityExistsException::new);
+                Project scrapProject = projectRepository.findById(boardId).orElseThrow(BoardNotFoundException::new);
                 if (action == ActionType.POST) {
                     scrapProject.addScrapCount();
                     ProjectScrap projectScrap = new ProjectScrap(member, scrapProject);
                     projectScrapRepository.save(projectScrap);
                 } else if (action == ActionType.DELETE) {
                     scrapProject.minusScrapCount();
-                    projectScrapRepository.deleteByProjectId(boardId).orElseThrow(EntityNotFoundException::new);
+                    projectScrapRepository.deleteByProjectId(boardId).orElseThrow(ScrapNotFoundException::new);
                 }
                 break;
             }
             case "study" : {
-                Study scrapStudy = studyRepository.findById(boardId).orElseThrow(EntityExistsException::new);
+                Study scrapStudy = studyRepository.findById(boardId).orElseThrow(BoardNotFoundException::new);
                 if (action == ActionType.POST) {
                     scrapStudy.addScrapCount();
                     StudyScrap studyScrap = new StudyScrap(member, scrapStudy);
                     studyScrapRepository.save(studyScrap);
                 } else if (action == ActionType.DELETE) {
                     scrapStudy.minusScrapCount();
-                    studyScrapRepository.deleteByStudyId(boardId).orElseThrow(EntityNotFoundException::new);
+                    studyScrapRepository.deleteByStudyId(boardId).orElseThrow(ScrapNotFoundException::new);
                 }
                 break;
             }

@@ -46,9 +46,9 @@ public class JwtHeaderCheckingFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(userAuthToken);
             } catch (InvalidJwtException e) {
                 if (e.hasExpired()) { // jwt 유효기간 만료
-                    throw new AuthorizationServiceException("access token is expired");
+                    response.sendError(HttpServletResponse.SC_FORBIDDEN, "access token is expired");
                 }
-                throw new AuthorizationServiceException("access token error");
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "access token error");
             }
         }
 
