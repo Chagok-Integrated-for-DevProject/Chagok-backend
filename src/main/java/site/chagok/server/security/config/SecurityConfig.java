@@ -3,6 +3,7 @@ package site.chagok.server.security.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.AuthenticationException;
@@ -32,8 +33,11 @@ public class SecurityConfig {
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 
         http
-                .authorizeHttpRequests(auth -> auth
-                        .antMatchers("/member/update/**", "/member/info", "/contests/comments").authenticated()
+                .authorizeHttpRequests(auth -> auth // security domain 설정
+                        .antMatchers("/contests/comments", "/member/update/**").hasRole("USER")
+                        .antMatchers(HttpMethod.GET, "/member/info", "/projects/recommend", "/studies/recommend").hasRole("USER")
+                        .antMatchers(HttpMethod.POST, "/auth/refresh").hasRole("USER")
+                        .antMatchers(HttpMethod.DELETE, "/auth/delete").hasRole("USER")
                         .anyRequest().permitAll())
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(new AuthenticationEntryPoint())) // 인증받지 않은 사용자에 대한 처리
@@ -71,7 +75,7 @@ public class SecurityConfig {
         // 인증받지 않은 사용자에 대해, 401 error - jwt 토큰으로만 인증
         @Override
         public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException{
-            response.sendError(401, "Unauthorized");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "invalid member");
         }
     }
 }

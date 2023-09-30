@@ -22,7 +22,7 @@ import site.chagok.server.security.util.ResponseUtil;
 
 import javax.persistence.EntityNotFoundException;
 
-@Api(tags = "인증 및 회원가입/탈퇴, 전부 secure api endpoint (사용자 인증 필요)")
+@Api(tags = "인증 및 회원가입/탈퇴")
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -36,30 +36,20 @@ public class SecurityController {
     @ApiResponses({@ApiResponse(code = 200, message = "서버 인증 성공"), @ApiResponse(code = 400, message = "사용자 정보 획득 에러(oauth2.0 통신과정) 또는 access code 에러")})
     public ResponseEntity<ResSignInDto> signIn(@RequestBody ReqSignInDto reqSignInDto) {
 
-        try {
-            AuthInfo authInfo = authService.signIn(reqSignInDto);
+        AuthInfo authInfo = authService.signIn(reqSignInDto);
 
-            if (authInfo.isSignUp()) // 가입이 된 상태라서, 바로 로그인 완료 및 jwt 발급
-                return ResponseUtil.createResponseWithCookieAndBody(authService.signIn(reqSignInDto));
+        if (authInfo.isSignUp()) // 가입이 된 상태라서, 바로 로그인 완료 및 jwt 발급
+            return ResponseUtil.createResponseWithCookieAndBody(authService.signIn(reqSignInDto));
 
-            return ResponseEntity.ok().body(authInfo.getSignInResDto()); // 가입이 되지 않은 상태
-
-        } catch (AuthorizationServiceException e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        return ResponseEntity.ok().body(authInfo.getSignInResDto()); // 가입이 되지 않은 상태
     }
 
     @PostMapping("/refresh")
-    @ApiOperation(value = "리프레시 토큰 전달")
+    @ApiOperation(value = "secure - 리프레시 토큰 전달")
     @ApiResponses({@ApiResponse(code = 200, message = "리프레시 토큰 갱신 성공"), @ApiResponse(code = 400, message = "refresh token 에러 또는 access token 에러")})
     public ResponseEntity<ResSignInDto> renewRefreshTokenAuth(@CookieValue("refreshToken") String refreshToken, @RequestBody String jwtToken) {
 
-        try {
-            return ResponseUtil.createResponseWithCookieAndBody(authService.refresh(new JwtTokenSetDto(jwtToken, refreshToken)));
-
-        } catch (AuthorizationServiceException | EntityNotFoundException e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        return ResponseUtil.createResponseWithCookieAndBody(authService.refresh(new JwtTokenSetDto(jwtToken, refreshToken)));
     }
 
     @PostMapping("/signUp")
@@ -67,25 +57,14 @@ public class SecurityController {
     @ApiResponses({@ApiResponse(code = 200, message = "회원가입 성공"), @ApiResponse(code = 400, message = "사용자 정보 획득 에러(oauth2.0 통신과정) 또는 access code 에러, 이미 사용자가 존재하거나 닉네임이 존재한다면 에러")})
     public ResponseEntity<ResSignInDto> signUp(@RequestBody SignUpDto signUpDto) {
 
-        try {
-            return ResponseUtil.createResponseWithCookieAndBody(authService.signUp(signUpDto));
-        } catch (AuthorizationServiceException e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        return ResponseUtil.createResponseWithCookieAndBody(authService.signUp(signUpDto));
     }
 
     @DeleteMapping("/delete")
-    @ApiOperation(value = "사용자 회원탈퇴", notes = "회원탈퇴 api, 댓글은 삭제처리만 되고, 사용자 관련 데이터는 삭제")
+    @ApiOperation(value = "사용자 회원탈퇴", notes = "secure - 회원탈퇴 api, 댓글은 삭제처리만 되고, 사용자 관련 데이터는 삭제")
     @ApiResponses({@ApiResponse(code = 200, message = "회원탈퇴 성공"), @ApiResponse(code = 400, message = "회원탈퇴 에러")})
-    public ResponseEntity deleteAccount() {
+    public void deleteAccount() {
 
-        try {
-            accountService.deleteAccount();
-            return new ResponseEntity(HttpStatus.OK);
-
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity("invalid member", HttpStatus.BAD_REQUEST);
-        }
+        accountService.deleteAccount();
     }
-
 }
