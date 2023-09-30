@@ -1,10 +1,12 @@
 package site.chagok.server.contest.exception;
 
+import site.chagok.server.common.exception.NotFoundException;
+
 import javax.persistence.EntityNotFoundException;
 
-public class CommentNotFoundException extends EntityNotFoundException {
+public class CommentNotFoundException extends NotFoundException {
 
     public CommentNotFoundException() {
-        super("cannot find comment");
+        super("comment_01", "cannot find comment");
     }
 }

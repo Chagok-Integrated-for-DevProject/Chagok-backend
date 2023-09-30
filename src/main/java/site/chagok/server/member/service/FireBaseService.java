@@ -10,10 +10,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import site.chagok.server.member.exception.ImgFileNotFoundException;
+import site.chagok.server.member.exception.UpdateInfoException;
 import site.chagok.server.member.util.MediaTypeSelector;
 
 import javax.annotation.PostConstruct;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.UUID;
 
@@ -40,7 +41,7 @@ public class FireBaseService {
     }
 
     // firebase storage image 저장
-    public String saveImage(MultipartFile imgFile) throws IOException {
+    public String saveImage(MultipartFile imgFile) {
 
         String originalFileName = imgFile.getOriginalFilename();
 
@@ -51,7 +52,12 @@ public class FireBaseService {
         // path 생성
         String uploadFileName = uuidToPath + extension;
 
-        byte[] imageData = imgFile.getBytes();
+        byte[] imageData;
+        try {
+            imageData = imgFile.getBytes();
+        } catch (IOException e) {
+            throw new UpdateInfoException("image_01", "image update error");
+        }
 
         // firebase storage bucket
         Bucket bucket = StorageClient.getInstance().bucket();
@@ -62,13 +68,13 @@ public class FireBaseService {
     }
 
     // firebase storage image 조회
-    public byte[] getImage(String imageFileName) throws FileNotFoundException {
+    public byte[] getImage(String imageFileName) {
         Bucket bucket = StorageClient.getInstance().bucket();
 
         Blob blob = bucket.get(imageFileName);
 
         if (blob == null)
-            throw new FileNotFoundException();
+            throw new ImgFileNotFoundException();
 
         return blob.getContent();
     }

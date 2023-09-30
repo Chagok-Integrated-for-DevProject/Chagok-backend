@@ -21,6 +21,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
+import site.chagok.server.common.exception.AuthorizationException;
+import site.chagok.server.common.exception.NotFoundException;
 import site.chagok.server.security.dto.JwtTokenSetDto;
 import site.chagok.server.security.domain.AuthInfo;
 import site.chagok.server.security.redis.domain.RefreshToken;
@@ -78,7 +80,7 @@ public class JWTTokenService {
             return new AuthInfo(jwt, refreshTokenValue, true);
 
         } catch (JoseException | MalformedClaimException e) {
-            throw new AuthorizationServiceException("access token issue error");
+            throw new AuthorizationException("auth_01", "access token issue error");
         }
     }
 
@@ -94,7 +96,8 @@ public class JWTTokenService {
                 .build();
 
         //  jwt validating
-        JwtClaims jwtClaims = jwtConsumer.processToClaims(jwt);
+        JwtClaims jwtClaims = null;
+        jwtClaims = jwtConsumer.processToClaims(jwt);
 
         String jwtUserEmail = jwtClaims.getClaimValue("email").toString();
 
@@ -111,7 +114,7 @@ public class JWTTokenService {
 
     public AuthInfo renewRefreshToken(JwtTokenSetDto jwtTokenSetDto) {
 
-        RefreshToken savedRefreshToken = refreshTokenRepository.findByRefreshToken(jwtTokenSetDto.getRefreshToken()).orElseThrow(() -> new EntityNotFoundException("invalid refresh token"));
+        RefreshToken savedRefreshToken = refreshTokenRepository.findByRefreshToken(jwtTokenSetDto.getRefreshToken()).orElseThrow(() -> new AuthorizationException("refresh_01", "invalid refresh token"));
 
         /*
             1. 요청한 refreshToken 값과 저장 된 refresh token 값을 비교
@@ -137,7 +140,7 @@ public class JWTTokenService {
              */
             if (isNotExpiredTime(jwtClaims.getExpirationTime()) || !jwtTokenSetDto.getRefreshToken().equals(savedRefreshToken.getRefreshToken()) ||
                     !savedRefreshToken.getJwtId().equals(jwtClaims.getJwtId())) {
-                throw new AuthorizationServiceException("invalid request or invalid refresh token");
+                throw new AuthorizationException("refresh_02", "invalid request or invalid refresh token");
             }
 
             String jwtUserEmail = jwtClaims.getClaimValue("email").toString();
@@ -150,7 +153,7 @@ public class JWTTokenService {
             return this.issueJWTToken(jwtUserEmail, roles);
 
         } catch (MalformedClaimException | InvalidJwtException e) {
-            throw new AuthorizationServiceException("jwt token error");
+            throw new AuthorizationException("jwt_01", "jwt token error");
         }
     }
 

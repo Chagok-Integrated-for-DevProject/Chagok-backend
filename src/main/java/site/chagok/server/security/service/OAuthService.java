@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.netty.http.client.HttpClient;
+import site.chagok.server.common.exception.AuthorizationException;
 
 import javax.net.ssl.SSLException;
 import java.time.Duration;
@@ -48,14 +49,14 @@ public class OAuthService {
         HttpClient httpClient = HttpClient.create()
                 .responseTimeout(Duration.ofMillis(20000))
                 .proxyWithSystemProperties();
-//        SslContext sslContext = SslContextBuilder.forClient().build();
+
         return WebClient.builder()
                 .clientConnector(new ReactorClientHttpConnector(httpClient))
                 .build();
     }
 
     // 소셜 로그인 사용자로부터 이메일 획득
-    public String getGoogleCredential(String accessToken) throws JsonProcessingException {
+    public String getGoogleCredential(String accessToken) {
 
         // access token으로 사용자 정보 획득
         UriComponentsBuilder googleUriBuilder = UriComponentsBuilder
@@ -75,12 +76,17 @@ public class OAuthService {
 
         ObjectMapper objectMapper = new ObjectMapper();
 
-        JsonNode userMap = objectMapper.readTree(userJsonStr);
+        JsonNode userMap = null;
+        try {
+            userMap = objectMapper.readTree(userJsonStr);
+        } catch (JsonProcessingException e) {
+            throw new AuthorizationException("auth_01", "authorization process error");
+        }
 
         return userMap.get("email").asText();
     }
 
-    public String getKakaoResponse(String accessToken) throws JsonProcessingException {
+    public String getKakaoResponse(String accessToken) {
         /*
             authorizationToken 전달받고,
             카카오 authorization server에서 액세스 토큰 획득 이후,
@@ -93,7 +99,7 @@ public class OAuthService {
                 .retrieve()
                 .onStatus(HttpStatus::is4xxClientError, response -> { // invalid token 에러시,
                     if (response.statusCode().is4xxClientError())
-                        throw new AuthorizationServiceException("invalid access code");
+                        throw new AuthorizationException("oauth_01", "invalid access code");
                     return null;
                 })
                 .bodyToMono(String.class)
@@ -101,7 +107,12 @@ public class OAuthService {
 
         ObjectMapper objectMapper = new ObjectMapper();
 
-        JsonNode userJson = objectMapper.readTree(userJsonStr);
+        JsonNode userJson = null;
+        try {
+            userJson = objectMapper.readTree(userJsonStr);
+        } catch (JsonProcessingException e) {
+            throw new AuthorizationException("auth_01", "authorization process error");
+        }
 
         // 사용자 이메일 반환
         return userJson.get("kakao_account").get("email").asText();

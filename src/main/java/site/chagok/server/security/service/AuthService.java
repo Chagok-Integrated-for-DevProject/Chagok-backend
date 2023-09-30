@@ -1,23 +1,15 @@
 package site.chagok.server.security.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.util.UriComponentsBuilder;
 import site.chagok.server.common.contstans.SocialType;
+import site.chagok.server.common.exception.AuthorizationException;
 import site.chagok.server.security.dto.JwtTokenSetDto;
 import site.chagok.server.security.dto.ReqSignInDto;
 import site.chagok.server.security.domain.AuthInfo;
 import site.chagok.server.security.dto.SignUpDto;
 
-import javax.net.ssl.*;
-import java.security.cert.X509Certificate;
 import java.util.List;
 
 @Service
@@ -67,18 +59,13 @@ public class AuthService {
 
     // 사용자 user email 얻어오기
     private String getUserEmail(String accessToken, SocialType socialType){
-
-         try {
-             switch (socialType) {
-                 case Google:
-                     return oAuthService.getGoogleCredential(accessToken);
-                 case Kakao:
-                     return oAuthService.getKakaoResponse(accessToken);
-                 default:
-                     throw new IllegalStateException("social type error");
-             }
-         } catch (JsonProcessingException e) {
-             throw new AuthorizationServiceException("cannot get user data");
+         switch (socialType) {
+             case Google:
+                 return oAuthService.getGoogleCredential(accessToken);
+             case Kakao:
+                 return oAuthService.getKakaoResponse(accessToken);
+             default:
+                 throw new IllegalStateException("social type error");
          }
     }
 }

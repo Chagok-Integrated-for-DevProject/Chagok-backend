@@ -11,10 +11,6 @@ import site.chagok.server.member.service.MemberImgService;
 import site.chagok.server.member.service.MemberInfoService;
 import site.chagok.server.member.util.MediaTypeSelector;
 
-import javax.persistence.EntityNotFoundException;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
 
 @Api(tags ="사용자 데이터 조회")
 @RestController
@@ -37,7 +33,7 @@ public class MemberController {
     @ApiOperation(value = "사용자 이미지 조회")
     @ApiImplicitParam(name = "image", value = "조회할 사용자 프로필 이미지( 파일이름.확장자 로 이루어짐 )")
     @ApiResponses({@ApiResponse(code = 200, message = "스크랩 조회 성공"), @ApiResponse(code = 400, message = "프로필 조회 오류")})
-    public ResponseEntity getProfileImg(@PathVariable("image")String image) throws FileNotFoundException {
+    public ResponseEntity getProfileImg(@PathVariable("image")String image){
 
         byte[] savedFile = null;
         MediaType mediaType = null;

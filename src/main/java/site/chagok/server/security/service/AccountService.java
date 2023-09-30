@@ -1,11 +1,11 @@
 package site.chagok.server.security.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.chagok.server.contest.domain.Comment;
 import site.chagok.server.member.domain.Member;
+import site.chagok.server.member.exception.UpdateInfoException;
 import site.chagok.server.member.repository.MemberRepository;
 import site.chagok.server.member.service.MemberCredentialService;
 import site.chagok.server.member.service.MemberImgService;
@@ -34,7 +34,7 @@ public class AccountService {
 
         // DB에 없으면 회원가입
         if (alreadySaved)
-            throw new AuthorizationServiceException("cannot sign up - already Exists Member");
+            throw new UpdateInfoException("member_01", "cannot sign up - already Exists Member");
 
         memberInfoService.checkNicknameExists(signUpDto.getNickName());
 

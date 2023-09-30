@@ -1,13 +1,13 @@
 package site.chagok.server.member.service;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import site.chagok.server.member.domain.Member;
+import site.chagok.server.member.exception.ImgFileNotFoundException;
+import site.chagok.server.member.exception.UpdateInfoException;
 import site.chagok.server.member.repository.MemberRepository;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -29,8 +29,8 @@ public class MemberImgService {
 
 
         // 시큐어코딩 - 이미지 형식만 허용
-        if(!Objects.requireNonNull(imgFile.getContentType()).startsWith("image")){
-            throw new FileNotFoundException("cannot get appropriate profile image file");
+        if(!imgFile.getContentType().startsWith("image")){
+            throw new UpdateInfoException("image_01", "cannot get appropriate profile image file");
         }
 
         Member member = credentialService.getMember();
@@ -60,9 +60,9 @@ public class MemberImgService {
 
     // 이미지 조회
     @Transactional
-    public byte[] getProfileImg(String image) throws FileNotFoundException {
+    public byte[] getProfileImg(String image) {
 
-        String fileName = memberRepository.findByProfileImg(image).orElseThrow(() -> new FileNotFoundException("cannot get profile image")).getProfileImg();
+        String fileName = memberRepository.findByProfileImg(image).orElseThrow(ImgFileNotFoundException::new).getProfileImg();
         byte[] savedFile = fireBaseService.getImage(fileName);
 
         return savedFile;

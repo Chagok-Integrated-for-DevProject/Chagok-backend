@@ -1,9 +1,9 @@
 package site.chagok.server.member.exception;
 
-import org.springframework.security.access.AuthorizationServiceException;
+import site.chagok.server.common.exception.AuthorizationException;
 
-public class InvalidMemberException extends AuthorizationServiceException {
+public class InvalidMemberException extends AuthorizationException {
     public InvalidMemberException() {
-        super("invalid member");
+        super("invalid_01", "invalid member");
     }
 }

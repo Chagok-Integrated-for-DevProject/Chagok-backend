@@ -45,10 +45,14 @@ public class JwtHeaderCheckingFilter extends OncePerRequestFilter {
                 // Security Context에 추가.
                 SecurityContextHolder.getContext().setAuthentication(userAuthToken);
             } catch (InvalidJwtException e) {
-                if (e.hasExpired()) { // jwt 유효기간 만료
-                    response.sendError(HttpServletResponse.SC_FORBIDDEN, "access token is expired");
+                if (e.hasExpired()) {// jwt 유효기간 만료
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    response.getWriter().write("access token is expired");
                 }
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "access token error");
+                else {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.getWriter().write("access token error");
+                }
             }
         }
 

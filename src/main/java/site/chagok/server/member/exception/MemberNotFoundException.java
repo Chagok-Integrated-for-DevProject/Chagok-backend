@@ -1,10 +1,10 @@
 package site.chagok.server.member.exception;
 
-import javax.persistence.EntityNotFoundException;
+import site.chagok.server.common.exception.NotFoundException;
 
-public class MemberNotFoundException extends EntityNotFoundException {
+public class MemberNotFoundException extends NotFoundException {
 
     public MemberNotFoundException() {
-        super("cannot find member");
+        super("member_01", "cannot find member");
     }
 }
