@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.web.bind.annotation.*;
+import site.chagok.server.security.constants.SecurityHeader;
 import site.chagok.server.security.domain.AuthInfo;
 import site.chagok.server.security.dto.JwtTokenSetDto;
 import site.chagok.server.security.dto.ReqSignInDto;
@@ -21,6 +22,7 @@ import site.chagok.server.security.service.AuthService;
 import site.chagok.server.security.util.ResponseUtil;
 
 import javax.persistence.EntityNotFoundException;
+import javax.servlet.http.HttpServletRequest;
 
 @Api(tags = "인증 및 회원가입/탈퇴")
 @RestController
@@ -47,7 +49,9 @@ public class SecurityController {
     @PostMapping("/refresh")
     @ApiOperation(value = "secure - 리프레시 토큰 전달")
     @ApiResponses({@ApiResponse(code = 200, message = "리프레시 토큰 갱신 성공"), @ApiResponse(code = 400, message = "refresh token 에러 또는 access token 에러")})
-    public ResponseEntity<ResSignInDto> renewRefreshTokenAuth(@CookieValue("refreshToken") String refreshToken, @RequestBody String jwtToken) {
+    public ResponseEntity<ResSignInDto> renewRefreshTokenAuth(@CookieValue("refreshToken") String refreshToken, HttpServletRequest request) {
+
+        String jwtToken = request.getHeader(SecurityHeader.JWT_HEADER).substring(7);
 
         return ResponseUtil.createResponseWithCookieAndBody(authService.refresh(new JwtTokenSetDto(jwtToken, refreshToken)));
     }

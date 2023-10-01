@@ -117,6 +117,7 @@ public class JWTTokenService {
          */
 
         JwtConsumer jwtConsumer = new JwtConsumerBuilder()
+                .setRequireExpirationTime() // jwt expired time 유무 검사
                 .setAllowedClockSkewInSeconds(30) // allow some leeway in validating time based claims to account for clock skew
                 .setExpectedIssuer("chagok service server") // issuer 검사
                 .setVerificationKey(rsaJsonWebKey.getKey()) // public key 검증
@@ -124,32 +125,37 @@ public class JWTTokenService {
                         AlgorithmConstraints.ConstraintType.PERMIT, AlgorithmIdentifiers.RSA_USING_SHA256) // 알고리즘 방식 검사
                 .build();
 
+        JwtClaims jwtClaims = null;
         try {
             //  jwt validating
-            JwtClaims jwtClaims = jwtConsumer.processToClaims(jwtTokenSetDto.getJwtToken());
+            jwtClaims = jwtConsumer.processToClaims(jwtTokenSetDto.getJwtToken());
 
             /*
                 아직 jwt 토큰의 유효기간이 남아있거나,
                 서버측 refresh token과 요청 refresh token 불일치,
                 refresh 의 jwt Id와 요청 jwt 토큰의 id 불일치 시 에러
              */
-            if (isNotExpiredTime(jwtClaims.getExpirationTime()) || !jwtTokenSetDto.getRefreshToken().equals(savedRefreshToken.getRefreshToken()) ||
-                    !savedRefreshToken.getJwtId().equals(jwtClaims.getJwtId())) {
-                throw new AuthorizationApiException("refresh_02", "invalid request or invalid refresh token");
+            throw new AuthorizationApiException("refresh_02", "invalid request or invalid refresh token");
+
+        } catch (InvalidJwtException e) {
+            if (e.hasExpired()) {
+
+                if (!jwtTokenSetDto.getRefreshToken().equals(savedRefreshToken.getRefreshToken())) {
+                    throw new AuthorizationApiException("refresh_02", "invalid request or invalid refresh token");
+                }
+
+                String jwtUserEmail = jwtClaims.getClaimValue("email").toString();
+                List<String> roles = (List<String>) jwtClaims.getClaimValue("roles");
+
+                // 기존 refresh token 삭제
+                refreshTokenRepository.delete(savedRefreshToken);
+
+                // jwt 토큰, refresh 토큰 새로 발급
+                return this.issueJWTToken(jwtUserEmail, roles);
             }
-
-            String jwtUserEmail = jwtClaims.getClaimValue("email").toString();
-            List<String> roles = (List<String>) jwtClaims.getClaimValue("roles");
-
-            // 기존 refresh token 삭제
-            refreshTokenRepository.delete(savedRefreshToken);
-
-            // jwt 토큰, refresh 토큰 새로 발급
-            return this.issueJWTToken(jwtUserEmail, roles);
-
-        } catch (MalformedClaimException | InvalidJwtException e) {
-            throw new AuthorizationApiException("jwt_01", "jwt token error");
         }
+
+        return null;
     }
 
     private boolean isNotExpiredTime(NumericDate secondsTimeStamp) {

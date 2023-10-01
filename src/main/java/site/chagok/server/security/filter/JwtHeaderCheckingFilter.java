@@ -33,7 +33,6 @@ public class JwtHeaderCheckingFilter extends OncePerRequestFilter {
         if (jwtHeader != null && jwtHeader.startsWith("Bearer ")) {
             String jwtToken = jwtHeader.substring(7);
 
-
             try {
                 // jwt 기반, UsernamePasswordAuthenticationToken 생성
                 Authentication userAuthToken = jwtTokenService.validateJwtToken(jwtToken);
@@ -41,7 +40,7 @@ public class JwtHeaderCheckingFilter extends OncePerRequestFilter {
                 // Security Context에 추가.
                 SecurityContextHolder.getContext().setAuthentication(userAuthToken);
             } catch (InvalidJwtException e) {
-                if (e.hasExpired()) {// jwt 유효기간 만료
+                if (!request.getRequestURI().equals("/auth/refresh") && e.hasExpired()) {// jwt 유효기간 만료
                     ResponseUtil.jwtExpiredJsonResponse(response);
                 }
             }
