@@ -1,8 +1,9 @@
 package site.chagok.server.security.filter;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jose4j.jwt.consumer.InvalidJwtException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -39,8 +40,8 @@ public class JwtHeaderCheckingFilter extends OncePerRequestFilter {
 
                 // Security Context에 추가.
                 SecurityContextHolder.getContext().setAuthentication(userAuthToken);
-            } catch (InvalidJwtException e) {
-                if (!request.getRequestURI().equals("/auth/refresh") && e.hasExpired()) {// jwt 유효기간 만료
+            } catch (JwtException e) {
+                if (!request.getRequestURI().equals("/auth/refresh") && e instanceof ExpiredJwtException) {// jwt 유효기간 만료
                     ResponseUtil.jwtExpiredJsonResponse(response);
                 }
             }
