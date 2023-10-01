@@ -7,7 +7,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.chagok.server.common.contstans.PostType;
-import site.chagok.server.common.exception.BoardNotFoundException;
+import site.chagok.server.common.exception.BoardNotFoundApiException;
 import site.chagok.server.member.domain.Member;
 import site.chagok.server.member.service.MemberCredentialService;
 import site.chagok.server.study.domain.Study;
@@ -17,7 +17,6 @@ import site.chagok.server.study.dto.GetStudyPreviewDto;
 import site.chagok.server.study.repository.StudyRepository;
 import site.chagok.server.study.repository.StudySpecification;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -65,7 +64,7 @@ public class StudyService {
     @Transactional(readOnly = true)
     public GetStudyPreviewDto getStudyPreview(Long studyId) {
 
-        Study study = studyRepository.findById(studyId).orElseThrow(BoardNotFoundException::new);
+        Study study = studyRepository.findById(studyId).orElseThrow(BoardNotFoundApiException::new);
 
         return GetStudyPreviewDto.builder()
                 .studyId(study.getId())
@@ -81,7 +80,7 @@ public class StudyService {
     }
     @Transactional
     public GetStudyDto getStudy(Long studyId){
-        Study study = studyRepository.findById(studyId).orElseThrow(BoardNotFoundException::new);
+        Study study = studyRepository.findById(studyId).orElseThrow(BoardNotFoundApiException::new);
         study.addViewCount();
         return GetStudyDto.builder()
                 .title(study.getTitle())

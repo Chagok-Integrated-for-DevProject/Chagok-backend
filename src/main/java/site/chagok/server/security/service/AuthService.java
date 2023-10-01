@@ -1,10 +1,8 @@
 package site.chagok.server.security.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import site.chagok.server.common.contstans.SocialType;
-import site.chagok.server.common.exception.AuthorizationException;
 import site.chagok.server.security.dto.JwtTokenSetDto;
 import site.chagok.server.security.dto.ReqSignInDto;
 import site.chagok.server.security.domain.AuthInfo;

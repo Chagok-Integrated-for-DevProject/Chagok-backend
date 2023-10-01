@@ -8,7 +8,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.chagok.server.common.contstans.PostType;
-import site.chagok.server.common.exception.BoardNotFoundException;
+import site.chagok.server.common.exception.BoardNotFoundApiException;
 import site.chagok.server.member.domain.Member;
 import site.chagok.server.member.service.MemberCredentialService;
 import site.chagok.server.project.domain.Project;
@@ -18,7 +18,6 @@ import site.chagok.server.project.dto.GetRecommendedProjectDto;
 import site.chagok.server.project.repository.ProjectRepository;
 import site.chagok.server.project.repository.ProjectSpecification;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -63,7 +62,7 @@ public class ProjectService {
     @Transactional(readOnly = true)
     public GetProjectPreviewDto getProjectPreview(Long projectId) {
 
-        Project project = projectRepository.findById(projectId).orElseThrow(BoardNotFoundException::new);
+        Project project = projectRepository.findById(projectId).orElseThrow(BoardNotFoundApiException::new);
 
         return GetProjectPreviewDto.builder()
                 .title(project.getTitle())
@@ -92,7 +91,7 @@ public class ProjectService {
 
     @Transactional
     public GetProjectDto getProject(Long studyId){
-        Project project = projectRepository.findById(studyId).orElseThrow(BoardNotFoundException::new);
+        Project project = projectRepository.findById(studyId).orElseThrow(BoardNotFoundApiException::new);
         project.addViewCount();
         return GetProjectDto.builder()
                 .title(project.getTitle())

@@ -13,8 +13,10 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import site.chagok.server.security.constants.SecutiryHeader;
+import site.chagok.server.security.constants.SecurityHeader;
 import site.chagok.server.security.filter.JwtHeaderCheckingFilter;
+import site.chagok.server.security.util.ResponseUtil;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -60,7 +62,7 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(Arrays.asList("https:localhost:443","https://localhost:3000", "http://localhost:3000", "https://localhost:3001", "https://chagok.site"));
         configuration.setAllowedMethods(Arrays.asList("GET","POST", "DELETE", "PUT"));
         configuration.setAllowedHeaders(List.of("*"));
-        configuration.setExposedHeaders(List.of(SecutiryHeader.JWT_HEADER)); // custom 설정 중 해당 헤더만 허용
+        configuration.setExposedHeaders(List.of(SecurityHeader.JWT_HEADER)); // custom 설정 중 해당 헤더만 허용
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
@@ -75,7 +77,10 @@ public class SecurityConfig {
         // 인증받지 않은 사용자에 대해, 401 error - jwt 토큰으로만 인증
         @Override
         public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException{
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "invalid member");
+            if (response.getStatus() != HttpServletResponse.SC_FORBIDDEN) {
+                // 유효하지 않은 token 이거나 인가절차를 거치지 않았을 때,
+                ResponseUtil.invalidMemberJsonResponse(response);
+            }
         }
     }
 }

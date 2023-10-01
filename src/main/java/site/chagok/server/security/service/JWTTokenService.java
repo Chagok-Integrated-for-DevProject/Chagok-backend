@@ -1,7 +1,6 @@
 package site.chagok.server.security.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.jose4j.jwa.AlgorithmConstraints;
 import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jws.AlgorithmIdentifiers;
@@ -13,22 +12,18 @@ import org.jose4j.jwt.consumer.InvalidJwtException;
 import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 import org.jose4j.lang.JoseException;
-import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
-import site.chagok.server.common.exception.AuthorizationException;
-import site.chagok.server.common.exception.NotFoundException;
+import site.chagok.server.common.exception.AuthorizationApiException;
 import site.chagok.server.security.dto.JwtTokenSetDto;
 import site.chagok.server.security.domain.AuthInfo;
 import site.chagok.server.security.redis.domain.RefreshToken;
 import site.chagok.server.security.redis.domain.RefreshTokenRepository;
 
-import javax.persistence.EntityNotFoundException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -46,7 +41,7 @@ public class JWTTokenService {
 
         JwtClaims claims = new JwtClaims();
         claims.setIssuer("chagok service server");  // 토큰 발행자
-        claims.setExpirationTimeMinutesInTheFuture(60); // 한시간 이후 토큰 expired
+        claims.setExpirationTimeMinutesInTheFuture(1); // 한시간 이후 토큰 expired
         claims.setGeneratedJwtId(); // jwt 토큰 고유 id
         claims.setIssuedAtToNow();  // jwt 토큰 발행 시간
         // claims.setNotBeforeMinutesInThePast(2); // time before which the token is not yet valid (2 minutes ago)
@@ -80,7 +75,7 @@ public class JWTTokenService {
             return new AuthInfo(jwt, refreshTokenValue, true);
 
         } catch (JoseException | MalformedClaimException e) {
-            throw new AuthorizationException("auth_01", "access token issue error");
+            throw new AuthorizationApiException("auth_01", "access token issue error");
         }
     }
 
@@ -114,7 +109,7 @@ public class JWTTokenService {
 
     public AuthInfo renewRefreshToken(JwtTokenSetDto jwtTokenSetDto) {
 
-        RefreshToken savedRefreshToken = refreshTokenRepository.findByRefreshToken(jwtTokenSetDto.getRefreshToken()).orElseThrow(() -> new AuthorizationException("refresh_01", "invalid refresh token"));
+        RefreshToken savedRefreshToken = refreshTokenRepository.findByRefreshToken(jwtTokenSetDto.getRefreshToken()).orElseThrow(() -> new AuthorizationApiException("refresh_01", "invalid refresh token"));
 
         /*
             1. 요청한 refreshToken 값과 저장 된 refresh token 값을 비교
@@ -140,7 +135,7 @@ public class JWTTokenService {
              */
             if (isNotExpiredTime(jwtClaims.getExpirationTime()) || !jwtTokenSetDto.getRefreshToken().equals(savedRefreshToken.getRefreshToken()) ||
                     !savedRefreshToken.getJwtId().equals(jwtClaims.getJwtId())) {
-                throw new AuthorizationException("refresh_02", "invalid request or invalid refresh token");
+                throw new AuthorizationApiException("refresh_02", "invalid request or invalid refresh token");
             }
 
             String jwtUserEmail = jwtClaims.getClaimValue("email").toString();
@@ -153,7 +148,7 @@ public class JWTTokenService {
             return this.issueJWTToken(jwtUserEmail, roles);
 
         } catch (MalformedClaimException | InvalidJwtException e) {
-            throw new AuthorizationException("jwt_01", "jwt token error");
+            throw new AuthorizationApiException("jwt_01", "jwt token error");
         }
     }
 

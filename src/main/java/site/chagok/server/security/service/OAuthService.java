@@ -3,11 +3,7 @@ package site.chagok.server.security.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.grpc.netty.shaded.io.netty.handler.ssl.util.InsecureTrustManagerFactory;
-import io.netty.handler.ssl.SslContext;
-import io.netty.handler.ssl.SslContextBuilder;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.security.access.AuthorizationServiceException;
@@ -15,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.netty.http.client.HttpClient;
-import site.chagok.server.common.exception.AuthorizationException;
+import site.chagok.server.common.exception.AuthorizationApiException;
 
 import javax.net.ssl.SSLException;
 import java.time.Duration;
@@ -80,7 +76,7 @@ public class OAuthService {
         try {
             userMap = objectMapper.readTree(userJsonStr);
         } catch (JsonProcessingException e) {
-            throw new AuthorizationException("auth_01", "authorization process error");
+            throw new AuthorizationApiException("auth_01", "authorization process error");
         }
 
         return userMap.get("email").asText();
@@ -99,7 +95,7 @@ public class OAuthService {
                 .retrieve()
                 .onStatus(HttpStatus::is4xxClientError, response -> { // invalid token 에러시,
                     if (response.statusCode().is4xxClientError())
-                        throw new AuthorizationException("oauth_01", "invalid access code");
+                        throw new AuthorizationApiException("oauth_01", "invalid access code");
                     return null;
                 })
                 .bodyToMono(String.class)
@@ -111,7 +107,7 @@ public class OAuthService {
         try {
             userJson = objectMapper.readTree(userJsonStr);
         } catch (JsonProcessingException e) {
-            throw new AuthorizationException("auth_01", "authorization process error");
+            throw new AuthorizationApiException("auth_01", "authorization process error");
         }
 
         // 사용자 이메일 반환

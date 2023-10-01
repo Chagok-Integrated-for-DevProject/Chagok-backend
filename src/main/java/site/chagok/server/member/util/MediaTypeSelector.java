@@ -1,7 +1,7 @@
 package site.chagok.server.member.util;
 
 import org.springframework.http.MediaType;
-import site.chagok.server.member.exception.ImgFileNotFoundException;
+import site.chagok.server.member.exception.ImgFileNotFoundApiException;
 
 
 public class MediaTypeSelector {
@@ -15,7 +15,7 @@ public class MediaTypeSelector {
             case "png":
                 return MediaType.IMAGE_PNG;
             default:
-                throw new ImgFileNotFoundException();
+                throw new ImgFileNotFoundApiException();
         }
     }
 }

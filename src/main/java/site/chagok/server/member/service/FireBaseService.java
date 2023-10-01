@@ -10,8 +10,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import site.chagok.server.member.exception.ImgFileNotFoundException;
-import site.chagok.server.member.exception.UpdateInfoException;
+import site.chagok.server.member.exception.ImgFileNotFoundApiException;
+import site.chagok.server.common.exception.UpdateInfoApiException;
 import site.chagok.server.member.util.MediaTypeSelector;
 
 import javax.annotation.PostConstruct;
@@ -56,7 +56,7 @@ public class FireBaseService {
         try {
             imageData = imgFile.getBytes();
         } catch (IOException e) {
-            throw new UpdateInfoException("image_01", "image update error");
+            throw new UpdateInfoApiException("image_01", "image update error");
         }
 
         // firebase storage bucket
@@ -74,7 +74,7 @@ public class FireBaseService {
         Blob blob = bucket.get(imageFileName);
 
         if (blob == null)
-            throw new ImgFileNotFoundException();
+            throw new ImgFileNotFoundApiException();
 
         return blob.getContent();
     }

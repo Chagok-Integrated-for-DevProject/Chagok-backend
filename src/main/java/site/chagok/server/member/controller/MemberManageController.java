@@ -2,19 +2,13 @@ package site.chagok.server.member.controller;
 
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import site.chagok.server.member.constants.ActionType;
 import site.chagok.server.member.dto.BoardScrapDto;
-import site.chagok.server.member.exception.NickNameExistsException;
 import site.chagok.server.member.service.MemberImgService;
 import site.chagok.server.member.service.MemberUpdateService;
 
-import javax.persistence.EntityNotFoundException;
 import java.io.IOException;
 import java.util.List;
 

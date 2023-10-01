@@ -4,25 +4,25 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import site.chagok.server.common.exception.AuthorizationException;
-import site.chagok.server.common.exception.NotFoundException;
-import site.chagok.server.member.exception.UpdateInfoException;
+import site.chagok.server.common.exception.AuthorizationApiException;
+import site.chagok.server.common.exception.NotFoundApiException;
+import site.chagok.server.common.exception.UpdateInfoApiException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(AuthorizationException.class)
-    public ResponseEntity<?> invalidMemberExceptionHandler(AuthorizationException e) {
+    @ExceptionHandler(AuthorizationApiException.class)
+    public ResponseEntity<?> invalidMemberExceptionHandler(AuthorizationApiException e) {
         return ResponseEntity.status(e.getHttpStatus()).body(e.getErrorDto());
     }
 
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<?> notFoundExceptionHandler(NotFoundException e) {
+    @ExceptionHandler(NotFoundApiException.class)
+    public ResponseEntity<?> notFoundExceptionHandler(NotFoundApiException e) {
         return ResponseEntity.status(e.getHttpStatus()).body(e.getErrorDto());
     }
 
-    @ExceptionHandler(UpdateInfoException.class)
-    public ResponseEntity<?> updateInfoExceptionHandler(UpdateInfoException e) {
+    @ExceptionHandler(UpdateInfoApiException.class)
+    public ResponseEntity<?> updateInfoExceptionHandler(UpdateInfoApiException e) {
         return ResponseEntity.status(e.getHttpStatus()).body(e.getErrorDto());
     }
 

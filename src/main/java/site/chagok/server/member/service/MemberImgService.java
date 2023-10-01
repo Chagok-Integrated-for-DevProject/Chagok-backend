@@ -5,11 +5,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import site.chagok.server.member.domain.Member;
-import site.chagok.server.member.exception.ImgFileNotFoundException;
-import site.chagok.server.member.exception.UpdateInfoException;
+import site.chagok.server.member.exception.ImgFileNotFoundApiException;
+import site.chagok.server.common.exception.UpdateInfoApiException;
 import site.chagok.server.member.repository.MemberRepository;
 import java.io.IOException;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +29,7 @@ public class MemberImgService {
 
         // 시큐어코딩 - 이미지 형식만 허용
         if(!imgFile.getContentType().startsWith("image")){
-            throw new UpdateInfoException("image_01", "cannot get appropriate profile image file");
+            throw new UpdateInfoApiException("image_01", "cannot get appropriate profile image file");
         }
 
         Member member = credentialService.getMember();
@@ -62,7 +61,7 @@ public class MemberImgService {
     @Transactional
     public byte[] getProfileImg(String image) {
 
-        String fileName = memberRepository.findByProfileImg(image).orElseThrow(ImgFileNotFoundException::new).getProfileImg();
+        String fileName = memberRepository.findByProfileImg(image).orElseThrow(ImgFileNotFoundApiException::new).getProfileImg();
         byte[] savedFile = fireBaseService.getImage(fileName);
 
         return savedFile;
