@@ -38,7 +38,6 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth // security domain 설정
                         .antMatchers("/contests/comments", "/member/update/**").hasRole("USER")
                         .antMatchers(HttpMethod.GET, "/member/info", "/projects/recommend", "/studies/recommend").hasRole("USER")
-                        .antMatchers(HttpMethod.POST, "/auth/refresh").hasRole("USER")
                         .antMatchers(HttpMethod.DELETE, "/auth/delete").hasRole("USER")
                         .anyRequest().permitAll())
                 .exceptionHandling(ex -> ex
