@@ -23,10 +23,8 @@ public class ResponseUtil {
                 .domain("api.chagok.site")
                 .build();
 
-
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
-                .header(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true")
                 .body(authInfo.getSignInResDto());
     }
 
