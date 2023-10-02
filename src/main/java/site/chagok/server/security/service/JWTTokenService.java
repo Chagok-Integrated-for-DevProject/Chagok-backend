@@ -41,7 +41,7 @@ public class JWTTokenService {
                 .setIssuer("chagok service server");
         claims.put("email", email);
         claims.put("roles", roles);
-        claims.put("expired", getExpirationTimeMinutesInTheFuture(1));
+        claims.put("expired", getExpirationTimeMinutesInTheFuture(30));
 
         String jwt = Jwts.builder()
                 .setHeader(headers)

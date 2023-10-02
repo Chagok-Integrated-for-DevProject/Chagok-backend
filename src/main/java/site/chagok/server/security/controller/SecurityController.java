@@ -5,6 +5,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ import site.chagok.server.security.util.ResponseUtil;
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 
-@Api(tags = "인증 및 회원가입/탈퇴")
+@Tag(name = "인증 및 회원가입/탈퇴 관리 API")
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -35,7 +36,10 @@ public class SecurityController {
 
     @PostMapping("/signIn")
     @ApiOperation(value = "로그인", notes = "가입이 되지 않은 상태라면, isSignUp 이 false, 가입이 되어있는 상태라면, isSignUp이 true 및 jwt, refresh 토큰(쿠키:refreshToken - httpOnly, secure 적용) 발급")
-    @ApiResponses({@ApiResponse(code = 200, message = "서버 인증 성공"), @ApiResponse(code = 400, message = "사용자 정보 획득 에러(oauth2.0 통신과정) 또는 access code 에러")})
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "서버 인증 성공"),
+            @ApiResponse(code = 401, message = "auth_01 - 사용자 정보 획득 에러(oauth2.0 통신과정) 또는 access code 에러")
+    })
     public ResponseEntity<ResSignInDto> signIn(@RequestBody ReqSignInDto reqSignInDto) {
 
         AuthInfo authInfo = authService.signIn(reqSignInDto);
@@ -47,8 +51,13 @@ public class SecurityController {
     }
 
     @PostMapping("/refresh")
-    @ApiOperation(value = "secure - 리프레시 토큰 전달")
-    @ApiResponses({@ApiResponse(code = 200, message = "리프레시 토큰 갱신 성공"), @ApiResponse(code = 400, message = "refresh token 에러 또는 access token 에러")})
+    @ApiOperation(value = "secure - 리프레시 토큰으로 jwt 토큰 갱신")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "리프레시 토큰 갱신 성공"),
+            @ApiResponse(code = 401, message = "refresh_01 - 서버측 refresh token 조회 오류(만료시) "),
+            @ApiResponse(code = 401, message = "jwt_01 - jwt access token 에러"),
+            @ApiResponse(code = 401, message = "jwt_02 - refresh 토큰 갱신 중 유효 검사 이상")
+    })
     public ResponseEntity<ResSignInDto> renewRefreshTokenAuth(@CookieValue("refreshToken") String refreshToken, HttpServletRequest request) {
 
         String jwtToken = request.getHeader(SecurityHeader.JWT_HEADER).substring(7);
@@ -58,7 +67,11 @@ public class SecurityController {
 
     @PostMapping("/signUp")
     @ApiOperation(value = "사용자 회원가입", notes = "회원가입 성공 시, jwt, refresh 토큰(쿠키:refreshToken - httpOnly, secure 적용) 발급")
-    @ApiResponses({@ApiResponse(code = 200, message = "회원가입 성공"), @ApiResponse(code = 400, message = "사용자 정보 획득 에러(oauth2.0 통신과정) 또는 access code 에러, 이미 사용자가 존재하거나 닉네임이 존재한다면 에러")})
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "회원가입 성공"),
+            @ApiResponse(code = 400, message = "nickname_01 - 해당 닉네임 중복"),
+            @ApiResponse(code = 400, message = "member_01 - 가입하려는 사용자가 이미 서버에 존재")
+    })
     public ResponseEntity<ResSignInDto> signUp(@RequestBody SignUpDto signUpDto) {
 
         return ResponseUtil.createResponseWithCookieAndBody(authService.signUp(signUpDto));
@@ -66,7 +79,9 @@ public class SecurityController {
 
     @DeleteMapping("/delete")
     @ApiOperation(value = "사용자 회원탈퇴", notes = "secure - 회원탈퇴 api, 댓글은 삭제처리만 되고, 사용자 관련 데이터는 삭제")
-    @ApiResponses({@ApiResponse(code = 200, message = "회원탈퇴 성공"), @ApiResponse(code = 400, message = "회원탈퇴 에러")})
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "회원탈퇴 성공")
+    })
     public void deleteAccount() {
 
         accountService.deleteAccount();

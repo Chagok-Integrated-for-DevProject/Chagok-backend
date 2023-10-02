@@ -1,6 +1,10 @@
 package site.chagok.server.config;
 
-
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -34,7 +38,7 @@ public class SwaggerConfig {
     @Bean
     public Docket getDocket() {
         return new Docket(DocumentationType.OAS_30)
-                .useDefaultResponseMessages(false)
+                .useDefaultResponseMessages(true)
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("site.chagok.server"))
                 .apis(RequestHandlerSelectors.any())
@@ -75,6 +79,49 @@ public class SwaggerConfig {
 
     private HttpAuthenticationScheme bearerAuthSecurityScheme(){
         return HttpAuthenticationScheme.JWT_BEARER_BUILDER.name("bearer").build();
+    }
+
+    @Bean
+    public OpenAPI openAPI() {
+        Info info = new Info()
+                .title(API_NAME)
+                .version(API_VERSION)
+                .description(API_DESCRIPTION);
+
+        /*// SecuritySecheme명
+        String jwtSchemeName = "jwtAuth";
+        // API 요청헤더에 인증정보 포함
+        SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwtSchemeName);
+        // SecuritySchemes 등록
+        Components components = new Components()
+                .addSecuritySchemes(jwtSchemeName, new SecurityScheme()
+                        .name(jwtSchemeName)
+                        .type(SecurityScheme.Type.HTTP) // HTTP 방식
+                        .scheme("bearer")
+                        .bearerFormat("JWT")); // 토큰 형식을 지정하는 임의의 문자(Optional)
+
+        return new OpenAPI()
+                .info(info)
+                .addSecurityItem(securityRequirement)
+                .components(components);*/
+
+        final String securitySchemeName = "jwt Auth";
+
+        // API 요청헤더에 인증정보 포함
+        SecurityRequirement securityRequirement = new SecurityRequirement()
+                .addList(securitySchemeName);
+        // SecuritySchemes 등록
+        Components components = new Components()
+                .addSecuritySchemes(securitySchemeName, new SecurityScheme()
+                        .name(securitySchemeName)
+                        .type(SecurityScheme.Type.HTTP)
+                        .scheme("bearer")
+                        .bearerFormat("JWT")); // 토큰 형식을 지정하는 임의의 문자(Optional)
+
+        return new OpenAPI()
+                .info(info)
+                .addSecurityItem(securityRequirement)
+                .components(components);
     }
 
 }
