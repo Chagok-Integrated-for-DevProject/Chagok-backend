@@ -41,5 +41,5 @@ public class GetContestCommentDto {
     private boolean deleted;
 
     @ApiModelProperty(notes = "대댓글 정보 GetContestCommentDto")
-    private List<GetContestCommentDto> linkedComment;
+    private List<GetContestCommentDto> linkedComment = new ArrayList<>();
 }
