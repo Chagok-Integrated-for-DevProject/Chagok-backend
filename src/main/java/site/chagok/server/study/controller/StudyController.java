@@ -1,9 +1,10 @@
 package site.chagok.server.study.controller;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,7 +29,7 @@ public class StudyController {
     private static final String STUDY_DEFAULT_SIZE ="3";
     private static final String STUDY_DEFAULT_SORT ="hotCount";
     @GetMapping(value="/studies")
-    @ApiOperation(value = "스터디 정렬", notes = "파라미터 techStacks(스택 리스트),searchTerm(검색어),pageNumber(기본값 0),pageSize(기본값 3),sort(기본값 hotCount,desc / 마감순은 id,desc)")
+    @Operation(summary = "스터디 정렬", description = "파라미터 techStacks(스택 리스트),searchTerm(검색어),pageNumber(기본값 0),pageSize(기본값 3),sort(기본값 hotCount,desc / 마감순은 id,desc)")
     public Page<GetStudyPreviewDto> getStudies(
              @RequestParam(value ="searchTerm",required = false)String searchTerm
             ,@RequestParam(value="techStacks",required = false) List<String> techStacks
@@ -43,17 +44,18 @@ public class StudyController {
     }
 
     @GetMapping (value="/studies/{id}")
-    @ApiOperation(value = "스터디 상세보기")
+    @Operation(summary = "스터디 상세보기")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "스터디 게시글 조회 성공"),
-            @ApiResponse(code = 404, message = "board_01 - 게시글 조회 오류", response = ErrorDto.class)
+            @ApiResponse(responseCode = "200", description = "스터디 게시글 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "board_01 - 게시글 조회 오류", content = @Content(
+                    schema = @Schema(implementation = ErrorDto.class)))
     })
     public GetStudyDto getStudy(@PathVariable("id") Long studyId){
         return studyService.getStudy(studyId);
     }
 
     @GetMapping (value="/studies/recommend")
-    @ApiOperation(value = "스터디 추천 받기")
+    @Operation(summary = "스터디 추천 받기")
     public List<GetRecommendedStudyDto> getRecommendedStudy(){
         return studyService.getRecommendedStudy();
     }

@@ -1,10 +1,16 @@
 package site.chagok.server.member.controller;
 
-import io.swagger.annotations.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import site.chagok.server.common.dto.ErrorDto;
 import site.chagok.server.member.constants.ActionType;
 import site.chagok.server.member.dto.BoardScrapDto;
 import site.chagok.server.member.service.MemberImgService;
@@ -31,11 +37,11 @@ public class MemberManageController {
 
 
     @PostMapping("/nickname")
-    @ApiOperation(value="secure - 닉네임 업데이트")
-    @ApiImplicitParam(name = "nickname", value = "변경할 닉네임")
+    @Operation(summary="secure - 닉네임 업데이트")
+    @Parameter(name = "nickname", description = "변경할 닉네임")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "닉네임 변경성공"),
-            @ApiResponse(code = 400, message = "nickname_01 - 해당 닉네임 중복")
+            @ApiResponse(responseCode = "200", description = "닉네임 변경성공"),
+            @ApiResponse(responseCode = "400", description = "nickname_01 - 해당 닉네임 중복")
     })
     public void updateNickName(@RequestParam("nickname")String nickName) {
 
@@ -43,10 +49,11 @@ public class MemberManageController {
     }
 
     @PostMapping("/scrap")
-    @ApiOperation(value = "secure - 게시글 스크랩 추가")
+    @Operation(summary = "secure - 게시글 스크랩 추가")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "스크랩 추가 성공"),
-            @ApiResponse(code = 404, message = "board_01 - 게시글 조회 오류"),
+            @ApiResponse(responseCode = "200", description = "스크랩 추가 성공"),
+            @ApiResponse(responseCode = "404", description = "board_01 - 게시글 조회 오류", content = @Content(
+                    schema = @Schema(implementation = ErrorDto.class))),
     })
     public void addScrapBoard(@RequestBody BoardScrapDto boardScrapDto) {
 
@@ -54,10 +61,11 @@ public class MemberManageController {
     }
 
     @DeleteMapping("/scrap")
-    @ApiOperation(value = "secure - 게시글 스크랩 삭제")
+    @Operation(summary = "secure - 게시글 스크랩 삭제")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "스크랩 삭제 성공"),
-            @ApiResponse(code = 404, message = "scrap_01 - 스크랩 조회 오류")
+            @ApiResponse(responseCode = "200", description = "스크랩 삭제 성공"),
+            @ApiResponse(responseCode = "404", description = "scrap_01 - 스크랩 조회 오류", content = @Content(
+                    schema = @Schema(implementation = ErrorDto.class)))
     })
     public void deleteScrapBoard(@RequestBody BoardScrapDto boardScrapDto) {
 
@@ -65,9 +73,9 @@ public class MemberManageController {
     }
 
     @PostMapping("/skills")
-    @ApiOperation(value = "secure - 사용자 기술스택 업데이트", notes = "request body: skills - 사용자 기술 스택에 대한 String list")
+    @Operation(summary = "secure - 사용자 기술스택 업데이트", description = "request body: skills - 사용자 기술 스택에 대한 String list")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "스크랩 추가 성공")
+            @ApiResponse(responseCode = "200", description = "스크랩 추가 성공")
     })
     public void updateTechStacks(@RequestBody List<String> skills) {
 
@@ -75,10 +83,11 @@ public class MemberManageController {
     }
 
     @PostMapping("/profile-image")
-    @ApiOperation(value = "secure - 사용자 프로필 이미지 업데이트", notes = "request body: image - 사용자가 업데이트할 프로필 이미지( multipart 형식 )")
+    @Operation(summary = "secure - 사용자 프로필 이미지 업데이트", description = "request body: image - 사용자가 업데이트할 프로필 이미지( multipart 형식 )")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "프로필 이미지 업데이트 성공"),
-            @ApiResponse(code = 400, message = "image_01 - 프로필 이미지 업데이트 오류")
+            @ApiResponse(responseCode = "200", description = "프로필 이미지 업데이트 성공"),
+            @ApiResponse(responseCode = "400", description = "image_01 - 프로필 이미지 업데이트 오류", content = @Content(
+                    schema = @Schema(implementation = ErrorDto.class)))
     })
     public void updateProfileImg(@RequestPart(name = "image")MultipartFile profileFile) throws IOException {
 
@@ -86,9 +95,9 @@ public class MemberManageController {
     }
 
     @DeleteMapping("/profile-image")
-    @ApiOperation(value = "secure - 사용자 프로필 이미지 삭제, 사용자의 프로필 이미지 null처리")
+    @Operation(summary = "secure - 사용자 프로필 이미지 삭제, 사용자의 프로필 이미지 null처리")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "스크랩 삭제 성공"),
+            @ApiResponse(responseCode = "200", description = "스크랩 삭제 성공"),
     })
     public void deleteProfileImg() {
 
