@@ -64,7 +64,7 @@ public class OAuthService {
                 .retrieve()
                 .onStatus(HttpStatus::is4xxClientError, response -> { // invalid token 에러시,
                     if (response.statusCode().is4xxClientError())
-                        throw new AuthorizationServiceException("invalid access code");
+                        throw new AuthorizationApiException("auth_01", "invalid google access token");
                     return null;
                 })
                 .bodyToMono(String.class)
@@ -95,7 +95,7 @@ public class OAuthService {
                 .retrieve()
                 .onStatus(HttpStatus::is4xxClientError, response -> { // invalid token 에러시,
                     if (response.statusCode().is4xxClientError())
-                        throw new AuthorizationApiException("oauth_01", "invalid access code");
+                        throw new AuthorizationApiException("auth_01", "invalid kakao access token");
                     return null;
                 })
                 .bodyToMono(String.class)
