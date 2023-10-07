@@ -37,6 +37,9 @@ public class GetContestCommentDto {
     @ApiModelProperty(notes = "댓글의 카카오톡 연락주소, 댓글만(대댓글 x)", example = "open.kakao.com/...")
     private String kakaoRef;
 
+    @ApiModelProperty(notes = "댓글 단 사용자 email")
+    private String userEmail;
+
     @ApiModelProperty(notes = "댓글 삭제 유무")
     private boolean deleted;
 
