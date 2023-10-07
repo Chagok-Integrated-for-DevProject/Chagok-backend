@@ -38,6 +38,7 @@ public class CommentSorter {
                 .parentId(comment.getParentId())
                 .kakaoRef(comment.getKakaoRef())
                 .linkedComment(new ArrayList<>())
+                .userEmail(comment.getMember().getEmail())
                 .build());
     }
 
@@ -49,6 +50,7 @@ public class CommentSorter {
                 .deleted(comment.isDeleted())
                 .memberNickName(comment.getMember().getNickName())
                 .commentId(comment.getId())
+                .userEmail(comment.getMember().getEmail())
                 .parentId(comment.getParentId())
                 .build());
     }

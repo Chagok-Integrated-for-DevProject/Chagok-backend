@@ -22,4 +22,6 @@ public class CommentDto {
 
     @ApiModelProperty(notes = "카카오톡 연락주소 댓글만 가능, 대댓글 x ", example = "open.kakao.com/...")
     private String kakaoRef;
+
+
 }
