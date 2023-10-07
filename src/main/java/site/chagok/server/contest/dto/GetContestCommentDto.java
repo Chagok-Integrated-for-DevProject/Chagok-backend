@@ -37,6 +37,9 @@ public class GetContestCommentDto {
     @Schema(description = "댓글 삭제 유무")
     private boolean deleted;
 
+    @Schema(description = "유저 이메일")
+    private String userEmail;
+
     @Schema(description = "대댓글 정보 GetContestCommentDto")
     private List<GetContestCommentDto> linkedComment;
 }
