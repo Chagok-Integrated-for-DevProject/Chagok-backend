@@ -112,7 +112,7 @@ public class MemberUpdateService {
     // 기술스택 업데이트
     @Transactional
     public void updateTechStacks(List<String> techStacks) {
-        Member member = credentialService.getMember();
+        Member member = credentialService.getMemberWithTechs();
 
         member.updateTechStacks(techStacks);
     }
