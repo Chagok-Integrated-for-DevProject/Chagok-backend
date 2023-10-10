@@ -18,6 +18,7 @@ import site.chagok.server.member.exception.InvalidMemberApiException;
 import site.chagok.server.member.service.MemberCredentialService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -62,20 +63,19 @@ public class ContestService {
 
     // 사용자 공모전 스크랩 미리보기
     @Transactional(readOnly = true)
-    public GetContestPreviewDto getContestPreview(Long contestId) {
-        Contest contest = contestRepository.findById(contestId).orElseThrow(BoardNotFoundApiException::new);
-
+    public List<GetContestPreviewDto> getContestPreview(List<Contest> contests) {
         // 공모전 스크랩 미리보기 dto 반환
-        return GetContestPreviewDto.builder()
-                .contestId(contest.getId())
-                .title(contest.getTitle())
-                .imageUrl(contest.getImageUrl())
-                .host(contest.getHost())
-                .startDate(contest.getStartDate())
-                .endDate(contest.getEndDate())
-                .scrapCount(contest.getScrapCount())
-                .commentCount(contest.getCommentCount())
-                .build();
+        return contests.stream().map(c-> GetContestPreviewDto.builder()
+                        .contestId(c.getId())
+                        .title(c.getTitle())
+                        .imageUrl(c.getImageUrl())
+                        .host(c.getHost())
+                        .startDate(c.getStartDate())
+                        .endDate(c.getEndDate())
+                        .scrapCount(c.getScrapCount())
+                        .commentCount(c.getCommentCount())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     // 공모전 글에 대한 댓글 조회

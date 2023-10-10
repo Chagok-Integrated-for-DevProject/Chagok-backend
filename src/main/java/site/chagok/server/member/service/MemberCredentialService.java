@@ -20,4 +20,11 @@ public class MemberCredentialService {
 
         return memberRepository.findByEmail(userEmail).orElseThrow(MemberNotFoundApiException::new);
     }
+
+    @Transactional
+    public Member getMemberWithTechs() {
+        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        return memberRepository.findByEmailWithTechs(userEmail).orElseThrow(MemberNotFoundApiException::new);
+    }
 }

@@ -40,7 +40,7 @@ public class StudyService {
         return studies.map(s-> GetStudyPreviewDto.builder()
                 .studyId(s.getId())
                 .title(s.getTitle())
-                .preview(s.getContent()) // 추후 수정
+                .preview(s.getContent())
                 .siteType(s.getSiteType())
                 .techStacks(s.getTechStacks())
                 .viewCount(s.getViewCount())
@@ -62,21 +62,20 @@ public class StudyService {
     }
     // 사용자 스터디 스크랩 미리보기
     @Transactional(readOnly = true)
-    public GetStudyPreviewDto getStudyPreview(Long studyId) {
+    public List<GetStudyPreviewDto> getStudyPreview(List<Study> studies) {
 
-        Study study = studyRepository.findById(studyId).orElseThrow(BoardNotFoundApiException::new);
-
-        return GetStudyPreviewDto.builder()
-                .studyId(study.getId())
-                .title(study.getTitle())
-                .preview(study.getContent()) // 추후 수정
-                .siteType(study.getSiteType())
-                .postType(PostType.STUDY)
-                .techStacks(study.getTechStacks())
-                .viewCount(study.getViewCount())
-                .scrapCount(study.getScrapCount())
-                .studyId(study.getId())
-                .build();
+        return studies.stream().map(s-> GetStudyPreviewDto.builder()
+                        .studyId(s.getId())
+                        .title(s.getTitle())
+                        .preview(s.getContent())
+                        .siteType(s.getSiteType())
+                        .techStacks(s.getTechStacks())
+                        .viewCount(s.getViewCount())
+                        .scrapCount(s.getScrapCount())
+                        .postType(PostType.STUDY)
+                        .createdTime(s.getCreatedTime())
+                        .build())
+                .collect(Collectors.toList());
     }
     @Transactional
     public GetStudyDto getStudy(Long studyId){

@@ -43,7 +43,7 @@ public class SecurityController {
         AuthInfo authInfo = authService.signIn(reqSignInDto);
 
         if (authInfo.isSignUp()) // 가입이 된 상태라서, 바로 로그인 완료 및 jwt 발급
-            return ResponseUtil.createResponseWithCookieAndBody(authService.signIn(reqSignInDto));
+            return ResponseUtil.createResponseWithCookieAndBody(authInfo);
 
         return ResponseEntity.ok().body(authInfo.getSignInResDto()); // 가입이 되지 않은 상태
     }

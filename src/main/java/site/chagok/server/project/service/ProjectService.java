@@ -60,20 +60,20 @@ public class ProjectService {
 
     // 사용자 프로젝트 스크랩 미리보기
     @Transactional(readOnly = true)
-    public GetProjectPreviewDto getProjectPreview(Long projectId) {
+    public List<GetProjectPreviewDto> getProjectPreview(List<Project> projects) {
 
-        Project project = projectRepository.findById(projectId).orElseThrow(BoardNotFoundApiException::new);
-
-        return GetProjectPreviewDto.builder()
-                .title(project.getTitle())
-                .preview(project.getContent()) // 추후 수정
-                .siteType(project.getSiteType())
-                .postType(PostType.PROJECT)
-                .techStacks(project.getTechStacks())
-                .viewCount(project.getViewCount())
-                .scrapCount(project.getScrapCount())
-                .projectId(project.getId())
-                .build();
+        return projects.stream().map(s-> GetProjectPreviewDto.builder()
+                        .projectId(s.getId())
+                        .title(s.getTitle())
+                        .preview(s.getContent())
+                        .siteType(s.getSiteType())
+                        .techStacks(s.getTechStacks())
+                        .viewCount(s.getViewCount())
+                        .scrapCount(s.getScrapCount())
+                        .postType(PostType.PROJECT)
+                        .createdTime(s.getCreatedTime())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     @Transactional
