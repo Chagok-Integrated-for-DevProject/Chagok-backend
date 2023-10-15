@@ -52,9 +52,9 @@ public class SecurityController {
     @Operation(summary = "secure - 리프레시 토큰으로 jwt 토큰 갱신")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "리프레시 토큰 갱신 성공"),
-            @ApiResponse(responseCode = "401", description = "refresh_01 - 서버측 refresh token 조회 오류(만료시)" +
-                    "\t\n jwt_01 - jwt access token 에러" +
-                    "\t\n jwt_02 - refresh 토큰 갱신 중 유효 검사 이상", content = @Content(
+            @ApiResponse(responseCode = "401", description = "refresh_01 - 서버측에 refresh token 이 없거나 유효하지 않은 refresh 토큰 요청 할 때" +
+                    " \t\n refresh_02 - 토큰 갱신 요청시 refresh token이 아직 만료되지 않았을 때" +
+                    " \t\n jwt_01 - jwt access token 에러", content = @Content(
                     schema = @Schema(implementation = ErrorDto.class))),
     })
     public ResponseEntity<ResSignInDto> renewRefreshTokenAuth(@CookieValue("refreshToken") String refreshToken, HttpServletRequest request) {

@@ -121,19 +121,21 @@ public class JWTTokenService {
         }
 
         /*
-            아직 jwt 토큰의 유효기간이 남아있거나,
             서버측 refresh token과 요청 refresh token 불일치,
             refresh 의 jwt Id와 요청 jwt 토큰의 id 불일치 시 에러
+
+            아직 jwt 토큰의 유효기간이 남아있을 때 에러.
          */
 
         boolean isExpired = isExpired(jwtPayload);
         boolean equalRefreshToken = jwtTokenSetDto.getRefreshToken().equals(savedRefreshToken.getRefreshToken());
         boolean equalJti = savedRefreshToken.getJwtId().equals(jwtPayload.get("jti"));
 
-        if (!isExpired || !equalRefreshToken || !equalJti) {
-            throw new AuthorizationApiException("refresh_02", "invalid request or invalid refresh token");
+        if (!equalRefreshToken || !equalJti) {
+            throw new AuthorizationApiException("refresh_01", "invalid refresh token");
+        } else if (!isExpired) {
+            throw new AuthorizationApiException("refresh_02", "invalid request");
         }
-
         String jwtUserEmail = jwtPayload.get("email", String.class);
         List<String> roles = jwtPayload.get("roles", List.class);
 
