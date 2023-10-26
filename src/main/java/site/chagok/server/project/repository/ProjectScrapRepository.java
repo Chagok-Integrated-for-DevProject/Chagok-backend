@@ -17,7 +17,7 @@ public interface ProjectScrapRepository extends JpaRepository<ProjectScrap, Long
     Optional<ProjectScrap> deleteByProjectId(Long projectId);
 
 
-    @Query(value = "select distinct p from ProjectScrap ps inner join Project p on ps.project = p join fetch p.techStacks where ps.member = :member")
+    @Query(value = "select distinct p from ProjectScrap ps inner join Project p on ps.project = p left join fetch p.techStacks where ps.member = :member")
     List<Project> findProjectByMemberWithTechs(@Param("member") Member member);
 
     Optional<ProjectScrap> findProjectScrapByMemberAndProject(Member member, Project project);
