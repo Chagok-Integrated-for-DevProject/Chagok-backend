@@ -20,4 +20,6 @@ public interface ContestScrapRepository extends JpaRepository<ContestScrap, Long
 
     @Query(value = "select c from ContestScrap cs inner join Contest c on cs.contest = c where cs.member = :member")
     List<Contest> findContestByMember(@Param("member") Member member);
+
+    Optional<ContestScrap> findContestScrapByMemberAndContest(Member member, Contest contest);
 }

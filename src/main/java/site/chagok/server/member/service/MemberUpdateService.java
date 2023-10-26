@@ -11,6 +11,7 @@ import site.chagok.server.contest.repository.ContestScrapRepository;
 import site.chagok.server.member.constants.ActionType;
 import site.chagok.server.member.domain.Member;
 import site.chagok.server.member.dto.BoardScrapDto;
+import site.chagok.server.member.exception.ScrapAlreadySavedApiException;
 import site.chagok.server.member.exception.ScrapNotFoundApiException;
 import site.chagok.server.project.domain.Project;
 import site.chagok.server.project.domain.ProjectScrap;
@@ -22,6 +23,7 @@ import site.chagok.server.study.repository.StudyRepository;
 import site.chagok.server.study.repository.StudyScrapRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -68,27 +70,53 @@ public class MemberUpdateService {
 
         Member member = credentialService.getMember();
 
-        // 카테고리 종류에 따른 스크랩 추가/삭제
+        /*
+        카테고리 종류에 따른 스크랩 추가/삭제
+        저장 시, 이미 해당 게시글이 스크랩이 된 상태라면, 오류
+        삭제 시, 해당 게시글이 스크랩 되지 않았으면, 오류
+         */
         switch (category) {
             case "contest" : {
                 Contest scrapContest = contestRepository.findById(boardId).orElseThrow(BoardNotFoundApiException::new);
+
+                boolean isSaved = contestScrapRepository.findContestScrapByMemberAndContest(member, scrapContest).isPresent();
+
                 if (action == ActionType.POST) {
+                    if (isSaved) {
+                        throw new ScrapAlreadySavedApiException();
+                    }
+
                     scrapContest.addScrapCount();
                     ContestScrap contestScrap = new ContestScrap(member, scrapContest);
                     contestScrapRepository.save(contestScrap);
                 } else if (action == ActionType.DELETE) {
+                    if (!isSaved) {
+                        throw new ScrapNotFoundApiException();
+                    }
+
                     scrapContest.minusScrapCount();
-                    contestScrapRepository.deleteByContestId(boardId).orElseThrow(ScrapNotFoundApiException::new);
+                    contestScrapRepository.deleteByContestId(boardId);
                 }
                 break;
             }
             case "project" : {
                 Project scrapProject = projectRepository.findById(boardId).orElseThrow(BoardNotFoundApiException::new);
+
+                boolean isSaved = projectScrapRepository.findProjectScrapByMemberAndProject(member, scrapProject).isPresent();
+
                 if (action == ActionType.POST) {
+                    if (isSaved) {
+                        throw new ScrapAlreadySavedApiException();
+                    }
+
                     scrapProject.addScrapCount();
                     ProjectScrap projectScrap = new ProjectScrap(member, scrapProject);
                     projectScrapRepository.save(projectScrap);
                 } else if (action == ActionType.DELETE) {
+                    if (!isSaved) {
+                        throw new ScrapNotFoundApiException();
+                    }
+
                     scrapProject.minusScrapCount();
                     projectScrapRepository.deleteByProjectId(boardId).orElseThrow(ScrapNotFoundApiException::new);
                 }
@@ -96,11 +124,22 @@ public class MemberUpdateService {
             }
             case "study" : {
                 Study scrapStudy = studyRepository.findById(boardId).orElseThrow(BoardNotFoundApiException::new);
+
+                boolean isSaved = studyScrapRepository.findStudyScrapByMemberAndStudy(member, scrapStudy).isPresent();
+
                 if (action == ActionType.POST) {
+                    if (isSaved) {
+                        throw new ScrapAlreadySavedApiException();
+                    }
+
                     scrapStudy.addScrapCount();
                     StudyScrap studyScrap = new StudyScrap(member, scrapStudy);
                     studyScrapRepository.save(studyScrap);
                 } else if (action == ActionType.DELETE) {
+                    if (!isSaved) {
+                        throw new ScrapNotFoundApiException();
+                    }
+
                     scrapStudy.minusScrapCount();
                     studyScrapRepository.deleteByStudyId(boardId).orElseThrow(ScrapNotFoundApiException::new);
                 }

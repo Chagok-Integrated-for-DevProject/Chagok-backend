@@ -52,6 +52,7 @@ public class MemberManageController {
     @Operation(summary = "secure - 게시글 스크랩 추가")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "스크랩 추가 성공"),
+            @ApiResponse(responseCode = "400", description = "scrap_02 - 이미 스크랩 된 상태"),
             @ApiResponse(responseCode = "404", description = "board_01 - 게시글 조회 오류", content = @Content(
                     schema = @Schema(implementation = ErrorDto.class))),
     })

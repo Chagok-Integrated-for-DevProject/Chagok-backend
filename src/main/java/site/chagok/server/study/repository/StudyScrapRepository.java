@@ -19,4 +19,6 @@ public interface StudyScrapRepository extends JpaRepository<StudyScrap, Long> {
 
     @Query(value = "select distinct s from StudyScrap ss inner join Study s on ss.study = s join fetch s.techStacks where ss.member = :member")
     List<Study> findStudyByMemberWithTechs(@Param("member") Member member);
+
+    Optional<StudyScrap> findStudyScrapByMemberAndStudy(Member member, Study study);
 }
