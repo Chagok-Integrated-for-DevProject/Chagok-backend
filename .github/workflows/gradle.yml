@@ -87,10 +87,9 @@ jobs:
           script: |
             docker pull ${{ secrets.DOCKER_USERNAME }}/chagok:latest
             docker tag ${{ secrets.DOCKER_USERNAME }}/chagok:latest chagok:latest
-            # docker stop $(docker ps -a -q) 
-            docker stop chagok:latest
+            docker stop $(docker ps -a -q) 
             docker run -d --rm -p 8080:8080 --net redis-network --memory 1024m chagok:latest
-            # docker run -d --rm -p 6379:6379 --net redis-network --memory 256m redis:latest
+            docker run -d --rm -p 6379:6379 --net redis-network --memory 256m redis:latest
             
             docker rm $(docker ps --filter 'status=exited' -a -q)
             # 실행 중이지 않으 모든 컨테인 삭제
